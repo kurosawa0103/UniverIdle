@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniverIdle — 主界面（简化）</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      background: #1c1814;
+      color: #e4d8c4;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .hint { font-size: 12px; color: #7a7060; }
+    .app {
+      width: 960px;
+      max-width: 100%;
+      height: 600px;
+      background: #2a2420;
+      border: 1px solid #4a4038;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .top {
+      height: 44px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #322c26;
+      border-bottom: 1px solid #4a4038;
+    }
+    .top .title { font-weight: 600; color: #e8c878; }
+    .top .gold { margin-left: auto; color: #e8c878; }
+    .top button {
+      background: #3e3630;
+      border: 1px solid #5a5048;
+      color: #c8b8a0;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .body { flex: 1; display: flex; min-height: 0; }
+    .sidebar {
+      width: 120px;
+      background: #262220;
+      border-right: 1px solid #4a4038;
+      padding: 8px 0;
+    }
+    .skill {
+      padding: 10px 14px;
+      font-size: 14px;
+      color: #a89880;
+      cursor: default;
+      border-left: 3px solid transparent;
+    }
+    .skill.active {
+      background: #3a3430;
+      color: #f0e0c0;
+      border-left-color: #c8a050;
+    }
+    .content {
+      flex: 1;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .breadcrumb { font-size: 13px; color: #8a8070; }
+    .breadcrumb strong { color: #d4c4a8; }
+    .actions { display: flex; flex-direction: column; gap: 6px; }
+    .action {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: #322c28;
+      border: 1px solid #4a443c;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .action.running {
+      border-color: #a08040;
+      background: #3a3428;
+    }
+    .action.locked { opacity: 0.45; }
+    .action .time { color: #8a8070; width: 56px; }
+    .action .gain { margin-left: auto; color: #90c878; }
+    .progress-block {
+      margin-top: auto;
+      padding: 16px;
+      background: #262220;
+      border-radius: 8px;
+      border: 1px solid #4a4038;
+    }
+    .progress-block h4 { font-size: 12px; color: #8a8070; margin-bottom: 8px; font-weight: 400; }
+    .bar {
+      height: 12px;
+      background: #1a1814;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .bar-fill {
+      height: 100%;
+      width: 62%;
+      background: linear-gradient(90deg, #8a6830, #c8a050);
+    }
+    .inv { font-size: 13px; color: #a09078; }
+  </style>
+</head>
+<body>
+  <p class="hint">UniverIdle 主界面 v3 · 和 Melvor 一样简单 · 浏览器打开</p>
+  <div class="app">
+    <header class="top">
+      <span class="title">坠星谷</span>
+      <span class="gold">🪙 1,240</span>
+      <button>图鉴</button>
+      <button>设置</button>
+    </header>
+    <div class="body">
+      <nav class="sidebar">
+        <div class="skill">打猎</div>
+        <div class="skill active">溪钓</div>
+        <div class="skill">野拾</div>
+        <div class="skill">掘矿</div>
+        <div class="skill">炼药</div>
+        <div class="skill">锻造</div>
+        <div class="skill">讨伐</div>
+      </nav>
+      <main class="content">
+        <div class="breadcrumb">溪钓 › <strong>萤溪</strong></div>
+        <div class="actions">
+          <div class="action running">
+            <span>🦐</span>
+            <span>钓萤虾</span>
+            <span class="time">8.0秒</span>
+            <span class="gain">+1 萤虾</span>
+          </div>
+          <div class="action">
+            <span>🐟</span>
+            <span>钓鳟鱼</span>
+            <span class="time">12秒</span>
+            <span class="gain">需 Lv.10</span>
+          </div>
+          <div class="action locked">
+            <span>🐋</span>
+            <span>坑底烫潭 · 赤尾鳗</span>
+            <span class="time">—</span>
+            <span class="gain">🔒</span>
+          </div>
+        </div>
+        <div class="progress-block">
+          <h4>进行中</h4>
+          <div class="bar"><div class="bar-fill"></div></div>
+          <div style="font-size:13px;margin-bottom:10px">钓萤虾 · 00:06</div>
+          <div class="inv">虾 48 · 苔 22 · 红药 3 · 铜锭 6</div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniverIdle — 主界面概念（插画 UI）</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #1e2420;
+      --panel: #2a322c;
+      --panel-light: #354038;
+      --border: #4a5a50;
+      --gold: #e8b84a;
+      --teal: #5a9a8a;
+      --cream: #f0ebe0;
+      --text: #e8e4dc;
+      --muted: #9aa89e;
+      --accent: #c87840;
+      --card-hover: #3d4a42;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      background: #121614;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      color: var(--text);
+    }
+    .hint { font-size: 12px; color: #6a756c; margin-bottom: 10px; }
+    .app {
+      width: 1200px;
+      max-width: 100%;
+      height: 680px;
+      background: var(--bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.45);
+    }
+    /* top */
+    .topbar {
+      height: 52px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: linear-gradient(180deg, #2e3832, #252d28);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-img {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: linear-gradient(135deg, #3a5a4a, #1a2820);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .logo h1 { font-size: 17px; font-weight: 600; color: var(--cream); }
+    .logo span { font-size: 12px; color: var(--muted); margin-left: 6px; }
+    .currency { margin-left: auto; display: flex; gap: 20px; font-size: 14px; }
+    .currency .gold { color: var(--gold); }
+    .top-btn {
+      padding: 6px 14px; border-radius: 8px; font-size: 13px;
+      background: var(--panel-light); border: 1px solid var(--border);
+      color: var(--cream); cursor: default;
+    }
+    .top-btn:hover { background: var(--card-hover); }
+    /* body */
+    .body { flex: 1; display: flex; min-height: 0; }
+    /* sidebar */
+    .sidebar {
+      width: 172px;
+      background: #222a24;
+      border-right: 1px solid var(--border);
+      padding: 10px 8px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .skill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: default;
+      border: 1px solid transparent;
+      min-height: 52px;
+    }
+    .skill:hover { background: var(--panel); }
+    .skill.active {
+      background: var(--panel-light);
+      border-color: var(--teal);
+      box-shadow: inset 3px 0 0 var(--teal);
+    }
+    .skill-icon {
+      width: 40px; height: 40px; border-radius: 8px;
+      flex-shrink: 0; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .skill-info { flex: 1; min-width: 0; }
+    .skill-name { font-size: 14px; font-weight: 500; }
+    .skill-lv { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .skill-bar {
+      height: 3px; background: #1a201c; border-radius: 2px; margin-top: 4px;
+    }
+    .skill-bar i { display: block; height: 100%; background: var(--teal); border-radius: 2px; }
+    /* center */
+    .center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 14px;
+      gap: 12px;
+    }
+    .banner {
+      height: 130px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border);
+    }
+    .banner-bg {
+      width: 100%; height: 100%; object-fit: cover;
+      background: linear-gradient(135deg, #1a3040 0%, #2a5048 40%, #1a2820 100%);
+    }
+    .banner-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,0.65) 0%, transparent 60%);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .banner h2 { font-size: 22px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+    .tags { display: flex; gap: 8px; margin-top: 6px; }
+    .tag {
+      font-size: 11px; padding: 3px 8px; border-radius: 12px;
+      background: rgba(90,154,138,0.35); color: #b8e0d4;
+      border: 1px solid rgba(90,154,138,0.5);
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      flex: 1;
+      min-height: 0;
+      align-content: start;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      cursor: default;
+      transition: transform 0.15s, border-color 0.15s;
+      min-height: 100px;
+    }
+    .card:hover { transform: translateY(-2px); border-color: var(--teal); background: var(--card-hover); }
+    .card.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .card.locked { opacity: 0.45; filter: grayscale(0.6); }
+    .card-thumb {
+      width: 100%; height: 56px; border-radius: 8px; margin-bottom: 8px;
+      background: var(--panel-light);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .card-title { font-size: 14px; font-weight: 500; }
+    .card-meta { font-size: 12px; color: var(--muted); margin-top: 4px; display: flex; justify-content: space-between; }
+    .card-yield { color: var(--teal); font-size: 11px; }
+    .running {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .running-thumb { width: 56px; height: 56px; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+    .running-info { flex: 1; }
+    .running-info h3 { font-size: 15px; margin-bottom: 8px; }
+    .bar-wrap { height: 10px; background: #1a201c; border-radius: 5px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 62%; background: linear-gradient(90deg, var(--accent), var(--gold)); border-radius: 5px; }
+    .running-time { font-size: 13px; color: var(--gold); width: 48px; text-align: right; }
+    /* right detail */
+    .detail {
+      width: 228px;
+      background: #222a24;
+      border-left: 1px solid var(--border);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .detail-hero {
+      width: 100%; aspect-ratio: 1;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: var(--panel);
+    }
+    .detail h3 { font-size: 16px; }
+    .detail p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .req { font-size: 12px; }
+    .req li { list-style: none; padding: 4px 0; display: flex; align-items: center; gap: 6px; color: var(--muted); }
+    .req .ok { color: var(--teal); }
+    /* inventory */
+    .inv-bar {
+      height: 76px;
+      border-top: 1px solid var(--border);
+      background: #1c221e;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow-x: auto;
+    }
+    .inv-label { font-size: 12px; color: var(--muted); writing-mode: vertical-rl; letter-spacing: 2px; flex-shrink: 0; }
+    .slot {
+      width: 52px; height: 52px; flex-shrink: 0;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .slot .cnt {
+      position: absolute; bottom: 2px; right: 4px;
+      font-size: 11px; font-weight: 600; color: var(--cream);
+      text-shadow: 0 1px 2px #000;
+    }
+  </style>
+</head>
+<body>
+  <p class="hint">UniverIdle 主界面概念 · 有图 · 排版分区 · 交互区加大 · 浏览器打开</p>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="logo">
+        <div class="logo-img">✦</div>
+        <h1>坠星谷 <span>萤溪村</span></h1>
+      </div>
+      <div class="currency">
+        <span class="gold">🪙 1,240</span>
+        <span style="color:var(--muted)">声望 ★★☆</span>
+      </div>
+      <div class="top-btn">图鉴</div>
+      <div class="top-btn">背包</div>
+      <div class="top-btn">设置</div>
+    </header>
+
+    <div class="body">
+      <nav class="sidebar">
+        <div class="skill">
+          <div class="skill-icon"><svg viewBox="0 0 40 40"><rect fill="#3a2820" width="40" height="40"/><text x="20" y="26" text-anchor="middle" fill="#c8a080" font-size="16">🐭</text></svg></div>
+          <div class="skill-info"><div class="skill-name">打猎</div><div class="skill-lv">Lv. 8</div><div class="skill-bar"><i style="width:40%"></i></div></div>
+        </div>
+        <div class="skill active">
+          <div class="skill-icon"><svg viewBox="0 0 40 40"><defs><linearGradient id="w" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2a4858"/><stop offset="100%" stop-color="#1a3830"/></linearGradient></defs><rect fill="url(#w)" width="40" height="40"/><circle cx="28" cy="12" r="4" fill="#8ac8e8" opacity="0.8"/></svg></div>
+          <div class="skill-info"><div class="skill-name">溪钓</div><div class="skill-lv">Lv. 12</div><div class="skill-bar"><i style="width:65%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon"><svg viewBox="0 0 40 40"><rect fill="#2a3828" width="40" height="40"/><text x="20" y="26" text-anchor="middle" font-size="14">🌿</text></svg></div>
+          <div class="skill-info"><div class="skill-name">野拾</div><div class="skill-lv">Lv. 6</div><div class="skill-bar"><i style="width:28%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon"><svg viewBox="0 0 40 40"><rect fill="#383028" width="40" height="40"/><text x="20" y="26" text-anchor="middle" font-size="14">⛏</text></svg></div>
+          <div class="skill-info"><div class="skill-name">掘矿</div><div class="skill-lv">Lv. 10</div><div class="skill-bar"><i style="width:52%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon"><svg viewBox="0 0 40 40"><rect fill="#3a2830" width="40" height="40"/><text x="20" y="26" text-anchor="middle" font-size="14">⚗</text></svg></div>
+          <div class="skill-info"><div class="skill-name">炼药</div><div class="skill-lv">Lv. 9</div><div class="skill-bar"><i style="width:48%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon"><svg viewBox="0 0 40 40"><rect fill="#303028" width="40" height="40"/><text x="20" y="26" text-anchor="middle" font-size="14">🔨</text></svg></div>
+          <div class="skill-info"><div class="skill-name">锻造</div><div class="skill-lv">Lv. 7</div><div class="skill-bar"><i style="width:35%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon"><svg viewBox="0 0 40 40"><rect fill="#382828" width="40" height="40"/><text x="20" y="26" text-anchor="middle" font-size="14">⚔</text></svg></div>
+          <div class="skill-info"><div class="skill-name">讨伐</div><div class="skill-lv">Lv. 11</div><div class="skill-bar"><i style="width:58%"></i></div></div>
+        </div>
+      </nav>
+
+      <main class="center">
+        <div class="banner">
+          <svg class="banner-bg" viewBox="0 0 800 130" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a2838"/><stop offset="100%" stop-color="#2a4840"/></linearGradient>
+            </defs>
+            <rect width="800" height="130" fill="url(#sky)"/>
+            <ellipse cx="120" cy="100" rx="80" ry="20" fill="#1a3830" opacity="0.6"/>
+            <ellipse cx="400" cy="95" rx="200" ry="25" fill="#2a5850" opacity="0.5"/>
+            <circle cx="650" cy="30" r="3" fill="#c8e8ff" opacity="0.9"/>
+            <circle cx="680" cy="45" r="2" fill="#c8e8ff" opacity="0.6"/>
+            <circle cx="720" cy="25" r="2" fill="#e8d8a8" opacity="0.8"/>
+            <path d="M0 110 Q200 90 400 100 T800 105 L800 130 L0 130 Z" fill="#1a3028"/>
+          </svg>
+          <div class="banner-overlay">
+            <h2>萤溪</h2>
+            <div class="tags"><span class="tag">微光</span><span class="tag">安全</span><span class="tag">★☆☆</span></div>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card active">
+            <div class="card-thumb">
+              <svg width="80" height="48" viewBox="0 0 80 48"><ellipse cx="40" cy="28" rx="30" ry="12" fill="#2a5850"/><circle cx="40" cy="22" r="8" fill="#e87858" opacity="0.9"/><circle cx="36" cy="20" r="1.5" fill="#fff"/></svg>
+            </div>
+            <div class="card-title">钓萤虾</div>
+            <div class="card-meta"><span>8.0 秒</span><span class="card-yield">+1 萤虾</span></div>
+          </div>
+          <div class="card">
+            <div class="card-thumb">
+              <svg width="80" height="48" viewBox="0 0 80 48"><rect x="20" y="20" width="40" height="20" rx="4" fill="#4a4030"/><circle cx="35" cy="30" r="3" fill="#d8c878"/></svg>
+            </div>
+            <div class="card-title">淘星沙</div>
+            <div class="card-meta"><span>12 秒</span><span class="card-yield">+1 星沙</span></div>
+          </div>
+          <div class="card locked">
+            <div class="card-thumb">
+              <svg width="80" height="48" viewBox="0 0 80 48"><ellipse cx="40" cy="26" rx="22" ry="10" fill="#3a5858"/><text x="40" y="30" text-anchor="middle" fill="#888" font-size="10">🔒</text></svg>
+            </div>
+            <div class="card-title">钓鳟鱼</div>
+            <div class="card-meta"><span>需 Lv.10</span></div>
+          </div>
+        </div>
+
+        <div class="running">
+          <div class="running-thumb">
+            <svg width="56" height="56" viewBox="0 0 56 56"><rect fill="#2a3830" width="56" height="56"/><circle cx="28" cy="28" r="12" fill="#e87858"/></svg>
+          </div>
+          <div class="running-info">
+            <h3>进行中 · 钓萤虾</h3>
+            <div class="bar-wrap"><div class="bar-fill"></div></div>
+          </div>
+          <div class="running-time">00:06</div>
+        </div>
+      </main>
+
+      <aside class="detail">
+        <div class="detail-hero">
+          <svg width="100%" height="100%" viewBox="0 0 200 200">
+            <rect fill="#2a3830" width="200" height="200"/>
+            <ellipse cx="100" cy="140" rx="70" ry="20" fill="#1a2820"/>
+            <circle cx="100" cy="90" r="40" fill="#e87858"/>
+            <circle cx="88" cy="82" r="6" fill="#1a2018"/>
+            <path d="M60 50 Q100 20 140 50" stroke="#8ac8e8" fill="none" stroke-width="2" opacity="0.6"/>
+          </svg>
+        </div>
+        <h3>萤虾</h3>
+        <p>萤溪浅水的小虾，夜间会发光。炼药常用基材，也可直接出售。</p>
+        <ul class="req">
+          <li class="ok">✓ 溪钓 Lv.1</li>
+          <li class="ok">✓ 地点：萤溪</li>
+          <li>稀有：星沙 2%</li>
+        </ul>
+      </aside>
+    </div>
+
+    <footer class="inv-bar">
+      <span class="inv-label">物品</span>
+      <div class="slot"><svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="20" r="10" fill="#e87858"/></svg><span class="cnt">48</span></div>
+      <div class="slot"><svg width="36" height="36" viewBox="0 0 36 36"><path d="M18 8 Q8 18 18 28 Q28 18 18 8" fill="#5a9a6a"/></svg><span class="cnt">22</span></div>
+      <div class="slot"><svg width="36" height="36" viewBox="0 0 36 36"><rect x="12" y="10" width="12" height="18" rx="4" fill="#c84848"/></svg><span class="cnt">3</span></div>
+      <div class="slot"><svg width="36" height="36" viewBox="0 0 36 36"><rect x="10" y="14" width="16" height="12" rx="2" fill="#a88858"/></svg><span class="cnt">6</span></div>
+      <div class="slot"><svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="8" fill="#d8c878"/></svg><span class="cnt">31</span></div>
+    </footer>
+  </div>
+</body>
+</html>

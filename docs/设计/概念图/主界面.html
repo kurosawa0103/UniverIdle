@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniverIdle — 主界面概念图</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      background: #1a1410;
+      color: #e8dcc8;
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .label {
+      font-size: 12px;
+      color: #8a7a68;
+      letter-spacing: 0.1em;
+    }
+    .frame {
+      width: 1280px;
+      max-width: 100%;
+      height: 720px;
+      background: linear-gradient(145deg, #2a2218 0%, #1e1812 100%);
+      border: 2px solid #5c4a32;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,220,160,0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    /* Top bar */
+    .topbar {
+      height: 48px;
+      background: linear-gradient(180deg, #3d3024 0%, #2d241a 100%);
+      border-bottom: 1px solid #5c4a32;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 20px;
+    }
+    .logo { font-weight: 700; color: #f0c878; font-size: 18px; }
+    .logo span { color: #a89070; font-weight: 400; font-size: 13px; margin-left: 8px; }
+    .topbar .hub { color: #c4a86a; font-size: 14px; }
+    .topbar .gold { margin-left: auto; color: #f0c878; }
+    .topbar .btn {
+      padding: 4px 12px;
+      background: #4a3c28;
+      border: 1px solid #6b5538;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #d4c4a8;
+    }
+    /* Main */
+    .main {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+    /* Map */
+    .map-panel {
+      flex: 1.1;
+      border-right: 1px solid #5c4a32;
+      padding: 16px;
+      position: relative;
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(80,120,90,0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 60%, rgba(100,80,60,0.12) 0%, transparent 45%),
+        #252018;
+    }
+    .map-title {
+      font-size: 11px;
+      color: #7a6a58;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 12px;
+    }
+    .map-canvas {
+      position: relative;
+      height: calc(100% - 28px);
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20h40M20 0v40' stroke='%233a3228' stroke-width='0.5' fill='none'/%3E%3C/svg%3E");
+      border-radius: 6px;
+      border: 1px dashed #4a4030;
+    }
+    .node {
+      position: absolute;
+      text-align: center;
+      cursor: default;
+    }
+    .node-dot {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid #6b5538;
+      background: radial-gradient(circle at 35% 35%, #4a5a48, #2a3828);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin: 0 auto 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .node.active .node-dot {
+      border-color: #c4a050;
+      box-shadow: 0 0 16px rgba(200,160,80,0.4);
+    }
+    .node.locked .node-dot {
+      background: #2a2828;
+      opacity: 0.5;
+      filter: grayscale(0.8);
+    }
+    .node-name { font-size: 12px; color: #b8a888; }
+    .node-badge {
+      position: absolute;
+      top: -4px;
+      right: 8px;
+      font-size: 10px;
+      background: #5a4030;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid #8a6040;
+    }
+    .path {
+      position: absolute;
+      height: 2px;
+      background: #5c5040;
+      transform-origin: left center;
+    }
+    .n-yingxi { left: 18%; top: 28%; }
+    .n-aidong { left: 12%; top: 58%; }
+    .n-cunkou { left: 42%; top: 48%; }
+    .n-linyuan { left: 68%; top: 35%; }
+    .n-keng { left: 52%; top: 78%; }
+    .path-1 { left: 22%; top: 38%; width: 120px; transform: rotate(35deg); }
+    .path-2 { left: 38%; top: 52%; width: 140px; transform: rotate(-12deg); }
+    .path-3 { left: 48%; top: 58%; width: 80px; transform: rotate(55deg); }
+    /* Hub */
+    .hub-panel {
+      flex: 0.9;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: linear-gradient(180deg, #2a221c 0%, #221c16 100%);
+    }
+    .hub-title { font-size: 13px; color: #a89070; }
+    .buildings {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .building {
+      width: 72px;
+      padding: 8px;
+      background: #3a3028;
+      border: 1px solid #5c4a32;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 11px;
+    }
+    .building.selected {
+      border-color: #c4a050;
+      background: #4a4030;
+    }
+    .building.locked { opacity: 0.45; }
+    .building-icon { font-size: 24px; margin-bottom: 4px; }
+    .building-lv { color: #8a7a68; font-size: 10px; }
+    .queue-panel {
+      flex: 1;
+      background: #1e1814;
+      border: 1px solid #4a4030;
+      border-radius: 6px;
+      padding: 12px;
+      min-height: 120px;
+    }
+    .queue-title { font-size: 12px; color: #c4a86a; margin-bottom: 8px; }
+    .queue-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      background: #2a241c;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .progress {
+      flex: 1;
+      height: 8px;
+      background: #1a1410;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8a6030, #c4a050);
+      width: 68%;
+    }
+    .inventory {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: #a89878;
+      padding: 8px;
+      background: #252018;
+      border-radius: 4px;
+    }
+  /* Bottom bar */
+    .bottombar {
+      height: 88px;
+      background: #2d241a;
+      border-top: 1px solid #5c4a32;
+      padding: 8px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .activity-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+    }
+    .activity-tag {
+      width: 52px;
+      color: #8a7a68;
+      flex-shrink: 0;
+    }
+    .activity-row .progress { max-width: 400px; }
+    .activity-row .time { color: #c4a86a; width: 48px; }
+    .activity-row .action {
+      margin-left: auto;
+      padding: 2px 10px;
+      background: #4a3c28;
+      border: 1px solid #6b5538;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #d4c4a8;
+    }
+    /* Expedition modal overlay hint */
+    .modal-hint {
+      position: absolute;
+      right: 24px;
+      bottom: 100px;
+      width: 280px;
+      background: rgba(30,24,18,0.95);
+      border: 2px solid #8a6040;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 11px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .modal-hint h4 { color: #f0c878; font-size: 12px; margin-bottom: 8px; }
+    .slots { display: flex; gap: 4px; flex-wrap: wrap; margin: 8px 0; }
+    .slot {
+      width: 36px;
+      height: 36px;
+      background: #2a241c;
+      border: 1px solid #5c4a32;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .slot.empty { border-style: dashed; opacity: 0.4; }
+  </style>
+</head>
+<body>
+  <p class="label">UniverIdle · 主界面概念图（PC 1280×720）· 用浏览器打开本文件</p>
+  <div class="frame">
+    <header class="topbar">
+      <div class="logo">UniverIdle <span>宇宙无敌放置</span></div>
+      <div class="hub">📍 坠星谷 · 萤溪村工坊</div>
+      <div class="gold">🪙 1,240</div>
+      <div class="btn">📖 图鉴</div>
+      <div class="btn">⚙ 设置</div>
+    </header>
+
+    <div class="main">
+      <section class="map-panel">
+        <div class="map-title">世界地图 · 坠星谷</div>
+        <div class="map-canvas">
+          <div class="path path-1"></div>
+          <div class="path path-2"></div>
+          <div class="path path-3"></div>
+
+          <div class="node n-yingxi">
+            <span class="node-badge">👤学徒</span>
+            <div class="node-dot">💧</div>
+            <div class="node-name">萤溪</div>
+          </div>
+          <div class="node n-aidong active">
+            <span class="node-badge">🔨你</span>
+            <div class="node-dot">⛏</div>
+            <div class="node-name">矮洞</div>
+          </div>
+          <div class="node n-cunkou">
+            <div class="node-dot">🏠</div>
+            <div class="node-name">村口</div>
+          </div>
+          <div class="node n-linyuan">
+            <span class="node-badge">⚔远征</span>
+            <div class="node-dot">🌲</div>
+            <div class="node-name">林缘</div>
+          </div>
+          <div class="node n-keng locked">
+            <div class="node-dot">🌠</div>
+            <div class="node-name">坠星坑外</div>
+          </div>
+
+          <div class="modal-hint">
+            <h4>⚔ 远征 · 林缘猎狼</h4>
+            <div>行囊 6/9 格</div>
+            <div class="slots">
+              <div class="slot">🗡</div>
+              <div class="slot">🛡</div>
+              <div class="slot">🧪</div>
+              <div class="slot">🧪</div>
+              <div class="slot">🧪</div>
+              <div class="slot">🔥</div>
+              <div class="slot empty">+</div>
+              <div class="slot empty">+</div>
+              <div class="slot empty">+</div>
+            </div>
+            <div style="color:#8a7a68">点击底栏「查看行囊」展开全屏</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="hub-panel">
+        <div class="hub-title">据点工坊</div>
+        <div class="buildings">
+          <div class="building selected">
+            <div class="building-icon">⚗️</div>
+            <div>药炉</div>
+            <div class="building-lv">Lv.2</div>
+          </div>
+          <div class="building">
+            <div class="building-icon">🔥</div>
+            <div>熔炉</div>
+            <div class="building-lv">Lv.1</div>
+          </div>
+          <div class="building">
+            <div class="building-icon">🔨</div>
+            <div>铁砧</div>
+            <div class="building-lv">Lv.1</div>
+          </div>
+          <div class="building locked">
+            <div class="building-icon">🎣</div>
+            <div>渔棚</div>
+            <div class="building-lv">🔒</div>
+          </div>
+          <div class="building">
+            <div class="building-icon">⛺</div>
+            <div>营帐</div>
+            <div class="building-lv">1槽</div>
+          </div>
+        </div>
+        <div class="queue-panel">
+          <div class="queue-title">药炉 · 制作队列</div>
+          <div class="queue-item">
+            <span>红药水 ×1</span>
+            <span style="color:#8a7a68">萤苔×2 萤虾×1</span>
+            <div class="progress"><div class="progress-fill"></div></div>
+            <span style="color:#c4a86a">00:42</span>
+          </div>
+          <div class="queue-item" style="opacity:0.5">
+            <span>（空槽）</span>
+          </div>
+        </div>
+        <div class="inventory">
+          <span>🦐 萤虾 48</span>
+          <span>🌿 萤苔 22</span>
+          <span>🟫 铜锭 6</span>
+          <span>🧪 红药 3</span>
+        </div>
+      </section>
+    </div>
+
+    <footer class="bottombar">
+      <div class="activity-row">
+        <span class="activity-tag">你</span>
+        <span>矮洞 · 挖铜矿</span>
+        <div class="progress"><div class="progress-fill" style="width:72%"></div></div>
+        <span class="time">00:18</span>
+      </div>
+      <div class="activity-row">
+        <span class="activity-tag">学徒</span>
+        <span>萤溪 · 钓萤虾</span>
+        <div class="progress"><div class="progress-fill" style="width:55%"></div></div>
+        <span class="time">00:31</span>
+        <span class="action">召回</span>
+      </div>
+      <div class="activity-row">
+        <span class="activity-tag">远征</span>
+        <span>林缘 · 猎狼</span>
+        <div class="progress"><div class="progress-fill" style="width:28%"></div></div>
+        <span class="time">28:12</span>
+        <span class="action">查看行囊</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

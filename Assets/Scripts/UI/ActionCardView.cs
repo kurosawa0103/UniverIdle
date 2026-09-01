@@ -1,0 +1,57 @@
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace UniverIdle.UI
+{
+    public class ActionCardView : MonoBehaviour
+    {
+        [SerializeField] private Image background;
+        [SerializeField] private Image thumb;
+        [SerializeField] private TextMeshProUGUI titleText;
+        [SerializeField] private TextMeshProUGUI metaLeftText;
+        [SerializeField] private TextMeshProUGUI metaRightText;
+        [SerializeField] private CanvasGroup canvasGroup;
+
+        public string DisplayName { get; private set; }
+        public string Description { get; private set; }
+        public bool IsLocked { get; private set; }
+
+        public void Setup(string title, string metaLeft, string metaRight, string description, bool locked, Color thumbColor)
+        {
+            DisplayName = title;
+            Description = description;
+            IsLocked = locked;
+
+            if (titleText != null) titleText.text = title;
+            if (metaLeftText != null) metaLeftText.text = metaLeft;
+            if (metaRightText != null) metaRightText.text = metaRight;
+            if (thumb != null) thumb.color = thumbColor;
+
+            if (canvasGroup != null)
+            {
+                canvasGroup.alpha = locked ? 0.45f : 1f;
+                canvasGroup.interactable = !locked;
+            }
+            SetSelected(false);
+        }
+
+        public void SetSelected(bool selected)
+        {
+            if (background == null) return;
+            background.color = selected ? UITheme.PanelLight : UITheme.Panel;
+        }
+
+#if UNITY_EDITOR
+        public void Bind(Image bg, Image thumbImg, TextMeshProUGUI title, TextMeshProUGUI metaL, TextMeshProUGUI metaR, CanvasGroup group)
+        {
+            background = bg;
+            thumb = thumbImg;
+            titleText = title;
+            metaLeftText = metaL;
+            metaRightText = metaR;
+            canvasGroup = group;
+        }
+#endif
+    }
+}
