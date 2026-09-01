@@ -15,8 +15,16 @@ namespace UniverIdle.UI
 
         public string LocationName { get; private set; }
 
-        public void Setup(string skillName, string locationName, int level, float xpRatio, Color iconTint)
+        public void Setup(Image bg, Image accent, Image iconBg, TextMeshProUGUI name, TextMeshProUGUI lv, Image xp,
+            string skillName, string locationName, int level, float xpRatio, Color iconTint)
         {
+            background = bg;
+            accentBar = accent;
+            iconBackground = iconBg;
+            nameText = name;
+            levelText = lv;
+            xpFill = xp;
+
             LocationName = locationName;
             if (nameText != null) nameText.text = skillName;
             if (levelText != null) levelText.text = $"Lv. {level}";
@@ -32,17 +40,5 @@ namespace UniverIdle.UI
             if (accentBar != null)
                 accentBar.enabled = selected;
         }
-
-#if UNITY_EDITOR
-        public void Bind(Image bg, Image accent, Image iconBg, TextMeshProUGUI name, TextMeshProUGUI lv, Image xp)
-        {
-            background = bg;
-            accentBar = accent;
-            iconBackground = iconBg;
-            nameText = name;
-            levelText = lv;
-            xpFill = xp;
-        }
-#endif
     }
 }

@@ -17,13 +17,22 @@ namespace UniverIdle.UI
         public string Description { get; private set; }
         public bool IsLocked { get; private set; }
 
-        public void Setup(string title, string metaLeft, string metaRight, string description, bool locked, Color thumbColor)
+        public void Setup(Image bg, Image thumbImg, TextMeshProUGUI title, TextMeshProUGUI metaL, TextMeshProUGUI metaR,
+            CanvasGroup group, string displayTitle, string metaLeft, string metaRight, string description, bool locked,
+            Color thumbColor)
         {
-            DisplayName = title;
+            background = bg;
+            thumb = thumbImg;
+            titleText = title;
+            metaLeftText = metaL;
+            metaRightText = metaR;
+            canvasGroup = group;
+
+            DisplayName = displayTitle;
             Description = description;
             IsLocked = locked;
 
-            if (titleText != null) titleText.text = title;
+            if (titleText != null) titleText.text = displayTitle;
             if (metaLeftText != null) metaLeftText.text = metaLeft;
             if (metaRightText != null) metaRightText.text = metaRight;
             if (thumb != null) thumb.color = thumbColor;
@@ -41,17 +50,5 @@ namespace UniverIdle.UI
             if (background == null) return;
             background.color = selected ? UITheme.PanelLight : UITheme.Panel;
         }
-
-#if UNITY_EDITOR
-        public void Bind(Image bg, Image thumbImg, TextMeshProUGUI title, TextMeshProUGUI metaL, TextMeshProUGUI metaR, CanvasGroup group)
-        {
-            background = bg;
-            thumb = thumbImg;
-            titleText = title;
-            metaLeftText = metaL;
-            metaRightText = metaR;
-            canvasGroup = group;
-        }
-#endif
     }
 }

@@ -279,15 +279,14 @@ namespace UniverIdle.Editor
 
             var barBg = CreateImage("XpBg", info, UITheme.BarTrack, new Vector2(80, 3));
             AddLayout(barBg.gameObject, 0, 3);
-            var barFill = CreateImage("XpFill", barBg, UITheme.Teal, new Vector2(80, 3));
+            var barFill = CreateImage("XpFill", barBg.rectTransform, UITheme.Teal, new Vector2(80, 3));
             barFill.type = Image.Type.Filled;
             barFill.fillMethod = Image.FillMethod.Horizontal;
             barFill.fillAmount = xp;
-            Stretch(barFill);
+            Stretch(barFill.rectTransform);
 
             var view = rt.gameObject.AddComponent<SkillNavItemView>();
-            view.Bind(bg, accent, icon, nameT, lvT, barFill);
-            view.Setup(skillName, location, level, xp, iconColor);
+            view.Setup(bg, accent, icon, nameT, lvT, barFill, skillName, location, level, xp, iconColor);
             return view;
         }
 
@@ -311,7 +310,7 @@ namespace UniverIdle.Editor
             }
 
             var overlay = CreateImage("Overlay", banner, UITheme.BannerOverlay, Vector2.zero);
-            Stretch(overlay);
+            Stretch(overlay.rectTransform);
 
             var textArea = CreateRect("BannerText", banner);
             Stretch(textArea);
@@ -391,8 +390,7 @@ namespace UniverIdle.Editor
             var metaR_T = CreateTMP(metaR, metaRow, font, 11, UITheme.Teal, TextAlignmentOptions.Right);
 
             var view = rt.gameObject.AddComponent<ActionCardView>();
-            view.Bind(bg, thumb, titleT, metaL_T, metaR_T, cg);
-            view.Setup(title, metaL, metaR, desc, locked, thumbColor);
+            view.Setup(bg, thumb, titleT, metaL_T, metaR_T, cg, title, metaL, metaR, desc, locked, thumbColor);
             return view;
         }
 
@@ -411,8 +409,8 @@ namespace UniverIdle.Editor
 
             var thumb = CreateImage("Thumb", rt, UITheme.Hex("#2A3830"), new Vector2(56, 56));
             AddLayout(thumb.gameObject, 56, 56);
-            var thumbInner = CreateImage("Inner", thumb, UITheme.Accent, new Vector2(24, 24));
-            Center(thumbInner, 24, 24);
+            var thumbInner = CreateImage("Inner", thumb.rectTransform, UITheme.Accent, new Vector2(24, 24));
+            Center(thumbInner.rectTransform, 24, 24);
 
             var mid = CreateRect("Mid", rt);
             var midLE = mid.gameObject.AddComponent<LayoutElement>();
@@ -424,11 +422,11 @@ namespace UniverIdle.Editor
 
             var barBg = CreateImage("BarBg", mid, UITheme.BarTrack, new Vector2(0, 10));
             AddLayout(barBg.gameObject, 0, 10);
-            fill = CreateImage("BarFill", barBg, UITheme.Accent, new Vector2(0, 10));
+            fill = CreateImage("BarFill", barBg.rectTransform, UITheme.Accent, new Vector2(0, 10));
             fill.type = Image.Type.Filled;
             fill.fillMethod = Image.FillMethod.Horizontal;
             fill.fillAmount = 0.62f;
-            Stretch(fill);
+            Stretch(fill.rectTransform);
 
             time = CreateTMP("00:06", rt, font, 13, UITheme.Gold, TextAlignmentOptions.Right);
             AddLayout(time.gameObject, 48, 36);
@@ -445,8 +443,8 @@ namespace UniverIdle.Editor
 
             var hero = CreateImage("Hero", detail, UITheme.Panel, new Vector2(200, 200));
             AddLayout(hero.gameObject, 0, 200);
-            var heroInner = CreateImage("Shrimp", hero, UITheme.Accent, new Vector2(80, 80));
-            Center(heroInner, 80, 80);
+            var heroInner = CreateImage("Shrimp", hero.rectTransform, UITheme.Accent, new Vector2(80, 80));
+            Center(heroInner.rectTransform, 80, 80);
 
             title = CreateTMP("萤虾", detail, font, 16, UITheme.Text, TextAlignmentOptions.Left);
             body = CreateTMP("萤溪浅水的小虾，夜间会发光。炼药常用基材，也可直接出售。", detail, font, 13, UITheme.Muted, TextAlignmentOptions.TopLeft);
@@ -483,7 +481,7 @@ namespace UniverIdle.Editor
             var bg = rt.gameObject.AddComponent<Image>();
             bg.color = UITheme.Panel;
             var icon = CreateImage("Icon", rt, color, new Vector2(28, 28));
-            Center(icon, 28, 28);
+            Center(icon.rectTransform, 28, 28);
             var cnt = CreateTMP(count, rt, font, 11, UITheme.Cream, TextAlignmentOptions.BottomRight);
             var cntRt = cnt.rectTransform;
             cntRt.anchorMin = new Vector2(1, 0);
