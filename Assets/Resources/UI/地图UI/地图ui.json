@@ -1,0 +1,999 @@
+{
+  "frames": {
+    "图集打包用/地图UI/背景.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 1400,
+        "h": 1000
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1400,
+        "h": 1000
+      },
+      "sourceSize": {
+        "w": 1400,
+        "h": 1000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/过去地面.png": {
+      "frame": {
+        "x": 1400,
+        "y": 0,
+        "w": 526,
+        "h": 287
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 526,
+        "h": 287
+      },
+      "sourceSize": {
+        "w": 526,
+        "h": 287
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/梦境.png": {
+      "frame": {
+        "x": 1926,
+        "y": 0,
+        "w": 119,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 9,
+        "w": 119,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/下层_大门.png": {
+      "frame": {
+        "x": 1926,
+        "y": 110,
+        "w": 109,
+        "h": 86
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 109,
+        "h": 86
+      },
+      "sourceSize": {
+        "w": 109,
+        "h": 86
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/宇宙_仓鼠.png": {
+      "frame": {
+        "x": 1926,
+        "y": 196,
+        "w": 108,
+        "h": 117
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 5,
+        "w": 108,
+        "h": 117
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/宇宙.png": {
+      "frame": {
+        "x": 1400,
+        "y": 287,
+        "w": 512,
+        "h": 648
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 512,
+        "h": 648
+      },
+      "sourceSize": {
+        "w": 512,
+        "h": 648
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/上层电梯楼.png": {
+      "frame": {
+        "x": 1912,
+        "y": 313,
+        "w": 136,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/荒原_宝可梦.png": {
+      "frame": {
+        "x": 1912,
+        "y": 441,
+        "w": 123,
+        "h": 99
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 14,
+        "w": 123,
+        "h": 99
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/藏书楼.png": {
+      "frame": {
+        "x": 1912,
+        "y": 540,
+        "w": 81,
+        "h": 151
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 81,
+        "h": 151
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 151
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/过去_花火.png": {
+      "frame": {
+        "x": 1993,
+        "y": 540,
+        "w": 54,
+        "h": 56
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 5,
+        "y": 4,
+        "w": 54,
+        "h": 56
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/过去_论坛.png": {
+      "frame": {
+        "x": 1993,
+        "y": 596,
+        "w": 46,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 46,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/上层_怪猫石像_激活过和未.png": {
+      "frame": {
+        "x": 1912,
+        "y": 691,
+        "w": 79,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 79,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 79,
+        "h": 118
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/海龟.png": {
+      "frame": {
+        "x": 1912,
+        "y": 809,
+        "w": 75,
+        "h": 83
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 75,
+        "h": 83
+      },
+      "sourceSize": {
+        "w": 75,
+        "h": 83
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/怪猫石像.png": {
+      "frame": {
+        "x": 1987,
+        "y": 809,
+        "w": 58,
+        "h": 95
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 58,
+        "h": 95
+      },
+      "sourceSize": {
+        "w": 58,
+        "h": 95
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/白色房间.png": {
+      "frame": {
+        "x": 1912,
+        "y": 892,
+        "w": 71,
+        "h": 63
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 71,
+        "h": 63
+      },
+      "sourceSize": {
+        "w": 71,
+        "h": 63
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/风车平原塔.png": {
+      "frame": {
+        "x": 1983,
+        "y": 904,
+        "w": 63,
+        "h": 153
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 63,
+        "h": 153
+      },
+      "sourceSize": {
+        "w": 63,
+        "h": 153
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/海边地面.png": {
+      "frame": {
+        "x": 1400,
+        "y": 935,
+        "w": 505,
+        "h": 256
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 3,
+        "y": 0,
+        "w": 505,
+        "h": 256
+      },
+      "sourceSize": {
+        "w": 512,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/地下室.png": {
+      "frame": {
+        "x": 1905,
+        "y": 1057,
+        "w": 142,
+        "h": 38
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 142,
+        "h": 38
+      },
+      "sourceSize": {
+        "w": 142,
+        "h": 38
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/沙漠_机器人.png": {
+      "frame": {
+        "x": 1905,
+        "y": 955,
+        "w": 62,
+        "h": 83
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 83
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 83
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/未来_绿色.png": {
+      "frame": {
+        "x": 0,
+        "y": 1191,
+        "w": 345,
+        "h": 425
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 345,
+        "h": 425
+      },
+      "sourceSize": {
+        "w": 345,
+        "h": 425
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/赛博城.png": {
+      "frame": {
+        "x": 0,
+        "y": 1000,
+        "w": 197,
+        "h": 166
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 197,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 197,
+        "h": 166
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/下层电梯楼.png": {
+      "frame": {
+        "x": 197,
+        "y": 1000,
+        "w": 162,
+        "h": 166
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 162,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 180,
+        "h": 166
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/边界层.png": {
+      "frame": {
+        "x": 0,
+        "y": 1616,
+        "w": 223,
+        "h": 289
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 223,
+        "h": 289
+      },
+      "sourceSize": {
+        "w": 223,
+        "h": 289
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/沙漠_村庄.png": {
+      "frame": {
+        "x": 0,
+        "y": 1905,
+        "w": 267,
+        "h": 142
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 53,
+        "y": 32,
+        "w": 267,
+        "h": 142
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 174
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/宇宙_列车.png": {
+      "frame": {
+        "x": 223,
+        "y": 1616,
+        "w": 351,
+        "h": 284
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 351,
+        "h": 284
+      },
+      "sourceSize": {
+        "w": 351,
+        "h": 300
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/沙漠地面.png": {
+      "frame": {
+        "x": 267,
+        "y": 1900,
+        "w": 393,
+        "h": 137
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 393,
+        "h": 137
+      },
+      "sourceSize": {
+        "w": 393,
+        "h": 137
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/下层电梯map.png": {
+      "frame": {
+        "x": 345,
+        "y": 1191,
+        "w": 244,
+        "h": 234
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 11,
+        "w": 244,
+        "h": 234
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/上层电梯map.png": {
+      "frame": {
+        "x": 359,
+        "y": 1000,
+        "w": 212,
+        "h": 164
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 22,
+        "y": 46,
+        "w": 212,
+        "h": 164
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/下层街道地面.png": {
+      "frame": {
+        "x": 571,
+        "y": 1000,
+        "w": 226,
+        "h": 155
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 226,
+        "h": 155
+      },
+      "sourceSize": {
+        "w": 226,
+        "h": 155
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/梦境_46.png": {
+      "frame": {
+        "x": 345,
+        "y": 1425,
+        "w": 167,
+        "h": 135
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 167,
+        "h": 135
+      },
+      "sourceSize": {
+        "w": 167,
+        "h": 135
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/车站.png": {
+      "frame": {
+        "x": 512,
+        "y": 1425,
+        "w": 240,
+        "h": 131
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 16,
+        "y": 0,
+        "w": 240,
+        "h": 131
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 131
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/下层电梯地面.png": {
+      "frame": {
+        "x": 589,
+        "y": 1191,
+        "w": 244,
+        "h": 231
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 12,
+        "w": 244,
+        "h": 231
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/荒原地面.png": {
+      "frame": {
+        "x": 833,
+        "y": 1155,
+        "w": 504,
+        "h": 211
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 45,
+        "w": 504,
+        "h": 211
+      },
+      "sourceSize": {
+        "w": 512,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/边界层地面.png": {
+      "frame": {
+        "x": 833,
+        "y": 1000,
+        "w": 228,
+        "h": 123
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 14,
+        "y": 2,
+        "w": 228,
+        "h": 123
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/上层电梯地面.png": {
+      "frame": {
+        "x": 1061,
+        "y": 1000,
+        "w": 212,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 22,
+        "y": 4,
+        "w": 212,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/宇宙_机器人.png": {
+      "frame": {
+        "x": 574,
+        "y": 1556,
+        "w": 253,
+        "h": 221
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 253,
+        "h": 221
+      },
+      "sourceSize": {
+        "w": 253,
+        "h": 221
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/赛博层地面.png": {
+      "frame": {
+        "x": 574,
+        "y": 1777,
+        "w": 345,
+        "h": 117
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 345,
+        "h": 117
+      },
+      "sourceSize": {
+        "w": 345,
+        "h": 117
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/荒原_岩石荒漠.png": {
+      "frame": {
+        "x": 752,
+        "y": 1422,
+        "w": 267,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 267,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 267,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/未来_毁灭.png": {
+      "frame": {
+        "x": 827,
+        "y": 1518,
+        "w": 307,
+        "h": 195
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 307,
+        "h": 195
+      },
+      "sourceSize": {
+        "w": 307,
+        "h": 195
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/荒原_山怪.png": {
+      "frame": {
+        "x": 1019,
+        "y": 1366,
+        "w": 162,
+        "h": 90
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 162,
+        "h": 90
+      },
+      "sourceSize": {
+        "w": 162,
+        "h": 90
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "图集打包用/地图UI/梦境_稻草人.png": {
+      "frame": {
+        "x": 1134,
+        "y": 1456,
+        "w": 182,
+        "h": 192
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 182,
+        "h": 192
+      },
+      "sourceSize": {
+        "w": 182,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "texture.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 2048,
+      "h": 2048
+    },
+    "scale": 1
+  }
+}

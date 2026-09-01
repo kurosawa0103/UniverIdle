@@ -63,7 +63,54 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.55f1c1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\BuildInfoReporter\Editor\BuildInfoPostProcessor.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Editor\SingleShaderGUI.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Gm\Editor\DesktopPetGmSetup.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\Editor\DecorItemCreatorWindow.cs" />
+    <Compile Include="Assets\Editor\FreeTexturePackerImporter.cs" />
+    <Compile Include="Assets\Scripts\Editor\HierarchyIconManager.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Interactive\Editor\WindParallaxEditor.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Interactive\Editor\InteractiveWindEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\PlayerPrefsWindow.cs" />
+    <Compile Include="Assets\Editor\Localization\OpenAiTranslateClient.cs" />
+    <Compile Include="Assets\Scripts\Editor\PlayerPrefsExtension.cs" />
+    <Compile Include="Assets\Editor\Localization\LocalizationWriteTargets.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Gm\Editor\DesktopPetTimeScaleEditor.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Interactive\Editor\WindManagerEditor.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Editor\PetAiBehaviorLogWindow.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Editor\LubyTheaterStagePreviewWindow.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Gm\Editor\DesktopPetGmPanelTabsEnsure.cs" />
+    <Compile Include="Assets\Scripts\Editor\GameTimerWindow.cs" />
+    <Compile Include="Assets\BuildInfoReporter\Editor\BuildInfoWindow.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Gm\Editor\DesktopPetGmWindow.cs" />
+    <Compile Include="Assets\Scripts\Editor\FungusSayExporter.cs" />
     <Compile Include="Assets\Editor\MainUISetup.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Editor\PetAiTheaterDebugPanel.cs" />
+    <Compile Include="Assets\Editor\Localization\LocalizationTranslateRunner.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Editor\UberShaderGUI.cs" />
+    <Compile Include="Assets\BuildInfoReporter\Editor\BuildReportData.cs" />
+    <Compile Include="Assets\Editor\Localization\LocalizationRowSelectWindow.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Other\Editor\ShaderInstancerEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\PerformanceMonitorWindow.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Editor\DesktopPetEditorUi.cs" />
+    <Compile Include="Assets\Editor\Localization\LocalizationTranslateSettings.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Hub\Editor\DesktopHubCodexPageEnsure.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Editor\LubyTheaterStagingEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\ResourceReferenceFinder.cs" />
+    <Compile Include="Assets\Scripts\Editor\SaveExportWindow.cs" />
+    <Compile Include="Assets\Editor\Localization\LocalizationCsvBaseline.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Editor\LubyTheaterEventDefinitionEditor.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Editor\LubyAnimPreviewWindow.cs" />
+    <Compile Include="Assets\Scripts\Editor\I2LocalizationFileImporter.cs" />
+    <Compile Include="Assets\Scripts\Editor\Plist.cs" />
+    <Compile Include="Assets\Editor\Localization\LocalizationTranslateWindow.cs" />
+    <Compile Include="Assets\Editor\Localization\LocalizationCsvIO.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Demo\Scripts\Editor\MaterialInstancerEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\HierarchyIconConfig.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Editor\LubyJournalLinesImport.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Hub\Editor\DesktopHubApply.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\Editor\DecorEditorDust.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Editor\ShaderInformation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -422,12 +469,32 @@
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.4\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sirenix.Reflection.Editor">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.Reflection.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="ReportGeneratorMerged">
       <HintPath>Library\PackageCache\com.unity.testtools.codecoverage@1.2.6\lib\ReportGenerator\ReportGeneratorMerged.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sirenix.Serialization">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.Serialization.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.Plastic.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@2.12.4\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sirenix.Serialization.Config">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.Serialization.Config.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sirenix.OdinInspector.Editor">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.OdinInspector.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DOTweenEditor">
+      <HintPath>Assets\Plugins\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="OnigwrapPlastic">
@@ -438,6 +505,10 @@
       <HintPath>Library\PackageCache\com.unity.collab-proxy@2.12.4\Lib\Editor\Unity.Plastic.Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="LitJSON">
+      <HintPath>Assets\Plugins\LitJSON.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="log4netPlastic">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@2.12.4\Lib\Editor\log4netPlastic.dll</HintPath>
       <Private>False</Private>
@@ -446,16 +517,44 @@
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.4\Editor\VisualScripting.Core\Dependencies\DotNetZip\Unity.VisualScripting.IonicZip.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sirenix.OdinInspector.Attributes">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.OdinInspector.Attributes.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="unityplastic">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@2.12.4\Lib\Editor\unityplastic.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sirenix.Utilities">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.Utilities.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DOTween">
+      <HintPath>Assets\Plugins\Demigiant\DOTween\DOTween.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.4\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="BehaviorDesigner.Runtime">
+      <HintPath>Assets\Plugins\Behavior Designer\Runtime\BehaviorDesigner.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.iOS_I2Loc.Xcode">
+      <HintPath>Assets\Plugins\I2\Localization\Scripts\Editor\Unity XCode\UnityEditor.iOS_I2Loc.Xcode.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sirenix.Utilities.Editor">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.Utilities.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.4\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="BehaviorDesigner.Editor">
+      <HintPath>Assets\Plugins\Behavior Designer\Editor\BehaviorDesigner.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="nunit.framework">
@@ -962,12 +1061,56 @@
       <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1c1\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\Facades\System.Xml.XPath.XDocument.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEditor.TestRunner">
+      <HintPath>Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.TestRunner">
       <HintPath>Library\ScriptAssemblies\UnityEngine.TestRunner.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEditor.TestRunner">
-      <HintPath>Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
+    <Reference Include="Unity.EditorCoroutines.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.EditorCoroutines.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Timeline.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Shared.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualStudio.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.UI">
+      <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Core">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Core.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Rider.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Flow">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Flow.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Timeline">
@@ -976,14 +1119,6 @@
     </Reference>
     <Reference Include="Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection">
       <HintPath>Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.EditorCoroutines.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.EditorCoroutines.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
@@ -1010,40 +1145,12 @@
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.State.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.Timeline.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.VisualScripting.Shared.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.VisualStudio.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.VisualScripting.Core">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEditor.UI">
-      <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.VisualScripting.Core.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Rider.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.State">
@@ -1054,17 +1161,29 @@
       <HintPath>Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.VisualScripting.Flow">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.VisualScripting.Flow.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj" />
     <ProjectReference Include="Assembly-CSharp.csproj" />
+    <ProjectReference Include="Assembly-CSharp-Editor-firstpass.csproj" />
+    <ProjectReference Include="Febucci.TextAnimator.Demo.Runtime.csproj" />
+    <ProjectReference Include="Fungus.FungusLuaEditor.csproj" />
+    <ProjectReference Include="FungusEditor.csproj" />
+    <ProjectReference Include="com.rlabrecque.steamworks.net.csproj" />
+    <ProjectReference Include="SoftMask.csproj" />
+    <ProjectReference Include="Febucci.TextAnimator.Runtime.csproj" />
+    <ProjectReference Include="Sirenix.OdinInspector.Modules.UnityMathematics.csproj" />
+    <ProjectReference Include="Febucci.TextAnimator.Editor.csproj" />
+    <ProjectReference Include="Febucci.Attributes.Runtime.csproj" />
+    <ProjectReference Include="Fungus.csproj" />
+    <ProjectReference Include="Fungus.LineEndingsEditor.csproj" />
+    <ProjectReference Include="Febucci.Attributes.Editor.csproj" />
+    <ProjectReference Include="SoftMask-Editor.csproj" />
+    <ProjectReference Include="BuildReportTool.csproj" />
+    <ProjectReference Include="Fungus.UsfxrEditor.csproj" />
+    <ProjectReference Include="com.rlabrecque.steamworks.net.editor.csproj" />
+    <ProjectReference Include="Fungus.FungusLuaJSONCheckerEditor.csproj" />
+    <ProjectReference Include="Febucci.TextAnimator.TMP.Runtime.csproj" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>

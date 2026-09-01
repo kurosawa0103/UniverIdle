@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6478091a2b3c4d5e6f702, type: 3}
+  m_Name: Personality_Lively
+  m_EditorClassIdentifier:
+  personalityId: personality_lively
+  displayName: "\u6D3B\u6CFC"
+  description: "\u7231\u52A8\u3001\u591A\u8D70\u5C11\u7AD9\uFF1B\u591C\u665A\u5C11\u7761\u3002\u4E13\u5C5E LivelyPetAiGroup\u3002"
+  aiGroup: {fileID: 11400000, guid: a1b2c3d4e5f6478890a1b2c3d4e5f608, type: 2}

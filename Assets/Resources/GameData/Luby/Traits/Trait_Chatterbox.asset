@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6478091a2b3c4d5e6f703, type: 3}
+  m_Name: Trait_Chatterbox
+  m_EditorClassIdentifier: 
+  traitId: trait_chatterbox
+  displayName: "\u8BDD\u75D2"
+  description: "\u5634\u91CC\u788E\u788E\u5FF5\uFF0C\u793E\u4EA4\u610F\u56FE\u66F4\u5BB9\u6613\u5192\u6CE1\u3002"
+  exclusiveTraits: []
+  behaviors:
+  - behavior: {fileID: 11400000, guid: c0d1e2f3a4b5061728394a5b6c7d8e9c, type: 2}
+    weight: 1.4
+  groupWeightAdds:
+  - behavior: {fileID: 11400000, guid: 9e0f1a2b3c4d5e6f708192a3b4c5d6e7, type: 2}
+    weight: 1.2

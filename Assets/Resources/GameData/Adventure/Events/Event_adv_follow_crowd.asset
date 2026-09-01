@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c2d3e4f5a6478890a1b2c3d4e5f601, type: 3}
+  m_Name: Event_adv_follow_crowd
+  m_EditorClassIdentifier: 
+  eventId: adv_follow_crowd
+  title: "跟着热闹"
+  weight: 1.1
+  durationSeconds: 30
+  goldMin: 2
+  goldMax: 6
+  requireNight: 0
+  requireRain: 0
+  personalityWeightMuls:
+  - id: personality_lively
+    weightMul: 1.8
+  - id: personality_clingy
+    weightMul: 1.6
+  - id: personality_adventurer
+    weightMul: 1.3
+  traitWeightMuls: []

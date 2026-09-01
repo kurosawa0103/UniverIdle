@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b4f140d87a9e684b9817a83cad36184, type: 3}
+  m_Name: HierarchyIconConfig
+  m_EditorClassIdentifier: 
+  entries:
+  - scriptName: MapUIManager
+    icon: {fileID: 2800000, guid: 4875e9a147283ad42ae107002093112e, type: 3}
+  - scriptName: Localization
+    icon: {fileID: 2800000, guid: 1b5be4b4643fa5c4aa2528494d859a77, type: 3}

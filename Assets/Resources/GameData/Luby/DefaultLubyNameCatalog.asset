@@ -1,0 +1,193 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1ed3a0da58fb5742a6c04240572a72c, type: 3}
+  m_Name: DefaultLubyNameCatalog
+  m_EditorClassIdentifier: 
+  patterns:
+  - pattern: 0
+    weight: 40
+  - pattern: 1
+    weight: 25
+  - pattern: 2
+    weight: 15
+  - pattern: 3
+    weight: 15
+  - pattern: 4
+    weight: 5
+  adjectives:
+  - "\u8F6F"
+  - "\u6696"
+  - "\u8F7B"
+  - "\u5706"
+  - "\u4E56"
+  - "\u840C"
+  - "\u7CEF"
+  - "\u7ED2"
+  - "\u68C9"
+  - "\u4E91"
+  - "\u6708"
+  - "\u661F"
+  - "\u82B1"
+  - "\u8C46"
+  - "\u6817"
+  - "\u6843"
+  - "\u674F"
+  - "\u871C"
+  - "\u7CD6"
+  - "\u5976"
+  - "\u6CE1"
+  - "\u95EA"
+  - "\u9759"
+  - "\u6162"
+  - "\u61D2"
+  - "\u6084"
+  - "\u8D34"
+  - "\u8E66"
+  nouns:
+  - "\u56E2\u5B50"
+  - "\u6BDB\u7403"
+  - "\u8033\u6735"
+  - "\u5C3E\u5C3E"
+  - "\u56E2\u5B9D"
+  - "\u8033\u5B9D"
+  - "\u5C3E\u5B9D"
+  - "\u8C46\u4E01"
+  - "\u7ED2\u7403"
+  - "\u5750\u57AB"
+  - "\u5C0F\u7A9D"
+  - "\u8349\u57AB"
+  - "\u82B1\u56E2"
+  - "\u96EA\u7403"
+  - "\u68C9\u56E2"
+  - "\u4E91\u56E2"
+  - "\u82D7\u82D7"
+  - "\u82BD\u82BD"
+  - "\u679C\u679C"
+  - "\u7C92\u7C92"
+  - "\u70B9\u70B9"
+  - "\u6735\u6735"
+  - "\u74E3\u74E3"
+  - "\u7A57\u7A57"
+  bunnySuffixes:
+  - "\u5154"
+  - "\u5C0F\u5154"
+  - "\u5154\u5154"
+  - "\u5154\u5B9D"
+  - "\u5154\u5D3D"
+  - "\u957F\u8033"
+  - "\u77ED\u5C3E"
+  - "\u8F6F\u8033"
+  reduplicateRoots:
+  - "\u56E2"
+  - "\u7403"
+  - "\u8DF3"
+  - "\u8E66"
+  - "\u8F6F"
+  - "\u61D2"
+  - "\u4E56"
+  - "\u840C"
+  - "\u7ED2"
+  - "\u4E91"
+  - "\u82B1"
+  - "\u8C46"
+  presets:
+  - "\u68C9\u82B1\u7403"
+  - "\u4E09\u74E3\u8349"
+  - "\u80E1\u841D\u535C"
+  - "\u6708\u8033\u6735"
+  - "\u4E91\u6735\u5154"
+  - "\u661F\u5B50\u5750"
+  - "\u8584\u8377\u56E2"
+  - "\u5976\u7CD6\u7403"
+  - "\u96EA\u5154\u7403"
+  appearanceBiases:
+  - appearanceKey: Luby_Look_White
+    colorWords:
+    - "\u4E91\u767D"
+    - "\u96EA\u7ED2"
+    - "\u68C9\u767D"
+    - "\u5976\u767D"
+  - appearanceKey: Luby_Look_Mint
+    colorWords:
+    - "\u8584\u8377"
+    - "\u9752\u82BD"
+    - "\u51C9\u56E2"
+    - "\u7FE0\u8F6F"
+  - appearanceKey: Luby_Look_Lavender
+    colorWords:
+    - "\u6DE1\u7D2B"
+    - "\u85B0\u8863"
+    - "\u7D2B\u4E91"
+    - "\u96FE\u7D2B"
+  - appearanceKey: Luby_Look_Rare
+    colorWords:
+    - "\u661F\u95EA"
+    - "\u5F69\u7ED2"
+    - "\u91D1\u8033"
+    - "\u7A00\u5149"
+  personalityBiases:
+  - personalityId: personality_ordinary
+    adjectives:
+    - "\u7A33"
+    - "\u4E56"
+    - "\u6DE1"
+    - "\u5E73"
+  - personalityId: personality_lively
+    adjectives:
+    - "\u8E66"
+    - "\u8DF3"
+    - "\u95EA"
+    - "\u5FEB"
+  - personalityId: personality_shy
+    adjectives:
+    - "\u6084"
+    - "\u8F6F"
+    - "\u7F9E"
+    - "\u8EB2"
+  - personalityId: personality_clingy
+    adjectives:
+    - "\u8D34"
+    - "\u8DDF"
+    - "\u6696"
+    - "\u7F20"
+  - personalityId: personality_curious
+    adjectives:
+    - "\u63A2"
+    - "\u95FB"
+    - "\u4EAE"
+    - "\u95EE"
+  - personalityId: personality_dreamy
+    adjectives:
+    - "\u98D8"
+    - "\u7A7A"
+    - "\u68A6"
+    - "\u4E91"
+  - personalityId: personality_lazy
+    adjectives:
+    - "\u61D2"
+    - "\u6162"
+    - "\u762B"
+    - "\u56F0"
+  - personalityId: personality_tsundere
+    adjectives:
+    - "\u50B2"
+    - "\u62D2"
+    - "\u5A07"
+    - "\u62E5"
+  - personalityId: personality_adventurer
+    adjectives:
+    - "\u63A2"
+    - "\u95EF"
+    - "\u8FDC"
+    - "\u91CE"
+  reduplicateBunnyChance: 0.5
+  personalityBiasChance: 0.7

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa18670826d2c8441bf56222377c801b, type: 3}
+  m_Name: ClingyPetAiGroup
+  m_EditorClassIdentifier:
+  displayName: "\u7C98\u4EBA AI"
+  behaviors:
+  - {fileID: 11400000, guid: f14399d83250454493f3f6a110774d81, type: 2}
+  - {fileID: 11400000, guid: 63ebd4cdc6994c5280f699ed1f5f8651, type: 2}
+  - {fileID: 11400000, guid: 70909cbd54574913bcbef99a991f0e2f, type: 2}
+  - {fileID: 11400000, guid: acda8bdca610415cb25425184a31f520, type: 2}
+  - {fileID: 11400000, guid: 5b24d5fd3cb04bd4bc590d110f84e00c, type: 2}
+  - {fileID: 11400000, guid: c6f9d8b5e3a25f7b0c1d2e3f40516273, type: 2}
+  - {fileID: 11400000, guid: c1bddd1308cf4f341b2f90c623fa9459, type: 2}
+  requestOnlyBehaviors:
+  - {fileID: 11400000, guid: a0b1c2d3e4f5061728394a5b6c7d8e9f, type: 2}
+  - {fileID: 11400000, guid: a8b9c0d1e2f30415263748596a7b8c9d, type: 2}
+  - {fileID: 11400000, guid: 4f1a3b6688d24b2f95eb95c112233445, type: 2}
+  - {fileID: 11400000, guid: f1a2b3c4d5e60718293a4b5c6d7e8f90, type: 2}
+  - {fileID: 11400000, guid: a2b3c4d5e60718293a4b5c6d7e8f9012, type: 2}
+  - {fileID: 11400000, guid: e3f4a5b6c7d8192a3b4c5d6e7f8091a2, type: 2}
+  - {fileID: 11400000, guid: f4a5b6c7d8e92a3b4c5d6e7f8091a2b3, type: 2}
+  - {fileID: 11400000, guid: 9857e30fce646834ead2aea5aeb7fd42, type: 2}
+  fallbackBehavior: {fileID: 11400000, guid: f14399d83250454493f3f6a110774d81, type: 2}
+  avoidImmediateRepeat: 1

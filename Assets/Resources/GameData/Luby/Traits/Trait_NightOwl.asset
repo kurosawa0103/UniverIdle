@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6478091a2b3c4d5e6f703, type: 3}
+  m_Name: Trait_NightOwl
+  m_EditorClassIdentifier: 
+  traitId: trait_night_owl
+  displayName: "\u591C\u732B\u5B50"
+  description: "\u767D\u5929\u666E\u901A\uFF0C\u591C\u91CC\u66F4\u7231\u8D70\u52A8\u3001\u4F38\u61D2\u8170\uFF0C\u7761\u610F\u66F4\u6D45\u3002"
+  exclusiveTraits:
+  - {fileID: 11400000, guid: fb000b7c7dda45bf9579d2c2d8e51c59, type: 2}
+  behaviors:
+  - behavior: {fileID: 11400000, guid: 4c43165fba6c4a87a5722a3ff61b3c65, type: 2}
+    weight: 2.5
+  - behavior: {fileID: 11400000, guid: 0f627d4f6f3b426bb7e8e231318891f9, type: 2}
+    weight: 1.6
+  groupWeightAdds:
+  - behavior: {fileID: 11400000, guid: a7b8c9d0e1f2436586970819a3b4c5d6, type: 2}
+    weight: -1

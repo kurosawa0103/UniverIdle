@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c2d3e4f5a6478890a1b2c3d4e5f601, type: 3}
+  m_Name: Event_adv_scare_cat
+  m_EditorClassIdentifier: 
+  eventId: adv_scare_cat
+  title: "被猫吓跑"
+  weight: 1.0
+  durationSeconds: 30
+  goldMin: 1
+  goldMax: 4
+  requireNight: 0
+  requireRain: 0
+  personalityWeightMuls:
+  - id: personality_shy
+    weightMul: 2.0
+  traitWeightMuls: []

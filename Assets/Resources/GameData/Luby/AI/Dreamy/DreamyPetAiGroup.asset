@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa18670826d2c8441bf56222377c801b, type: 3}
+  m_Name: DreamyPetAiGroup
+  m_EditorClassIdentifier:
+  displayName: "\u53D1\u5446 AI"
+  behaviors:
+  - {fileID: 11400000, guid: b2b91c42e2c3440a98257dd2ffa7b981, type: 2}
+  - {fileID: 11400000, guid: 66c19bbfb6f1449fb32011d777e98516, type: 2}
+  - {fileID: 11400000, guid: 7cc99472756f4d41bed7540c90f6f997, type: 2}
+  - {fileID: 11400000, guid: 468840349f95451b8b6c5b5815dbd4a0, type: 2}
+  - {fileID: 11400000, guid: 6814a6d7a6c14f51a5d407b8e1949ed5, type: 2}
+  - {fileID: 11400000, guid: c6f9d8b5e3a25f7b0c1d2e3f40516273, type: 2}
+  - {fileID: 11400000, guid: c1bddd1308cf4f341b2f90c623fa9459, type: 2}
+  requestOnlyBehaviors:
+  - {fileID: 11400000, guid: a0b1c2d3e4f5061728394a5b6c7d8e9f, type: 2}
+  - {fileID: 11400000, guid: a8b9c0d1e2f30415263748596a7b8c9d, type: 2}
+  - {fileID: 11400000, guid: 4f1a3b6688d24b2f95eb95c112233445, type: 2}
+  - {fileID: 11400000, guid: f1a2b3c4d5e60718293a4b5c6d7e8f90, type: 2}
+  - {fileID: 11400000, guid: a2b3c4d5e60718293a4b5c6d7e8f9012, type: 2}
+  - {fileID: 11400000, guid: e3f4a5b6c7d8192a3b4c5d6e7f8091a2, type: 2}
+  - {fileID: 11400000, guid: f4a5b6c7d8e92a3b4c5d6e7f8091a2b3, type: 2}
+  - {fileID: 11400000, guid: 9857e30fce646834ead2aea5aeb7fd42, type: 2}
+  fallbackBehavior: {fileID: 11400000, guid: b2b91c42e2c3440a98257dd2ffa7b981, type: 2}
+  avoidImmediateRepeat: 1

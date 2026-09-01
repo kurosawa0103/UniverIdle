@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6478091a2b3c4d5e6f702, type: 3}
+  m_Name: Personality_Curious
+  m_EditorClassIdentifier:
+  personalityId: personality_curious
+  displayName: "\u597D\u5947"
+  description: "\u7231\u901B\u6863\u3001\u4E1C\u5F20\u897F\u671B\uFF1B\u6BD4\u6D3B\u6CFC\u6162\u4F46\u7231\u8D70\u8FDC\u3002\u4E13\u5C5E CuriousPetAiGroup\u3002"
+  aiGroup: {fileID: 11400000, guid: e2c3d4e5f60718293a4b5c6d7e8f002b, type: 2}

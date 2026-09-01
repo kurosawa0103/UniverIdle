@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cd689e98c0d4afe9ebf11cfccef8e9e, type: 3}
+  m_Name: NormalSleepBehavior
+  m_EditorClassIdentifier: 
+  behaviorId: sleep
+  weight: 0.9
+  minDuration: 5
+  maxDuration: 11
+  cooldown: 10
+  enterConditions:
+  - {fileID: 11400000, guid: b8c9d0e1f2a35476869708192a4b5c6d, type: 2}
+  maintainEnterConditionsWhileActive: 1
+  canBeInterrupted: 1
+  interruptPriority: 5
+  animTrigger: Sleep
+  animBool: 
+  animBoolValue: 1
+  animSpeedParam: Speed
+  animSpeedValue: 0

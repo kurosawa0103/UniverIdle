@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6478091a2b3c4d5e6f704, type: 3}
+  m_Name: Template_Basic
+  m_EditorClassIdentifier: 
+  templateId: luby_basic
+  displayName: "\u57FA\u7840\u76F2\u76D2"
+  description: "\u57FA\u7840\u76F2\u76D2\uFF1A\u6027\u683C\u62BD\u666E\u901A/\u6D3B\u6CFC/\u80C6\u5C0F/\u7C98\u4EBA/\u597D\u5947/\u53D1\u5446/\u61D2\u60EB/\u50B2\u5A07/\u63A2\u9669\u8FF7\uFF1B\u7279\u8D28\u666E\u901A/\u7766\u7766\u866B/\u97F3\u4E50\u8FF7/\u7231\u8D22/\u8D2A\u5403\u9B3C/\u6652\u592A\u9633/\u591C\u732B\u5B50/\u8BDD\u75D2/\u96E8\u5B09\u3002AI \u7531\u6027\u683C\u51B3\u5B9A\u3002"
+  previewIcon: {fileID: 0}
+  rollPrice: 30
+  appearancePool:
+  - prefab: {fileID: 1734396204911606636, guid: 475447e5bbcc36c4ab3eb360f826d00c, type: 3}
+    weight: 3
+    bindPersonality: 0
+    personalityPool: []
+    bindTrait: 0
+    traitPool: []
+  - prefab: {fileID: 5270168122812890499, guid: bfcfc9af6676feb4ca660e09589f2a63, type: 3}
+    weight: 2
+    bindPersonality: 0
+    personalityPool: []
+    bindTrait: 0
+    traitPool: []
+  - prefab: {fileID: 4047099779985033850, guid: fdebe48c5e83d63458cf37442cdba6fd, type: 3}
+    weight: 1
+    bindPersonality: 0
+    personalityPool: []
+    bindTrait: 0
+    traitPool: []
+  scale: 1.4
+  personalityPool:
+  - personality: {fileID: 11400000, guid: f1a2b3c4d5e6478091a2b3c4d5e6f801, type: 2}
+    weight: 3
+  - personality: {fileID: 11400000, guid: e1f2a3b4c5d6478890a1b2c3d4e5f607, type: 2}
+    weight: 2
+  - personality: {fileID: 11400000, guid: f2a3b4c5d6e7588991b2c3d4e5f60708, type: 2}
+    weight: 2
+  - personality: {fileID: 11400000, guid: c1a2b3c4d5e6478091a2b3c4d5e6f001, type: 2}
+    weight: 1
+  - personality: {fileID: 11400000, guid: c2a3b4c5d6e7588991b2c3d4e5f60202, type: 2}
+    weight: 1
+  - personality: {fileID: 11400000, guid: c3a4b5c6d7e8699001d2e3f405160303, type: 2}
+    weight: 1
+  - personality: {fileID: 11400000, guid: c4a5b6c7d8e9700112e3f40516040400, type: 2}
+    weight: 1
+  - personality: {fileID: 11400000, guid: a1b2c3d4e5f6708192a3b4c5d6e7f807, type: 2}
+    weight: 1
+  - personality: {fileID: 11400000, guid: 872bd9fe088549db9feafb2a1c95f33b, type: 2}
+    weight: 1
+  traitPool:
+  - trait: {fileID: 11400000, guid: f1a2b3c4d5e6478091a2b3c4d5e6f802, type: 2}
+    weight: 2
+  - trait: {fileID: 11400000, guid: d2e3f4a5b6c7988897a6051425364758, type: 2}
+    weight: 1
+  - trait: {fileID: 11400000, guid: d4e5f6478091a2b3c4d5e6f904000000, type: 2}
+    weight: 1
+  - trait: {fileID: 11400000, guid: e5f6478091a2b3c4d5e6f90500000000, type: 2}
+    weight: 1
+  - trait: {fileID: 11400000, guid: f6478091a2b3c4d5e6f9060000000000, type: 2}
+    weight: 1
+  - trait: {fileID: 11400000, guid: fb000b7c7dda45bf9579d2c2d8e51c59, type: 2}
+    weight: 1
+  - trait: {fileID: 11400000, guid: 68d29d2a4b64430ba99e96d21744d539, type: 2}
+    weight: 1
+  - trait: {fileID: 11400000, guid: c0d1e2f3a4b5061728394a5b6c7d8e9e, type: 2}
+    weight: 1
+  - trait: {fileID: 11400000, guid: c0d1e2f3a4b5061728394a5b6c7d8e9f, type: 2}
+    weight: 1

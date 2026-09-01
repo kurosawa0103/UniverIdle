@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ecc0c19e8ab4204a88d78dc48c2714c, type: 3}
+  m_Name: Decor_Rock
+  m_EditorClassIdentifier: 
+  itemId: decor_rock
+  displayName: "\u5CA9\u77F3"
+  description: "\u5E26\u82D4\u84D3\u7684\u5C0F\u77F3\u5806\uFF0C\u8D34\u5730\u6446\u653E"
+  icon: {fileID: 21300000, guid: a1b2c3d4e5f6478890a1b2c3d4e5f712, type: 3}
+  price: 22
+  tab: 0
+  maxOwnCount: 0
+  placementPrefab: {fileID: 350283249038553002, guid: b1c2d3e4f5061728394a5b6c7d8e9f12, type: 3}
+  placeHeight: 0
+  canStackOnOthers: 1
+  furnitureKind: 0
+  furnitureStandOffsetX: 0
+  furnitureStandOffsetY: 0
+  passiveGoldMinIntervalSeconds: 45
+  passiveGoldMaxIntervalSeconds: 60
+  passiveGoldMinAmount: 1
+  passiveGoldMaxAmount: 3
+  lubyPerformanceBehavior: {fileID: 0}
+  lubyInteractAllowAnyone: 0
+  lubyInteractPersonalities: []
+  lubyInteractTraits: []
