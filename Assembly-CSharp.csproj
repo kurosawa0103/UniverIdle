@@ -63,10 +63,315 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.55f1c1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Steam相关\SteamTest.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Adventure\UI\AdventureBoardUiController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Conditions\WeatherIdCondition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyTheaterStaging.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Environment\Presentation\StormLightningDriver.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Background\Data\BackgroundCatalog.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Core\DesktopPetTabVisual.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Behaviors\FurnitureSpotBehaviorRuntime.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Demo\Scripts\DemoShaderButton.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\PlacedDecor.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyDecorInteractionSystem.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Inventory\UI\DeskIdlePointerInput.cs" />
+    <Compile Include="Assets\Scripts\GlitchController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyJournalService.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Demo\Scripts\MaterialInstancer.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Background\Data\BackgroundDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Core\DesktopPetPlayfieldBounds.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Environment\Presentation\WeatherFxPresenter.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\IDecorShortClickHandler.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyBehaviorWeightAdd.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\UI\CodexAppearanceSlot.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Background\ScenePageUIController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyRollEntries.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorRadio.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\PetAnimatorDriver.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\PetBehaviorCondition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Inventory\UI\InventoryUIController.List.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyPlacementSystem.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\PetAiGroup.cs" />
+    <Compile Include="Assets\Scripts\音乐鉴赏\MusicTrackItem.cs" />
+    <Compile Include="Assets\Scripts\UI\DialogContinueArrowBounce.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Settings\SettingsApplicator.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyPersonalityDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Behaviors\StandBehaviorDefinition.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Demo\Scripts\DemoPlayer.cs" />
+    <Compile Include="Assets\ScriptLocalization.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Background\ScenePageCapacityBinding.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Shop\UI\ShopItemSlot.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Interactive\InteractiveWind.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Environment\Data\DayNightConfig.cs" />
+    <Compile Include="Assets\Scripts\音乐鉴赏\MusicSlot.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Settings\SettingsPanelBinding.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorPlacementSystem.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Core\DeskSpriteBounds.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyTemplateDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\TimedPetBehaviorRuntime.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Hub\Data\DeskCapacityUpgradeTier.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorWorld.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Settings\EnvironmentApplicator.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyTheaterCatalog.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\UI\LubyInfoPanelController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyTraitDisplay.cs" />
+    <Compile Include="Assets\Scripts\音乐鉴赏\TextTyper.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorGoldCoin.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\UI\LubyUIController.Roll.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Shop\Data\ShopTabId.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Behaviors\SeekDecorInteractBehaviorDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\UI\LubyUIController.Detail.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyCoinCollectSystem.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Core\DesktopPetServices.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\DesktopCameraZoom.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Behaviors\WantSocialBehaviorDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Behaviors\SleepBehaviorDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Environment\Presentation\WeatherParticleSetup.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Environment\Core\DayNightSystem.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Environment\Core\EnvironmentManager.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyTraitDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Core\DeskPointer.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorPlaceSurface.cs" />
+    <Compile Include="Assets\Resources\ShaderGraph\UIDissolveController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyInstanceData.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Environment\Presentation\DayNightLightPresenter.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyTheaterEventDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Core\DeskCapacityDefaults.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Demo\Scripts\DemoLight.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyDisplayNames.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Settings\SettingsUIController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyJournalModels.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorAdventureBoard.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\UI\UiPanelDragHandle.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Shop\UI\ShopUIController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\UI\LubyUIController.Carousel.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Behaviors\RunBehaviorDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\IPetBehaviorRuntime.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyTheaterDirector.cs" />
+    <Compile Include="Assets\Scripts\音乐鉴赏\MusicPageView.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorPlacementSystem.Hold.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Other\ShaderInstancer.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\UI\LubyUIController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorFurnitureKind.cs" />
+    <Compile Include="Assets\Scripts\UI\ButtonClickSound.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Environment\Data\WeatherCatalog.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\PetBrain.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Background\BackgroundSceneCapacity.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Save\DesktopPetSaveMgr.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Settings\SettingsStore.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Environment\Data\WeatherDefinition.cs" />
+    <Compile Include="Assets\Scripts\Steam相关\SteamAchievementManager.cs" />
+    <Compile Include="Assets\Scripts\TVStaticController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Adventure\AdventureEventDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\PetAgent.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Environment\Core\WeatherSystem.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\TransparentGameWindow.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Gm\DesktopPetGmController.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Demo\Scripts\DemoTypeButton.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorFurnitureSpot.cs" />
+    <Compile Include="Assets\Scripts\Json\EventToJson.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\UI\LubyCarouselItem.cs" />
     <Compile Include="Assets\Scripts\UI\MainUIController.cs" />
-    <Compile Include="Assets\Scripts\UI\UITheme.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Interactive\WindParallax.cs" />
+    <Compile Include="Assets\Scripts\UI\ButtonHoverTextColor.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Demo\Scripts\DemoVerticalBorder.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\PetBehaviorContext.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\PetInteraction.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Shop\Runtime\ShopManager.cs" />
+    <Compile Include="Assets\Scripts\Json\GameDataToJson.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Behaviors\SeekAdventureBoardBehaviorDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Background\BackgroundShopService.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Gm\GmCycleRow.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Inventory\Runtime\ItemInventory.cs" />
     <Compile Include="Assets\Scripts\UI\ActionCardView.cs" />
+    <Compile Include="Assets\Scripts\UI\UITheme.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Inventory\UI\InventoryUIController.LubyDesk.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\PetBehaviorLogEntry.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyCoinCollector.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Conditions\DayNightPhaseCondition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyNameCatalog.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\UI\LubyPrefabIcon.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Demo\Scripts\DemoAllShaders.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Adventure\LubyAdventureSystem.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Environment\DayNightPhase.cs" />
+    <Compile Include="Assets\Scripts\Steamworks.NET\SteamManager.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyTheaterDebugReport.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyAcquisitionService.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DeskCoinChange.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Gm\DesktopPetGmGrantCatalog.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Shop\Data\ShopItemDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Shop\Data\ShopCatalog.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Core\DesktopPetGround.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyInstanceComponent.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Adventure\AdventureEventResolver.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Core\DesktopPetLayers.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyActivityEndUtility.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorPlacementSystem.Tick.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Behaviors\CollectCoinBehaviorDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Save\DesktopPetSaveBootstrap.cs" />
+    <Compile Include="Assets\Scripts\Steam相关\SteamRichPresenceManager.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Interactive\InteractiveSquish.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Inventory\UI\InventorySlot.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\UI\CodexUIController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorNightLight.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyJournalLineTable.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Behaviors\HorizontalMoveBehaviorDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\ILubyActivity.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyTemplateCatalog.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Background\BackgroundCapacityRules.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyAiComboDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Hub\DesktopHubPanelBinding.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Background\BackgroundWeatherRules.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Audio\DesktopPetBgmPlayer.cs" />
     <Compile Include="Assets\Scripts\UI\SkillNavItemView.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyWorld.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Core\DesktopPetDetailLayout.cs" />
+    <Compile Include="Assets\Sprite Shaders Ultimate\Scripts\Interactive\WindManager.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Adventure\AdventureRegionDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Runtime\LubyAppearanceCodex.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Background\BackgroundSystem.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Adventure\AdventureEventCatalog.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Luby\Data\LubyNameGenerator.cs" />
+    <Compile Include="Assets\Scripts\音乐鉴赏\MusicCoverRotator.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Hub\HubTab.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Shop\Runtime\ShopWallet.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\PetBehaviorDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Hub\DesktopHubUIController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Inventory\UI\InventoryUIController.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorInteractable.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Inventory\UI\InventoryUIController.Detail.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Behaviors\WalkBehaviorDefinition.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\PetAI\Core\PetLocomotion.cs" />
+    <Compile Include="Assets\Scripts\桌面相关\Decor\DecorHoldVisuals.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Effect\Standard\Frozen.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Fading\Standard\Halftone.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMPro.cginc" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Effect\Standard\Shine.shader" />
+    <None Include="Assets\Resources\ShaderGraph\jiguang.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Effect\Standard\Camouflage.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Fading\Standard\Directional Alpha Fade.shader" />
+    <None Include="Assets\BuildReport\CustomBuildScriptExample.txt" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Uber\Additive Uber.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\日语.txt" />
+    <None Include="Assets\Scripts\TVStaticSnow.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Alpha Tint.shader" />
+    <None Include="Assets\com.rlabrecque.steamworks.net\Plugins\steam_api.dll" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Effect\Standard\Hologram.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Fading\Standard\Full Glow Dissolve.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Fading\Standard\Directional Distortion Fade.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Add Color.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Transform\Standard\UV Distort.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Brightness.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Add Hue.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Uber\3D Lit Uber.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_Sprite.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Fading\Standard\Custom Fade.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Ink Spread.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Saturation.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Basic\Standard\Default.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Fading\Standard\Source Glow Dissolve.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
+    <None Include="Assets\Resources\ShaderGraph\MaskOB.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Strong Tint.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Uber\3D Lit URP Uber.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Hue.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Transform\Standard\Sine Move.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_SDF.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\日语.txt" />
+    <None Include="Assets\BuildReport\README.txt" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Uber\URP Lit Uber.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Fading\Standard\Full Distortion.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\繁体中文.txt" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Generated\Standard\Flame.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Outer Outline.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Transform\Standard\Squeeze.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Fading\Standard\Full Alpha Dissolve.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Interactive\Standard\Wind.shader" />
+    <None Include="Assets\com.rlabrecque.steamworks.net\Plugins\steam_api64.dll" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\韩语.txt" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Basic\Standard\Additive.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Transform\Standard\Pixelate.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
+    <None Include="Assets\Resources\ShaderGraph\DissolveEffect.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Basic\Standard\Multiplicative.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Effect\Standard\Burn.shader" />
+    <None Include="Assets\Resources\ShaderGraph\SpriteLit_YClip.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Uber\Standard Uber.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_SDF.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Transform\Standard\UV Rotate.shader" />
+    <None Include="Assets\BuildReport\license.txt" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
+    <None Include="Assets\Resources\ShaderGraph\Sprite-Lit-Default.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Black Tint.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
+    <None Include="Assets\Sprite Shaders Ultimate\Demo\Shaders\DemoGUI.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Uber\Multiplicative Uber.shader" />
+    <None Include="Assets\BuildReport\VERSION.txt" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Uber\UI Additive Uber.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Transform\Standard\UV Scale.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Transform\Standard\Sine Rotate.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Transform\Standard\UV Scroll.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Fading\Standard\Directional Glow Fade.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\繁体中文.txt" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Chinese6000.txt" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Generated\Standard\Smoke.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
+    <None Include="Assets\Resources\ShaderGraph\MaskBox.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Effect\Standard\Glitch.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
+    <None Include="Assets\Scripts\GlitchCRT.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Contrast.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Effect\Standard\Poison.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Color Replace.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\韩语.txt" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Fading\Standard\Source Alpha Dissolve.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Sine Glow.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Recolor.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Effect\Standard\Metal.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Split Toning.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\ASE\Readme.txt" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Effect\Standard\Rainbow.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Generated\Standard\Checkerboard.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Uber\UI Uber.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Interactive\Standard\Squish.shader" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Shift Hue.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Transform\Standard\Vibrate.shader" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Chinese6000.txt" />
+    <None Include="Assets\Resources\fonts\TextMesh Pro\Shaders\TMPro.cginc" />
+    <None Include="Assets\Res\fonts\TextMesh Pro\Shaders\TMP_Sprite.shader" />
+    <None Include="Assets\Sprite Shaders Ultimate\Shaders\Color\Standard\Inner Outline.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -401,12 +706,52 @@
       <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1c1\Editor\Data\Managed\UnityEngine\UnityEditor.UnityConnectModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sirenix.Reflection.Editor">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.Reflection.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="ReportGeneratorMerged">
       <HintPath>Library\PackageCache\com.unity.testtools.codecoverage@1.2.6\lib\ReportGenerator\ReportGeneratorMerged.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sirenix.Serialization">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.Serialization.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sirenix.Serialization.Config">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.Serialization.Config.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sirenix.OdinInspector.Editor">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.OdinInspector.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="LitJSON">
+      <HintPath>Assets\Plugins\LitJSON.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sirenix.OdinInspector.Attributes">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.OdinInspector.Attributes.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sirenix.Utilities">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.Utilities.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DOTween">
+      <HintPath>Assets\Plugins\Demigiant\DOTween\DOTween.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.4\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="BehaviorDesigner.Runtime">
+      <HintPath>Assets\Plugins\Behavior Designer\Runtime\BehaviorDesigner.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sirenix.Utilities.Editor">
+      <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.Utilities.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">
@@ -897,20 +1242,56 @@
       <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1c1\Editor\Data\NetStandard\compat\2.1.0\shims\netfx\System.Xml.Serialization.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.Timeline">
-      <HintPath>Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
+    <Reference Include="Unity.EditorCoroutines.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.EditorCoroutines.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection">
-      <HintPath>Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection.dll</HintPath>
+    <Reference Include="Unity.Timeline.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Shared.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualStudio.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.UI">
+      <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Core">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.EditorCoroutines.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.EditorCoroutines.Editor.dll</HintPath>
+    <Reference Include="Unity.VisualScripting.Core.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Rider.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Flow">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Flow.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Timeline">
+      <HintPath>Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection">
+      <HintPath>Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
@@ -937,40 +1318,12 @@
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.State.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.Timeline.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.VisualScripting.Shared.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.VisualStudio.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.VisualScripting.Core">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEditor.UI">
-      <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.VisualScripting.Core.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Rider.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.State">
@@ -981,16 +1334,27 @@
       <HintPath>Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.VisualScripting.Flow">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.VisualScripting.Flow.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj" />
+    <ProjectReference Include="Febucci.TextAnimator.Demo.Runtime.csproj" />
+    <ProjectReference Include="Fungus.FungusLuaEditor.csproj" />
+    <ProjectReference Include="FungusEditor.csproj" />
+    <ProjectReference Include="com.rlabrecque.steamworks.net.csproj" />
+    <ProjectReference Include="SoftMask.csproj" />
+    <ProjectReference Include="Febucci.TextAnimator.Runtime.csproj" />
+    <ProjectReference Include="Sirenix.OdinInspector.Modules.UnityMathematics.csproj" />
+    <ProjectReference Include="Febucci.TextAnimator.Editor.csproj" />
+    <ProjectReference Include="Febucci.Attributes.Runtime.csproj" />
+    <ProjectReference Include="Fungus.csproj" />
+    <ProjectReference Include="Fungus.LineEndingsEditor.csproj" />
+    <ProjectReference Include="Febucci.Attributes.Editor.csproj" />
+    <ProjectReference Include="SoftMask-Editor.csproj" />
+    <ProjectReference Include="BuildReportTool.csproj" />
+    <ProjectReference Include="Fungus.UsfxrEditor.csproj" />
+    <ProjectReference Include="com.rlabrecque.steamworks.net.editor.csproj" />
+    <ProjectReference Include="Fungus.FungusLuaJSONCheckerEditor.csproj" />
+    <ProjectReference Include="Febucci.TextAnimator.TMP.Runtime.csproj" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>
