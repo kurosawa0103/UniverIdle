@@ -74,6 +74,15 @@ namespace UniverIdle.Editor
             public const float SlotSize = 52f;
             public const float SlotIconSize = 36f;
             public const float SlotCountFont = 11f;
+
+            public const float InvPanelPadding = 16f;
+            public const float InvPanelGap = 12f;
+            public const float InvPanelHeaderHeight = 36f;
+            public const float InvPanelTitleFont = 18f;
+            public const float InvPanelCloseSize = 32f;
+            public const float InvPanelSlotWidth = 88f;
+            public const float InvPanelSlotHeight = 96f;
+            public const float InvPanelSlotGap = 8f;
         }
     }
 }

@@ -564,7 +564,7 @@
     <p class="desc" id="style-desc">暖灰手绘 v3（当前定稿）：蜡笔图标 + 不规则墨线框 + 硬阴影。有特色，量产图标略费工。</p>
   </div>
 
-  <p class="hint" id="hint">UniverIdle 主界面 · 风格对比 · UI 框体 + 图标随风格切换 · ①手绘用 PNG 蜡笔图，其余为各风格 SVG</p>
+  <p class="hint" id="hint">UniverIdle 主界面 · 风格对比 · 每种风格独立重绘 PNG 图标 · ②木刻已完成，其余风格生成中（未完成时暂回退手绘图）</p>
 
   <div class="app frame">
     <header class="topbar">
@@ -688,17 +688,22 @@
       codex:     '典籍羊皮：暖褐金线 SVG + 羊皮纸质感。偏 RPG 典籍风。',
       glow:      '坠星微光：灰蓝底 + 青绿微光 SVG。最贴「夜晚萤溪」题材。',
     };
-    const ASSET_EXT = { sketch: 'png' };
-
     function assetSrc(style, name) {
-      const ext = ASSET_EXT[style] || 'svg';
-      return `assets/styles/${style}/${name}.${ext}`;
+      return `assets/styles/${style}/${name}.png`;
     }
 
     function applyStyle(style) {
       document.body.dataset.style = style;
       document.querySelectorAll('img[data-asset]').forEach(img => {
-        img.src = assetSrc(style, img.dataset.asset);
+        const name = img.dataset.asset;
+        img.onerror = () => {
+          if (img.dataset.fallback !== '1') {
+            img.dataset.fallback = '1';
+            img.src = assetSrc('sketch', name);
+          }
+        };
+        img.removeAttribute('data-fallback');
+        img.src = assetSrc(style, name);
       });
       document.getElementById('style-desc').textContent = STYLES[style];
     }

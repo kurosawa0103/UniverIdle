@@ -24,13 +24,15 @@ namespace UniverIdle.UI
     [SerializeField] private TextMeshProUGUI detailTitleText;
     [SerializeField] private TextMeshProUGUI detailBodyText;
 
-    [Header("底栏")]
-    [SerializeField] private InventoryBarView inventoryBar;
+    [Header("背包")]
+    [SerializeField] private InventoryPanelView inventoryPanel;
+    [SerializeField] private Button inventoryButton;
 
     private GameSession _session;
     private string _activeWorkId = GameContent.WorkScavengeId;
     private string _activeActionId;
     private readonly List<WorkActionDefinition> _visibleActions = new();
+    private bool _buttonsWired;
 
     private void Awake()
     {
@@ -41,6 +43,8 @@ namespace UniverIdle.UI
 
     private void Start()
     {
+      WireButtons();
+
       if (_session?.Player != null)
       {
         _session.Player.OnInventoryChanged += OnInventoryChanged;
@@ -56,6 +60,40 @@ namespace UniverIdle.UI
       SelectWork(_activeWorkId);
       RefreshInventory();
       RefreshWorkNav();
+    }
+
+    /// <summary>运行时绑定按钮；编辑器菜单里 AddListener 的 lambda 不会写入场景。</summary>
+    private void WireButtons()
+    {
+      if (_buttonsWired) return;
+      _buttonsWired = true;
+
+      for (var i = 0; i < skillItems.Count; i++)
+      {
+        var item = skillItems[i];
+        if (item == null) continue;
+        var btn = item.GetComponent<Button>();
+        if (btn != null) BindSkillButton(i, btn);
+      }
+
+      for (var i = 0; i < actionCards.Count; i++)
+      {
+        var card = actionCards[i];
+        if (card == null) continue;
+        var btn = card.GetComponent<Button>();
+        if (btn != null) BindActionCard(i, btn);
+      }
+
+      if (inventoryButton != null)
+      {
+        inventoryButton.onClick.RemoveAllListeners();
+        inventoryButton.onClick.AddListener(ToggleInventoryPanel);
+      }
+    }
+
+    private void ToggleInventoryPanel()
+    {
+      inventoryPanel?.Toggle(_session?.Player);
     }
 
     private void OnDestroy()
@@ -246,7 +284,7 @@ namespace UniverIdle.UI
       locationTitleText.text = string.IsNullOrEmpty(action.SceneName) ? action.DisplayName : action.SceneName;
     }
 
-    private void RefreshInventory() => inventoryBar?.Refresh(_session?.Player);
+    private void RefreshInventory() => inventoryPanel?.Refresh(_session?.Player);
 
     private void RefreshWorkNav()
     {
@@ -343,7 +381,7 @@ namespace UniverIdle.UI
       RefreshInventory();
     }
 
-    public void BindSkillButton(int index, Button button)
+    private void BindSkillButton(int index, Button button)
     {
       if (index < 0 || index >= skillItems.Count) return;
       var item = skillItems[index];
@@ -353,12 +391,14 @@ namespace UniverIdle.UI
         return;
       }
       var workId = item.WorkId;
+      button.onClick.RemoveAllListeners();
       button.onClick.AddListener(() => SelectWork(workId));
     }
 
-    public void BindActionCard(int index, Button button)
+    private void BindActionCard(int index, Button button)
     {
       var captured = index;
+      button.onClick.RemoveAllListeners();
       button.onClick.AddListener(() =>
       {
         if (captured < _visibleActions.Count)
@@ -407,7 +447,8 @@ namespace UniverIdle.UI
       TextMeshProUGUI progressTime,
       TextMeshProUGUI detailTitle,
       TextMeshProUGUI detailBody,
-      InventoryBarView inventory)
+      InventoryPanelView inventory,
+      Button inventoryOpenButton)
     {
       skillItems = skills;
       locationTitleText = locationTitle;
@@ -417,7 +458,8 @@ namespace UniverIdle.UI
       progressTimeText = progressTime;
       detailTitleText = detailTitle;
       detailBodyText = detailBody;
-      inventoryBar = inventory;
+      inventoryPanel = inventory;
+      inventoryButton = inventoryOpenButton;
     }
 #endif
   }

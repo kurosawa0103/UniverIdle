@@ -16,6 +16,8 @@ namespace UniverIdle.UI
         public static readonly Color Border = Hex("#4A5C54");
         public static readonly Color BorderSubtle = Hex("#35433C");
         public static readonly Color Transparent = new Color(0, 0, 0, 0);
+        /// <summary>几乎不可见但可接收射线，用于透明 Button 底图。</summary>
+        public static readonly Color ClickableClear = new Color(1f, 1f, 1f, 0.004f);
 
         // 顶栏
         public static readonly Color TopBarTop = Hex("#2E3832");

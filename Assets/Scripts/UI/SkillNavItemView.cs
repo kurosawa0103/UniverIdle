@@ -73,7 +73,7 @@ namespace UniverIdle.UI
     public void SetSelected(bool selected)
     {
       if (background != null)
-        background.color = selected ? UITheme.PanelLight : UITheme.Transparent;
+        background.color = selected ? UITheme.PanelLight : UITheme.ClickableClear;
       if (border != null)
       {
         border.enabled = selected;

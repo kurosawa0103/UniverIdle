@@ -42,11 +42,7 @@ namespace UniverIdle.Editor
 
         private static void EnsureEventSystem()
         {
-            if (UnityEngine.Object.FindObjectOfType<EventSystem>() != null) return;
-            var es = new GameObject("EventSystem");
-            es.AddComponent<EventSystem>();
-            es.AddComponent<StandaloneInputModule>();
-            Undo.RegisterCreatedObjectUndo(es, "Create EventSystem");
+            MainUIInputBootstrap.EnsureEventSystem();
         }
 
         private static void RemoveExistingRoot()
@@ -107,6 +103,7 @@ namespace UniverIdle.Editor
 
             var canvas = canvasGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvasGo.AddComponent<MainUIInputBootstrap>();
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
@@ -117,6 +114,7 @@ namespace UniverIdle.Editor
             Stretch(app);
             var appImg = app.gameObject.AddComponent<Image>();
             appImg.color = UITheme.Background;
+            appImg.raycastTarget = false;
 
             var vlg = app.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: true);
@@ -130,7 +128,7 @@ namespace UniverIdle.Editor
 
             var topBar = CreatePanel(app, "TopBar", UITheme.TopBarBottom, ConceptLayout.TopBarHeight);
             AttachTopGradient(topBar);
-            AddTopBar(topBar, font);
+            AddTopBar(topBar, font, out var inventoryButton);
             CreateDivider(app, vertical: false);
 
             var body = CreateRect("Body", app);
@@ -165,22 +163,13 @@ namespace UniverIdle.Editor
             var detail = CreatePanel(body, "Detail", UITheme.SidebarBg, -1, ConceptLayout.DetailWidth);
             AddDetailPanel(detail, font, out var detailTitle, out var detailBody);
 
-            CreateDivider(app, vertical: false);
-            var invBar = CreatePanel(app, "InventoryBar", UITheme.InventoryBg, ConceptLayout.InvBarHeight);
-            var inventoryBar = AddInventoryBar(invBar, font);
+            var inventoryPanel = CreateInventoryPanel(canvasGo.transform, font);
 
-            controller.SetReferences(skills, locationTitle, actions, progressFill, progressLabel, progressTime, detailTitle, detailBody, inventoryBar);
+            controller.SetReferences(skills, locationTitle, actions, progressFill, progressLabel, progressTime, detailTitle, detailBody, inventoryPanel, inventoryButton);
 
-            for (var i = 0; i < skills.Count; i++)
-            {
-                var btn = skills[i].GetComponent<Button>();
-                if (btn != null) controller.BindSkillButton(i, btn);
-            }
-            for (var i = 0; i < actions.Count; i++)
-            {
-                var btn = actions[i].GetComponent<Button>();
-                if (btn != null) controller.BindActionCard(i, btn);
-            }
+            EditorUtility.SetDirty(controller);
+            EditorUtility.SetDirty(inventoryPanel);
+            EditorUtility.SetDirty(canvasGo);
 
             return canvasGo;
         }

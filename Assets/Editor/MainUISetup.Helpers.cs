@@ -83,11 +83,13 @@ namespace UniverIdle.Editor
             return go.GetComponent<RectTransform>();
         }
 
-        private static RectTransform CreatePanel(Transform parent, string name, Color color, float height, float width = -1)
+        private static RectTransform CreatePanel(Transform parent, string name, Color color, float height, float width = -1,
+            bool raycastTarget = false)
         {
             var rt = CreateRect(name, parent);
             var img = rt.gameObject.AddComponent<Image>();
             img.color = color;
+            img.raycastTarget = raycastTarget;
             var le = rt.gameObject.AddComponent<LayoutElement>();
             if (height > 0) le.preferredHeight = height;
             if (width > 0)

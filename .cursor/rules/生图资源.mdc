@@ -88,6 +88,22 @@ suitable for nine-slice panel / button / slot / progress bar, no text no icons
 2. 若新增槽位：更新 `资源清单.md` + `主界面-概念-手绘.html` 的 `<img>`
 3. 向用户说明：对应概念图哪个区域、文件名、是否覆盖旧图
 
+## 风格对比页（多画风重绘）
+
+对比页 `主界面-概念-风格对比.html` 每种画风在 `assets/styles/{画风}/` 各需 **18 张 PNG**，以 `assets/styles/sketch/` 手绘图为构图参考重绘。
+
+| 画风目录 | prompt 关键词（见 `scripts/style_prompts.json`） |
+|----------|--------------------------------------------------|
+| `sketch` | 蜡笔手绘（原图，不重绘） |
+| `woodcut` | woodcut linocut print |
+| `watercolor` | soft watercolor wash |
+| `flat` | flat design game icon |
+| `pixel` | pixel art sprite |
+| `codex` | illuminated manuscript |
+| `glow` | bioluminescent subtle glow |
+
+生图时 **必须** `reference_image_paths` 指向同名的 `sketch/{file}.png`，保证构图一致、只换画风。
+
 ## 禁止
 
 - 未读概念图就批量生成「通用奇幻图标」

@@ -9,7 +9,7 @@ namespace UniverIdle.Editor
 {
     public static partial class MainUISetup
     {
-        private static void AddTopBar(RectTransform top, TMP_FontAsset font)
+        private static void AddTopBar(RectTransform top, TMP_FontAsset font, out Button inventoryButton)
         {
             var hlg = top.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(hlg, expandWidth: false, expandHeight: true);
@@ -51,11 +51,11 @@ namespace UniverIdle.Editor
             CreateLayoutTMP("声望 ★★☆", currency, font, 14, UITheme.Muted, TextAlignmentOptions.Right, ConceptLayout.LogoIconSize);
 
             CreateTopButton(top, font, "图鉴");
-            CreateTopButton(top, font, "背包");
+            inventoryButton = CreateTopButton(top, font, "背包");
             CreateTopButton(top, font, "设置");
         }
 
-        private static void CreateTopButton(RectTransform parent, TMP_FontAsset font, string label)
+        private static Button CreateTopButton(RectTransform parent, TMP_FontAsset font, string label)
         {
             var rt = CreateRect($"Btn_{label}", parent);
             var le = rt.gameObject.AddComponent<LayoutElement>();
@@ -68,6 +68,7 @@ namespace UniverIdle.Editor
             ConfigureButton(btn, UITheme.PanelLight, UITheme.CardHover, UITheme.ButtonPressed);
             var tmp = CreateTMP(label, rt, font, ConceptLayout.TopBtnFont, UITheme.Cream, TextAlignmentOptions.Center);
             tmp.margin = new Vector4(ConceptLayout.TopBtnPadH, ConceptLayout.TopBtnPadV, ConceptLayout.TopBtnPadH, ConceptLayout.TopBtnPadV);
+            return btn;
         }
 
         private static void AddSkillNav(RectTransform sidebar, TMP_FontAsset font, List<SkillNavItemView> list)
@@ -391,32 +392,105 @@ namespace UniverIdle.Editor
             CreateLayoutTMP("掉落：按动作独立概率", detail, font, ConceptLayout.DetailReqFont, UITheme.Muted, TextAlignmentOptions.Left, 18);
         }
 
-        private static InventoryBarView AddInventoryBar(RectTransform inv, TMP_FontAsset font)
+        private static InventoryPanelView CreateInventoryPanel(Transform canvas, TMP_FontAsset font)
         {
-            var hlg = inv.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(hlg, expandWidth: false, expandHeight: true);
-            hlg.padding = new RectOffset(
-                Mathf.RoundToInt(ConceptLayout.InvPadH),
-                Mathf.RoundToInt(ConceptLayout.InvPadH),
-                Mathf.RoundToInt(ConceptLayout.InvPadV),
-                Mathf.RoundToInt(ConceptLayout.InvPadV));
-            hlg.spacing = ConceptLayout.InvGap;
-            hlg.childAlignment = TextAnchor.MiddleLeft;
+            var overlay = CreateRect("InventoryOverlay", canvas);
+            Stretch(overlay);
+            overlay.SetAsLastSibling();
 
-            var label = CreateTMP("物品", inv, font, 12, UITheme.Muted, TextAlignmentOptions.Center);
-            AddLayout(label.gameObject, ConceptLayout.InvLabelWidth, ConceptLayout.SlotSize);
-            label.characterSpacing = 2f;
+            var backdrop = CreateRect("Backdrop", overlay);
+            Stretch(backdrop);
+            var backdropImg = backdrop.gameObject.AddComponent<Image>();
+            backdropImg.color = new Color(0f, 0f, 0f, 0.55f);
+            var backdropBtn = backdrop.gameObject.AddComponent<Button>();
+            backdropBtn.transition = Selectable.Transition.None;
 
-            var slots = CreateRect("Slots", inv);
-            var slotsHLG = slots.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(slotsHLG, expandWidth: false, expandHeight: true);
-            slotsHLG.spacing = ConceptLayout.InvGap;
-            slotsHLG.childAlignment = TextAnchor.MiddleLeft;
-            var slotsLE = slots.gameObject.AddComponent<LayoutElement>();
-            slotsLE.flexibleWidth = 1;
+            var panel = CreateRect("Panel", overlay);
+            panel.anchorMin = panel.anchorMax = new Vector2(0.5f, 0.5f);
+            panel.pivot = new Vector2(0.5f, 0.5f);
+            panel.sizeDelta = new Vector2(520, 560);
+            var panelImg = panel.gameObject.AddComponent<Image>();
+            panelImg.color = UITheme.Panel;
+            StyleOutline(panelImg, UITheme.Border, new Vector2(1, -1));
 
-            var view = inv.gameObject.AddComponent<InventoryBarView>();
-            view.Configure(slots, font, 10);
+            var vlg = panel.gameObject.AddComponent<VerticalLayoutGroup>();
+            ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: true);
+            var panelPad = Mathf.RoundToInt(ConceptLayout.InvPanelPadding);
+            vlg.padding = new RectOffset(panelPad, panelPad, panelPad, panelPad);
+            vlg.spacing = ConceptLayout.InvPanelGap;
+
+            var header = CreateRect("Header", panel);
+            AddLayout(header.gameObject, 0, ConceptLayout.InvPanelHeaderHeight);
+            var headerHLG = header.gameObject.AddComponent<HorizontalLayoutGroup>();
+            ConfigureLayoutGroup(headerHLG, expandWidth: true, expandHeight: true);
+            headerHLG.childAlignment = TextAnchor.MiddleLeft;
+
+            var title = CreateLayoutTMP("背包", header, font, ConceptLayout.InvPanelTitleFont, UITheme.Cream,
+                TextAlignmentOptions.Left, ConceptLayout.InvPanelHeaderHeight);
+            title.fontStyle = FontStyles.Bold;
+            title.gameObject.GetComponent<LayoutElement>().flexibleWidth = 1;
+
+            var closeRt = CreateRect("Btn_Close", header);
+            AddLayout(closeRt.gameObject, ConceptLayout.InvPanelCloseSize, ConceptLayout.InvPanelCloseSize);
+            var closeImg = closeRt.gameObject.AddComponent<Image>();
+            closeImg.color = UITheme.PanelLight;
+            StyleOutline(closeImg, UITheme.Border, new Vector2(1, -1));
+            var closeBtn = closeRt.gameObject.AddComponent<Button>();
+            closeBtn.targetGraphic = closeImg;
+            ConfigureButton(closeBtn, UITheme.PanelLight, UITheme.CardHover, UITheme.ButtonPressed);
+            CreateTMP("×", closeRt, font, 22, UITheme.Cream, TextAlignmentOptions.Center);
+
+            var body = CreateRect("Body", panel);
+            body.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1;
+            var bodyBg = body.gameObject.AddComponent<Image>();
+            bodyBg.color = UITheme.InventoryBg;
+            StyleOutline(bodyBg, UITheme.BorderSubtle, new Vector2(1, -1));
+
+            var scrollRt = CreateRect("Scroll", body);
+            Stretch(scrollRt);
+            var scroll = scrollRt.gameObject.AddComponent<ScrollRect>();
+            scroll.horizontal = false;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+
+            var viewport = CreateRect("Viewport", scrollRt);
+            Stretch(viewport);
+            var viewportImg = viewport.gameObject.AddComponent<Image>();
+            viewportImg.color = Color.white;
+            viewport.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+
+            var content = CreateRect("Content", viewport);
+            content.anchorMin = new Vector2(0, 1);
+            content.anchorMax = new Vector2(1, 1);
+            content.pivot = new Vector2(0.5f, 1);
+            content.anchoredPosition = Vector2.zero;
+            content.sizeDelta = new Vector2(0, 0);
+
+            var grid = content.gameObject.AddComponent<GridLayoutGroup>();
+            grid.cellSize = new Vector2(ConceptLayout.InvPanelSlotWidth, ConceptLayout.InvPanelSlotHeight);
+            grid.spacing = new Vector2(ConceptLayout.InvPanelSlotGap, ConceptLayout.InvPanelSlotGap);
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = 5;
+            grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
+            grid.childAlignment = TextAnchor.UpperLeft;
+
+            var fitter = content.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            scroll.viewport = viewport;
+            scroll.content = content;
+
+            var empty = CreateLayoutTMP("暂无物品", body, font, ConceptLayout.DetailBodyFont, UITheme.Muted,
+                TextAlignmentOptions.Center, 24);
+            Stretch(empty.rectTransform);
+            empty.gameObject.SetActive(false);
+
+            var gridView = body.gameObject.AddComponent<InventoryGridView>();
+            gridView.Configure(content, font, empty);
+
+            overlay.gameObject.SetActive(false);
+
+            var view = overlay.gameObject.AddComponent<InventoryPanelView>();
+            view.Configure(overlay.gameObject, gridView, closeBtn, backdropBtn);
             return view;
         }
     }
