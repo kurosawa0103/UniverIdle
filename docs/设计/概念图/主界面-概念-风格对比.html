@@ -276,7 +276,6 @@
     [data-style="woodcut"] .bar-track { background: var(--paper-deep); border: 2px solid var(--ink); border-radius: 0; }
     [data-style="woodcut"] .bar-fill { background: repeating-linear-gradient(90deg, var(--accent) 0, var(--accent) 8px, var(--gold) 8px, var(--gold) 16px); border-radius: 0; }
     [data-style="woodcut"] .req .ok { color: var(--gold); }
-    [data-style="woodcut"] img { filter: var(--img-filter); }
 
     /* ══════════════════════════════════════
        ③ 淡彩水墨
@@ -328,7 +327,6 @@
     [data-style="watercolor"] .bar-track { background: rgba(0,0,0,.25); border: none; border-radius: 6px; }
     [data-style="watercolor"] .bar-fill { background: linear-gradient(90deg, var(--teal), var(--accent)); border-radius: 6px; opacity: .85; }
     [data-style="watercolor"] .req .ok { color: var(--teal); }
-    [data-style="watercolor"] img { filter: var(--img-filter); }
 
     /* ══════════════════════════════════════
        ④ 克制扁平
@@ -372,7 +370,6 @@
     [data-style="flat"] .bar-track { background: #36383a; border: none; border-radius: 4px; }
     [data-style="flat"] .bar-fill { background: var(--accent); border-radius: 4px; }
     [data-style="flat"] .req .ok { color: var(--teal); }
-    [data-style="flat"] img { filter: var(--img-filter); }
 
     /* ══════════════════════════════════════
        ⑤ 像素复古
@@ -420,7 +417,7 @@
     [data-style="pixel"] .bar-track { background: #303030; border: 2px solid #888; border-radius: 0; height: 16px; }
     [data-style="pixel"] .bar-fill { background: var(--accent); border-radius: 0; }
     [data-style="pixel"] .req .ok { color: var(--teal); }
-    [data-style="pixel"] img { filter: var(--img-filter); image-rendering: pixelated; }
+    [data-style="pixel"] img { image-rendering: pixelated; }
     [data-style="pixel"] .skill-name, [data-style="pixel"] .card-title { font-weight: 700; }
 
     /* ══════════════════════════════════════
@@ -476,7 +473,6 @@
     [data-style="codex"] .bar-fill { background: linear-gradient(90deg, var(--gold), var(--accent)); }
     [data-style="codex"] .req .ok { color: var(--gold); }
     [data-style="codex"] .running-time { color: var(--gold); }
-    [data-style="codex"] img { filter: var(--img-filter); }
 
     /* ══════════════════════════════════════
        ⑦ 坠星微光（夜景发光）
@@ -536,7 +532,6 @@
     }
     [data-style="glow"] .running-time { color: var(--teal); text-shadow: 0 0 8px rgba(104,200,184,.4); }
     [data-style="glow"] .req .ok { color: var(--teal); }
-    [data-style="glow"] img { filter: var(--img-filter); }
 
     /* ── 共用色引用 ── */
     [data-style] .hint { color: var(--muted); }
@@ -569,12 +564,12 @@
     <p class="desc" id="style-desc">暖灰手绘 v3（当前定稿）：蜡笔图标 + 不规则墨线框 + 硬阴影。有特色，量产图标略费工。</p>
   </div>
 
-  <p class="hint" id="hint">UniverIdle 主界面 · 风格对比预览 · 点击上方按钮切换 · 图标仍为同一批手绘素材</p>
+  <p class="hint" id="hint">UniverIdle 主界面 · 风格对比 · UI 框体 + 图标随风格切换 · ①手绘用 PNG 蜡笔图，其余为各风格 SVG</p>
 
   <div class="app frame">
     <header class="topbar">
       <div class="logo">
-        <div class="logo-img frame-inset"><img src="assets/logo.png" alt="坠星谷" /></div>
+        <div class="logo-img frame-inset"><img data-asset="logo" alt="坠星谷" /></div>
         <h1>坠星谷 <span>萤溪村</span></h1>
       </div>
       <div class="currency">
@@ -589,38 +584,38 @@
     <div class="body">
       <nav class="sidebar">
         <div class="skill">
-          <div class="skill-icon frame-inset"><img src="assets/skill_hunting.png" alt="打猎" /></div>
+          <div class="skill-icon frame-inset"><img data-asset="skill_hunting" alt="打猎" /></div>
           <div class="skill-info"><div class="skill-name">打猎</div><div class="skill-lv">Lv. 8</div><div class="skill-bar"><i style="width:40%"></i></div></div>
         </div>
         <div class="skill active">
-          <div class="skill-icon frame-inset"><img src="assets/skill_fishing.png" alt="溪钓" /></div>
+          <div class="skill-icon frame-inset"><img data-asset="skill_fishing" alt="溪钓" /></div>
           <div class="skill-info"><div class="skill-name">溪钓</div><div class="skill-lv">Lv. 12</div><div class="skill-bar"><i style="width:65%"></i></div></div>
         </div>
         <div class="skill">
-          <div class="skill-icon frame-inset"><img src="assets/skill_foraging.png" alt="野拾" /></div>
+          <div class="skill-icon frame-inset"><img data-asset="skill_foraging" alt="野拾" /></div>
           <div class="skill-info"><div class="skill-name">野拾</div><div class="skill-lv">Lv. 6</div><div class="skill-bar"><i style="width:28%"></i></div></div>
         </div>
         <div class="skill">
-          <div class="skill-icon frame-inset"><img src="assets/skill_mining.png" alt="掘矿" /></div>
+          <div class="skill-icon frame-inset"><img data-asset="skill_mining" alt="掘矿" /></div>
           <div class="skill-info"><div class="skill-name">掘矿</div><div class="skill-lv">Lv. 10</div><div class="skill-bar"><i style="width:52%"></i></div></div>
         </div>
         <div class="skill">
-          <div class="skill-icon frame-inset"><img src="assets/skill_alchemy.png" alt="炼药" /></div>
+          <div class="skill-icon frame-inset"><img data-asset="skill_alchemy" alt="炼药" /></div>
           <div class="skill-info"><div class="skill-name">炼药</div><div class="skill-lv">Lv. 9</div><div class="skill-bar"><i style="width:48%"></i></div></div>
         </div>
         <div class="skill">
-          <div class="skill-icon frame-inset"><img src="assets/skill_smithing.png" alt="锻造" /></div>
+          <div class="skill-icon frame-inset"><img data-asset="skill_smithing" alt="锻造" /></div>
           <div class="skill-info"><div class="skill-name">锻造</div><div class="skill-lv">Lv. 7</div><div class="skill-bar"><i style="width:35%"></i></div></div>
         </div>
         <div class="skill">
-          <div class="skill-icon frame-inset"><img src="assets/skill_combat.png" alt="讨伐" /></div>
+          <div class="skill-icon frame-inset"><img data-asset="skill_combat" alt="讨伐" /></div>
           <div class="skill-info"><div class="skill-name">讨伐</div><div class="skill-lv">Lv. 11</div><div class="skill-bar"><i style="width:58%"></i></div></div>
         </div>
       </nav>
 
       <main class="center">
         <div class="banner frame-inset">
-          <img class="banner-bg" src="assets/banner_yingxi.png" alt="萤溪" />
+          <img class="banner-bg" data-asset="banner_yingxi" alt="萤溪" />
           <div class="banner-overlay">
             <h2>萤溪</h2>
             <div class="tags"><span class="tag">微光</span><span class="tag">安全</span><span class="tag">★☆☆</span></div>
@@ -629,17 +624,17 @@
 
         <div class="cards">
           <div class="card frame-inset active">
-            <div class="card-thumb frame-inset"><img src="assets/card_catch_shrimp.png" alt="钓萤虾" /></div>
+            <div class="card-thumb frame-inset"><img data-asset="card_catch_shrimp" alt="钓萤虾" /></div>
             <div class="card-title">钓萤虾</div>
             <div class="card-meta"><span>8.0 秒</span><span class="card-yield">+1 萤虾</span></div>
           </div>
           <div class="card frame-inset">
-            <div class="card-thumb frame-inset"><img src="assets/card_pan_sand.png" alt="淘星沙" /></div>
+            <div class="card-thumb frame-inset"><img data-asset="card_pan_sand" alt="淘星沙" /></div>
             <div class="card-title">淘星沙</div>
             <div class="card-meta"><span>12 秒</span><span class="card-yield">+1 星沙</span></div>
           </div>
           <div class="card frame-inset locked">
-            <div class="card-thumb frame-inset"><img src="assets/card_catch_trout.png" alt="钓鳟鱼" /></div>
+            <div class="card-thumb frame-inset"><img data-asset="card_catch_trout" alt="钓鳟鱼" /></div>
             <div class="card-title">钓鳟鱼</div>
             <div class="card-meta"><span>需 Lv.10</span></div>
           </div>
@@ -647,7 +642,7 @@
 
         <div class="running frame-inset">
           <div class="running-thumb frame-inset">
-            <img src="assets/item_firefly_shrimp.png" alt="萤虾" />
+            <img data-asset="item_firefly_shrimp" alt="萤虾" />
           </div>
           <div class="running-info">
             <h3>进行中 · 钓萤虾</h3>
@@ -661,7 +656,7 @@
 
       <aside class="detail">
         <div class="detail-hero frame-inset">
-          <img src="assets/detail_firefly_shrimp.png" alt="萤虾" />
+          <img data-asset="detail_firefly_shrimp" alt="萤虾" />
         </div>
         <h3>萤虾</h3>
         <p>萤溪浅水的小虾，夜间会发光。炼药常用基材，也可直接出售。</p>
@@ -675,33 +670,49 @@
 
     <footer class="inv-bar">
       <span class="inv-label">物品</span>
-      <div class="slot frame-inset"><img src="assets/item_firefly_shrimp.png" alt="萤虾" /><span class="cnt">48</span></div>
-      <div class="slot frame-inset"><img src="assets/item_herb_sprout.png" alt="药草芽" /><span class="cnt">22</span></div>
-      <div class="slot frame-inset"><img src="assets/item_red_potion.png" alt="红药" /><span class="cnt">3</span></div>
-      <div class="slot frame-inset"><img src="assets/item_copper_ingot.png" alt="铜锭" /><span class="cnt">6</span></div>
-      <div class="slot frame-inset"><img src="assets/item_star_sand.png" alt="星沙" /><span class="cnt">31</span></div>
+      <div class="slot frame-inset"><img data-asset="item_firefly_shrimp" alt="萤虾" /><span class="cnt">48</span></div>
+      <div class="slot frame-inset"><img data-asset="item_herb_sprout" alt="药草芽" /><span class="cnt">22</span></div>
+      <div class="slot frame-inset"><img data-asset="item_red_potion" alt="红药" /><span class="cnt">3</span></div>
+      <div class="slot frame-inset"><img data-asset="item_copper_ingot" alt="铜锭" /><span class="cnt">6</span></div>
+      <div class="slot frame-inset"><img data-asset="item_star_sand" alt="星沙" /><span class="cnt">31</span></div>
     </footer>
   </div>
 
   <script>
     const STYLES = {
-      sketch:    '暖灰手绘 v3（当前定稿）：蜡笔图标 + 不规则墨线框 + 硬阴影。有特色，量产图标略费工。',
-      woodcut:   '木刻蚀刻：粗线块面、直角框、典籍插图感。和坠星谷题材很贴，图标比手绘好控。',
-      watercolor:'淡彩水墨：灰蓝洗色 + 圆角柔边。横幅/卡片氛围好，小图标需单独简化。',
-      flat:      '克制扁平：干净圆角、无硬阴影、信息密度高。最省工，靠横幅插画和 Melvor 拉开差距。',
-      pixel:     '像素复古：方块边框 + 等宽字。物品栏识别度高，需整套像素规范才统一。',
-      codex:     '典籍羊皮：暖褐 + 金线框、羊皮纸质感。偏 RPG 典籍风，适合有叙事感的挂机。',
-      glow:      '坠星微光：灰蓝底 + 青绿/琥珀微光。最贴「夜晚萤溪」题材，注意别做成网游发光 UI。',
+      sketch:    '暖灰手绘 v3（当前定稿）：蜡笔 PNG 图标 + 不规则墨线框 + 硬阴影。',
+      woodcut:   '木刻蚀刻：粗线块面 SVG 图标 + 直角框。和坠星谷题材很贴，图标比手绘好控。',
+      watercolor:'淡彩水墨：灰蓝洗色 SVG + 圆角柔边。横幅/卡片氛围好。',
+      flat:      '克制扁平：干净圆角 SVG 图标。最省工，信息密度高。',
+      pixel:     '像素复古：方块像素 SVG + 等宽字。物品栏识别度高。',
+      codex:     '典籍羊皮：暖褐金线 SVG + 羊皮纸质感。偏 RPG 典籍风。',
+      glow:      '坠星微光：灰蓝底 + 青绿微光 SVG。最贴「夜晚萤溪」题材。',
     };
+    const ASSET_EXT = { sketch: 'png' };
+
+    function assetSrc(style, name) {
+      const ext = ASSET_EXT[style] || 'svg';
+      return `assets/styles/${style}/${name}.${ext}`;
+    }
+
+    function applyStyle(style) {
+      document.body.dataset.style = style;
+      document.querySelectorAll('img[data-asset]').forEach(img => {
+        img.src = assetSrc(style, img.dataset.asset);
+      });
+      document.getElementById('style-desc').textContent = STYLES[style];
+    }
+
     document.querySelectorAll('.picker button').forEach(btn => {
       btn.addEventListener('click', () => {
         const s = btn.dataset.pick;
-        document.body.dataset.style = s;
+        applyStyle(s);
         document.querySelectorAll('.picker button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        document.getElementById('style-desc').textContent = STYLES[s];
       });
     });
+
+    applyStyle('sketch');
   </script>
 </body>
 </html>
