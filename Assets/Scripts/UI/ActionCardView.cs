@@ -18,18 +18,9 @@ namespace UniverIdle.UI
         public string Description { get; private set; }
         public bool IsLocked { get; private set; }
 
-        public void Setup(Image bg, Outline outline, Image thumbImg, TextMeshProUGUI title, TextMeshProUGUI metaL, TextMeshProUGUI metaR,
-            CanvasGroup group, string displayTitle, string metaLeft, string metaRight, string description, bool locked,
+        public void Bind(string displayTitle, string metaLeft, string metaRight, string description, bool locked,
             Color thumbColor)
         {
-            background = bg;
-            border = outline;
-            thumb = thumbImg;
-            titleText = title;
-            metaLeftText = metaL;
-            metaRightText = metaR;
-            canvasGroup = group;
-
             DisplayName = displayTitle;
             Description = description;
             IsLocked = locked;
@@ -45,6 +36,20 @@ namespace UniverIdle.UI
                 canvasGroup.interactable = !locked;
             }
             SetSelected(false);
+        }
+
+        public void Setup(Image bg, Outline outline, Image thumbImg, TextMeshProUGUI title, TextMeshProUGUI metaL, TextMeshProUGUI metaR,
+            CanvasGroup group, string displayTitle, string metaLeft, string metaRight, string description, bool locked,
+            Color thumbColor)
+        {
+            background = bg;
+            border = outline;
+            thumb = thumbImg;
+            titleText = title;
+            metaLeftText = metaL;
+            metaRightText = metaR;
+            canvasGroup = group;
+            Bind(displayTitle, metaLeft, metaRight, description, locked, thumbColor);
         }
 
         public void SetSelected(bool selected)

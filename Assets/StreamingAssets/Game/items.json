@@ -1,0 +1,59 @@
+{
+  "version": 3,
+  "items": [
+    {
+      "id": "rag",
+      "name": "破布",
+      "color": "#B89468",
+      "description": "脏兮兮的布条，也许还能缝点什么。"
+    },
+    {
+      "id": "splinter",
+      "name": "碎木",
+      "color": "#324030",
+      "description": "从废料里捡出的木片，生火或当柄都行。"
+    },
+    {
+      "id": "empty_bottle",
+      "name": "空瓶",
+      "color": "#90A098",
+      "description": "洗一洗就能装药水的玻璃瓶。"
+    },
+    {
+      "id": "copper_nail",
+      "name": "铜钉",
+      "color": "#F0C96E",
+      "description": "生锈但还能用的钉子，锻造常缺这个。"
+    },
+    {
+      "id": "worn_coin",
+      "name": "褪色铜币",
+      "color": "#C8A860",
+      "description": "磨损的零钱，村里认，也能熔了当铜料。"
+    },
+    {
+      "id": "herb_sprout",
+      "name": "药草芽",
+      "color": "#66B8A8",
+      "description": "沾着泥土的嫩芽，炼药学徒的最爱。"
+    },
+    {
+      "id": "slag",
+      "name": "炉渣",
+      "color": "#585048",
+      "description": "铁匠炉底捡出的渣块，锻打时偶尔用得着。"
+    },
+    {
+      "id": "stardust_shard",
+      "name": "星尘碎屑",
+      "color": "#F0DCA0",
+      "description": "坠星谷特有的微光颗粒，极其少见。"
+    },
+    {
+      "id": "old_charm",
+      "name": "旧护符",
+      "color": "#84D4C4",
+      "description": "不知谁丢的护身符，似乎还留着一点暖意。"
+    }
+  ]
+}

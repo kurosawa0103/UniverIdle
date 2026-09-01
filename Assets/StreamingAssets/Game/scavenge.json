@@ -1,0 +1,138 @@
+{
+  "version": 3,
+  "works": [
+    {
+      "id": "scavenge",
+      "name": "拾荒",
+      "locationName": "萤溪村",
+      "iconColor": "#2A4838",
+      "xpBase": 40,
+      "xpPerLevel": 20,
+      "sceneXpBase": 40,
+      "sceneXpPerLevel": 20,
+      "grantWorkXp": 1,
+      "grantSceneXp": 1
+    }
+  ],
+  "actions": [
+    {
+      "id": "scavenge_gate",
+      "workId": "scavenge",
+      "sceneId": "gate",
+      "sceneName": "村口",
+      "displayName": "村口 · 拾荒",
+      "durationSeconds": 3.5,
+      "xpReward": 6,
+      "requiredWorkLevel": 1,
+      "description": "进村的岔路口总有人掉东西。破布、空瓶最多，适合刚落脚的新手。",
+      "thumbColor": "#2A4838",
+      "loot": [
+        { "itemId": "rag", "chance": 0.88 },
+        { "itemId": "empty_bottle", "chance": 0.42 },
+        { "itemId": "splinter", "chance": 0.3 },
+        { "itemId": "worn_coin", "chance": 0.08 },
+        { "itemId": "stardust_shard", "chance": 0.005 }
+      ]
+    },
+    {
+      "id": "scavenge_street",
+      "workId": "scavenge",
+      "sceneId": "street",
+      "sceneName": "街道",
+      "displayName": "街道 · 扫街角",
+      "durationSeconds": 4,
+      "xpReward": 8,
+      "requiredWorkLevel": 2,
+      "description": "早市散场后，街角堆着果皮和破筐。铜钉、褪色铜币比村口常见些。",
+      "thumbColor": "#3A4838",
+      "loot": [
+        { "itemId": "rag", "chance": 0.65 },
+        { "itemId": "empty_bottle", "chance": 0.5 },
+        { "itemId": "splinter", "chance": 0.45 },
+        { "itemId": "copper_nail", "chance": 0.18 },
+        { "itemId": "worn_coin", "chance": 0.22 },
+        { "itemId": "herb_sprout", "chance": 0.05 },
+        { "itemId": "stardust_shard", "chance": 0.01 }
+      ]
+    },
+    {
+      "id": "scavenge_barn",
+      "workId": "scavenge",
+      "sceneId": "barn",
+      "sceneName": "谷仓后",
+      "displayName": "谷仓后 · 翻废料",
+      "durationSeconds": 5,
+      "xpReward": 12,
+      "requiredWorkLevel": 4,
+      "description": "谷仓后面堆着村民倒掉的杂物。碎木、破布多，偶尔翻出药草芽。",
+      "thumbColor": "#504838",
+      "loot": [
+        { "itemId": "rag", "chance": 0.72, "max": 2 },
+        { "itemId": "splinter", "chance": 0.78 },
+        { "itemId": "empty_bottle", "chance": 0.4 },
+        { "itemId": "copper_nail", "chance": 0.15 },
+        { "itemId": "herb_sprout", "chance": 0.14 },
+        { "itemId": "old_charm", "chance": 0.02 },
+        { "itemId": "stardust_shard", "chance": 0.015 }
+      ]
+    },
+    {
+      "id": "scavenge_stream",
+      "workId": "scavenge",
+      "sceneId": "stream",
+      "sceneName": "溪滩",
+      "displayName": "溪滩 · 捞漂物",
+      "durationSeconds": 7,
+      "xpReward": 16,
+      "requiredWorkLevel": 6,
+      "description": "萤溪涨水会把上游的东西冲下来。空瓶、护符比陆地好捞。",
+      "thumbColor": "#2E5850",
+      "loot": [
+        { "itemId": "empty_bottle", "chance": 0.58 },
+        { "itemId": "splinter", "chance": 0.38 },
+        { "itemId": "copper_nail", "chance": 0.25 },
+        { "itemId": "herb_sprout", "chance": 0.16 },
+        { "itemId": "old_charm", "chance": 0.06 },
+        { "itemId": "stardust_shard", "chance": 0.04 }
+      ]
+    },
+    {
+      "id": "scavenge_forge_alley",
+      "workId": "scavenge",
+      "sceneId": "forge_alley",
+      "sceneName": "铁砧巷",
+      "displayName": "铁砧巷 · 捡炉渣",
+      "durationSeconds": 6,
+      "xpReward": 18,
+      "requiredWorkLevel": 9,
+      "description": "铁匠铺后巷，炉渣和废钉随地都是。想攒锻造料，这里是捷径。",
+      "thumbColor": "#484038",
+      "loot": [
+        { "itemId": "slag", "chance": 0.7 },
+        { "itemId": "copper_nail", "chance": 0.45 },
+        { "itemId": "splinter", "chance": 0.25 },
+        { "itemId": "worn_coin", "chance": 0.12 },
+        { "itemId": "stardust_shard", "chance": 0.02 }
+      ]
+    },
+    {
+      "id": "scavenge_monument",
+      "workId": "scavenge",
+      "sceneId": "monument",
+      "sceneName": "坠星碑",
+      "displayName": "坠星碑 · 耙星屑",
+      "durationSeconds": 9,
+      "xpReward": 24,
+      "requiredWorkLevel": 12,
+      "description": "当年坠星留下的碑旁，泥土里仍嵌着微光颗粒。慢，但星尘碎屑概率最高。",
+      "thumbColor": "#585040",
+      "loot": [
+        { "itemId": "stardust_shard", "chance": 0.12 },
+        { "itemId": "old_charm", "chance": 0.1 },
+        { "itemId": "copper_nail", "chance": 0.2 },
+        { "itemId": "slag", "chance": 0.18 },
+        { "itemId": "herb_sprout", "chance": 0.08 }
+      ]
+    }
+  ]
+}

@@ -9,7 +9,7 @@ namespace UniverIdle.Editor
 {
     public static partial class MainUISetup
     {
-        private static void AddTopBar(RectTransform top, TMP_FontAsset font, out TextMeshProUGUI goldText)
+        private static void AddTopBar(RectTransform top, TMP_FontAsset font)
         {
             var hlg = top.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(hlg, expandWidth: false, expandHeight: true);
@@ -47,7 +47,7 @@ namespace UniverIdle.Editor
             currencyHLG.spacing = ConceptLayout.CurrencyGap;
             currencyHLG.childAlignment = TextAnchor.MiddleRight;
 
-            goldText = CreateLayoutTMP("🪙 1,240", currency, font, 14, UITheme.Gold, TextAlignmentOptions.Right, ConceptLayout.LogoIconSize);
+            CreateLayoutTMP("🪙 0", currency, font, 14, UITheme.Gold, TextAlignmentOptions.Right, ConceptLayout.LogoIconSize);
             CreateLayoutTMP("声望 ★★☆", currency, font, 14, UITheme.Muted, TextAlignmentOptions.Right, ConceptLayout.LogoIconSize);
 
             CreateTopButton(top, font, "图鉴");
@@ -81,24 +81,17 @@ namespace UniverIdle.Editor
                 Mathf.RoundToInt(ConceptLayout.SidebarPadV));
             vlg.spacing = ConceptLayout.SidebarGap;
 
-            var data = new (string name, string loc, int lv, float xp, Color icon)[]
+            var data = new (string workId, string name, string loc, int lv, float xp, Color icon)[]
             {
-                ("打猎", "谷仓", 8, 0.4f, UITheme.SkillHunt),
-                ("伐木", "村外", 5, 0.32f, UITheme.SkillWood),
-                ("溪钓", "萤溪", 12, 0.65f, UITheme.SkillFish),
-                ("野拾", "林缘", 6, 0.28f, UITheme.SkillForage),
-                ("掘矿", "矮洞", 10, 0.52f, UITheme.SkillMine),
-                ("炼药", "工坊", 9, 0.48f, UITheme.SkillAlchemy),
-                ("锻造", "铁砧", 7, 0.35f, UITheme.SkillSmith),
-                ("讨伐", "林缘", 11, 0.58f, UITheme.SkillCombat),
+                ("scavenge", "拾荒", "萤溪村", 1, 0f, UITheme.SkillForage),
             };
 
             foreach (var d in data)
-                list.Add(CreateSkillItem(sidebar, font, d.name, d.loc, d.lv, d.xp, d.icon));
+                list.Add(CreateSkillItem(sidebar, font, d.workId, d.name, d.loc, d.lv, d.xp, d.icon));
         }
 
         private static SkillNavItemView CreateSkillItem(RectTransform parent, TMP_FontAsset font,
-            string skillName, string location, int level, float xp, Color iconColor)
+            string workId, string skillName, string location, int level, float xp, Color iconColor)
         {
             var rt = CreateRect($"Skill_{skillName}", parent);
             AddLayout(rt.gameObject, 0, ConceptLayout.SkillMinHeight);
@@ -146,7 +139,7 @@ namespace UniverIdle.Editor
             var barFill = CreateFilledBar(info, ConceptLayout.SkillBarHeight, UITheme.BarTrack, UITheme.Teal, xp, "XpBg", "XpFill");
 
             var view = rt.gameObject.AddComponent<SkillNavItemView>();
-            view.Setup(bg, border, accent, iconFrame, nameT, lvT, barFill, skillName, location, level, xp, iconColor);
+            view.Setup(bg, border, accent, iconFrame, nameT, lvT, barFill, workId, skillName, location, level, xp, iconColor);
             return view;
         }
 
@@ -236,15 +229,12 @@ namespace UniverIdle.Editor
             hlg.spacing = ConceptLayout.CardGap;
             hlg.childAlignment = TextAnchor.UpperLeft;
 
-            var cards = new[]
+            const int slotCount = 6;
+            for (var i = 0; i < slotCount; i++)
             {
-                ("钓萤虾", "8.0 秒", "+1 萤虾", "萤溪浅水的小虾，夜间会发光。炼药常用基材，也可直接出售。", false, UITheme.ThumbFish),
-                ("淘星沙", "12 秒", "+1 星沙", "溪底沉积的星尘碎屑，附魔与炼金都需要。", false, UITheme.ThumbSand),
-                ("钓鳟鱼", "需 Lv.10", "🔒", "更深处才有鳟鱼，需要更高的溪钓等级。", true, UITheme.ThumbLocked),
-            };
-
-            foreach (var c in cards)
-                list.Add(CreateActionCard(row, font, c.Item1, c.Item2, c.Item3, c.Item4, c.Item5, c.Item6));
+                list.Add(CreateActionCard(row, font,
+                    "占位", "—", "—", "运行后由数据填充", false, UITheme.SkillForage));
+            }
 
             return row;
         }
@@ -349,18 +339,18 @@ namespace UniverIdle.Editor
             var heroInner = CreateColorBlock("Shrimp", hero.rectTransform, UITheme.Accent, new Vector2(80, 80));
             Center(heroInner.rectTransform, 80, 80);
 
-            title = CreateLayoutTMP("萤虾", detail, font, ConceptLayout.DetailTitleFont, UITheme.Text, TextAlignmentOptions.Left, 22);
-            body = CreateLayoutTMP("萤溪浅水的小虾，夜间会发光。炼药常用基材，也可直接出售。", detail, font, ConceptLayout.DetailBodyFont, UITheme.Muted, TextAlignmentOptions.TopLeft, 64);
+            title = CreateLayoutTMP("村口 · 拾荒", detail, font, ConceptLayout.DetailTitleFont, UITheme.Text, TextAlignmentOptions.Left, 22);
+            body = CreateLayoutTMP("拾荒分多个场景，每个地点掉落不同。选动作后横幅显示当前场景。", detail, font, ConceptLayout.DetailBodyFont, UITheme.Muted, TextAlignmentOptions.TopLeft, 64);
             body.enableWordWrapping = true;
             body.lineSpacing = 6f;
             body.gameObject.GetComponent<LayoutElement>().flexibleHeight = 1;
 
-            CreateLayoutTMP("✓ 溪钓 Lv.1", detail, font, ConceptLayout.DetailReqFont, UITheme.Teal, TextAlignmentOptions.Left, 18);
-            CreateLayoutTMP("✓ 地点：萤溪", detail, font, ConceptLayout.DetailReqFont, UITheme.Teal, TextAlignmentOptions.Left, 18);
-            CreateLayoutTMP("稀有：星沙 2%", detail, font, ConceptLayout.DetailReqFont, UITheme.Muted, TextAlignmentOptions.Left, 18);
+            CreateLayoutTMP("✓ 拾荒 Lv.1", detail, font, ConceptLayout.DetailReqFont, UITheme.Teal, TextAlignmentOptions.Left, 18);
+            CreateLayoutTMP("场景：村口、街道、谷仓后…", detail, font, ConceptLayout.DetailReqFont, UITheme.Teal, TextAlignmentOptions.Left, 18);
+            CreateLayoutTMP("掉落：按动作独立概率", detail, font, ConceptLayout.DetailReqFont, UITheme.Muted, TextAlignmentOptions.Left, 18);
         }
 
-        private static void AddInventoryBar(RectTransform inv, TMP_FontAsset font)
+        private static InventoryBarView AddInventoryBar(RectTransform inv, TMP_FontAsset font)
         {
             var hlg = inv.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(hlg, expandWidth: false, expandHeight: true);
@@ -376,30 +366,17 @@ namespace UniverIdle.Editor
             AddLayout(label.gameObject, ConceptLayout.InvLabelWidth, ConceptLayout.SlotSize);
             label.characterSpacing = 2f;
 
-            CreateInvSlot(inv, font, UITheme.ItemShrimp, "48");
-            CreateInvSlot(inv, font, UITheme.ItemHerb, "22");
-            CreateInvSlot(inv, font, UITheme.ItemPotion, "3");
-            CreateInvSlot(inv, font, UITheme.ItemOre, "6");
-            CreateInvSlot(inv, font, UITheme.Gold, "31");
-        }
+            var slots = CreateRect("Slots", inv);
+            var slotsHLG = slots.gameObject.AddComponent<HorizontalLayoutGroup>();
+            ConfigureLayoutGroup(slotsHLG, expandWidth: false, expandHeight: true);
+            slotsHLG.spacing = ConceptLayout.InvGap;
+            slotsHLG.childAlignment = TextAnchor.MiddleLeft;
+            var slotsLE = slots.gameObject.AddComponent<LayoutElement>();
+            slotsLE.flexibleWidth = 1;
 
-        private static void CreateInvSlot(RectTransform parent, TMP_FontAsset font, Color color, string count)
-        {
-            var rt = CreateRect("Slot", parent);
-            AddLayout(rt.gameObject, ConceptLayout.SlotSize, ConceptLayout.SlotSize);
-            var bg = rt.gameObject.AddComponent<Image>();
-            bg.color = UITheme.Panel;
-            StyleOutline(bg, UITheme.Border, new Vector2(1, -1));
-            var icon = CreateColorBlock("Icon", rt, color, new Vector2(ConceptLayout.SlotIconSize, ConceptLayout.SlotIconSize));
-            Center(icon.rectTransform, ConceptLayout.SlotIconSize, ConceptLayout.SlotIconSize);
-            var cnt = CreateTMP(count, rt, font, ConceptLayout.SlotCountFont, UITheme.Cream, TextAlignmentOptions.BottomRight);
-            var cntRt = cnt.rectTransform;
-            cntRt.anchorMin = new Vector2(1, 0);
-            cntRt.anchorMax = new Vector2(1, 0);
-            cntRt.pivot = new Vector2(1, 0);
-            cntRt.anchoredPosition = new Vector2(-4, 2);
-            cntRt.sizeDelta = new Vector2(30, 16);
-            cnt.fontStyle = FontStyles.Bold;
+            var view = inv.gameObject.AddComponent<InventoryBarView>();
+            view.Configure(slots, font, 10);
+            return view;
         }
     }
 }

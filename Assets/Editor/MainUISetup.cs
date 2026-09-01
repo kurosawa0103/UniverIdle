@@ -124,12 +124,13 @@ namespace UniverIdle.Editor
             vlg.padding = new RectOffset(0, 0, 0, 0);
 
             var controller = app.gameObject.AddComponent<MainUIController>();
+            app.gameObject.AddComponent<UniverIdle.Game.GameSession>();
             var skills = new List<SkillNavItemView>();
             var actions = new List<ActionCardView>();
 
             var topBar = CreatePanel(app, "TopBar", UITheme.TopBarBottom, ConceptLayout.TopBarHeight);
             AttachTopGradient(topBar);
-            AddTopBar(topBar, font, out var goldText);
+            AddTopBar(topBar, font);
             CreateDivider(app, vertical: false);
 
             var body = CreateRect("Body", app);
@@ -166,9 +167,9 @@ namespace UniverIdle.Editor
 
             CreateDivider(app, vertical: false);
             var invBar = CreatePanel(app, "InventoryBar", UITheme.InventoryBg, ConceptLayout.InvBarHeight);
-            AddInventoryBar(invBar, font);
+            var inventoryBar = AddInventoryBar(invBar, font);
 
-            controller.SetReferences(skills, locationTitle, actions, progressFill, progressLabel, progressTime, detailTitle, detailBody, goldText);
+            controller.SetReferences(skills, locationTitle, actions, progressFill, progressLabel, progressTime, detailTitle, detailBody, inventoryBar);
 
             for (var i = 0; i < skills.Count; i++)
             {

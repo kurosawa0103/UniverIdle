@@ -1,0 +1,22 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace UniverIdle.Game
+{
+  public sealed class WorkActionDefinition
+  {
+    public string Id { get; set; }
+    public string WorkId { get; set; }
+    public string SceneId { get; set; }
+    /// <summary>横幅/地点用短名，如「村口」「街道」。</summary>
+    public string SceneName { get; set; }
+    public string DisplayName { get; set; }
+    public float DurationSeconds { get; set; }
+    public int XpReward { get; set; }
+    /// <summary>解锁本地区所需的整项工作等级（如拾荒 Lv.2）。</summary>
+    public int RequiredWorkLevel { get; set; }
+    public string Description { get; set; }
+    public Color ThumbColor { get; set; }
+    public IReadOnlyList<LootEntry> LootTable { get; set; }
+  }
+}
