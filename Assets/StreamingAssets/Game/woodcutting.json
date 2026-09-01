@@ -1,0 +1,79 @@
+{
+  "version": 3,
+  "works": [
+    {
+      "id": "woodcutting",
+      "name": "砍树",
+      "locationName": "黑松林",
+      "iconColor": "#324030",
+      "xpBase": 40,
+      "xpPerLevel": 20,
+      "sceneXpBase": 40,
+      "sceneXpPerLevel": 20,
+      "grantWorkXp": 1,
+      "grantSceneXp": 1
+    }
+  ],
+  "actions": [
+    {
+      "id": "woodcut_pine",
+      "workId": "woodcutting",
+      "sceneId": "pine",
+      "sceneName": "短松",
+      "displayName": "短松 · 伐木",
+      "durationSeconds": 4,
+      "xpReward": 6,
+      "requiredWorkLevel": 1,
+      "description": "林缘最常见的短松，长得快、好砍，专出松木。",
+      "thumbColor": "#4A5C40",
+      "loot": [
+        { "itemId": "pine_log", "chance": 1 }
+      ]
+    },
+    {
+      "id": "woodcut_birch",
+      "workId": "woodcutting",
+      "sceneId": "birch",
+      "sceneName": "白桦",
+      "displayName": "白桦 · 伐木",
+      "durationSeconds": 5,
+      "xpReward": 9,
+      "requiredWorkLevel": 3,
+      "description": "溪边白桦树皮银白，伐倒后得桦木，比松木更适合做细工。",
+      "thumbColor": "#C8B890",
+      "loot": [
+        { "itemId": "birch_log", "chance": 1 }
+      ]
+    },
+    {
+      "id": "woodcut_oak",
+      "workId": "woodcutting",
+      "sceneId": "oak",
+      "sceneName": "橡树",
+      "displayName": "橡树 · 伐木",
+      "durationSeconds": 6.5,
+      "xpReward": 14,
+      "requiredWorkLevel": 6,
+      "description": "林中层橡树粗壮，斧痕深一寸才见木心，产出沉实的橡木。",
+      "thumbColor": "#5C4030",
+      "loot": [
+        { "itemId": "oak_log", "chance": 1 }
+      ]
+    },
+    {
+      "id": "woodcut_ironwood",
+      "workId": "woodcutting",
+      "sceneId": "ironwood",
+      "sceneName": "铁木",
+      "displayName": "铁木 · 伐木",
+      "durationSeconds": 9,
+      "xpReward": 22,
+      "requiredWorkLevel": 10,
+      "description": "黑松林深处的铁木，斧子咬进去像砍石头；慢，但每棵必出铁木。",
+      "thumbColor": "#383028",
+      "loot": [
+        { "itemId": "ironwood_log", "chance": 1 }
+      ]
+    }
+  ]
+}

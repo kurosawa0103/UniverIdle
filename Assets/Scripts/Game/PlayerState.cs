@@ -49,6 +49,19 @@ namespace UniverIdle.Game
       OnInventoryChanged?.Invoke();
     }
 
+    public bool TryConsumeItem(string itemId, long amount)
+    {
+      if (amount <= 0) return true;
+      if (string.IsNullOrEmpty(itemId) || GetItemCount(itemId) < amount) return false;
+      var remaining = GetItemCount(itemId) - amount;
+      if (remaining <= 0)
+        _inventory.Remove(itemId);
+      else
+        _inventory[itemId] = remaining;
+      OnInventoryChanged?.Invoke();
+      return true;
+    }
+
     public void AddWorkXp(string workId, int xp)
     {
       if (string.IsNullOrEmpty(workId) || xp <= 0) return;

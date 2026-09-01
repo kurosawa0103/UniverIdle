@@ -12,6 +12,8 @@ namespace UniverIdle.Game
     {
       Player = new PlayerState();
       Runner = new ActionRunner(Player);
+      Player.AddItem("small_trap", 8);
+      Player.AddItem("large_trap", 3);
     }
 
     private void Update()

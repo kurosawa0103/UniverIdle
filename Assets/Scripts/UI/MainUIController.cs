@@ -43,12 +43,15 @@ namespace UniverIdle.UI
     {
       if (_session?.Player != null)
       {
-        _session.Player.OnInventoryChanged += RefreshInventory;
+        _session.Player.OnInventoryChanged += OnInventoryChanged;
         _session.Player.OnWorkChanged += OnWorkChanged;
         _session.Player.OnSceneProgressChanged += OnSceneProgressChanged;
       }
       if (_session?.Runner != null)
+      {
         _session.Runner.OnActionCompleted += OnActionCompleted;
+        _session.Runner.OnActionStopped += OnActionStopped;
+      }
 
       SelectWork(_activeWorkId);
       RefreshInventory();
@@ -59,12 +62,15 @@ namespace UniverIdle.UI
     {
       if (_session?.Player != null)
       {
-        _session.Player.OnInventoryChanged -= RefreshInventory;
+        _session.Player.OnInventoryChanged -= OnInventoryChanged;
         _session.Player.OnWorkChanged -= OnWorkChanged;
         _session.Player.OnSceneProgressChanged -= OnSceneProgressChanged;
       }
       if (_session?.Runner != null)
+      {
         _session.Runner.OnActionCompleted -= OnActionCompleted;
+        _session.Runner.OnActionStopped -= OnActionStopped;
+      }
     }
 
     private void Update()
@@ -102,11 +108,9 @@ namespace UniverIdle.UI
       var action = GameContent.GetAction(actionId);
       if (action == null || action.WorkId != _activeWorkId) return;
       if (!SceneProgressRules.CanPerform(_session.Player, action)) return;
+      if (!_session.Runner.TryStart(action)) return;
 
       _activeActionId = actionId;
-
-      if (_session.Runner.CurrentAction?.Id != actionId)
-        _session.Runner.Start(action);
 
       for (var i = 0; i < actionCards.Count; i++)
         actionCards[i].SetSelected(i < _visibleActions.Count && _visibleActions[i].Id == actionId);
@@ -151,14 +155,17 @@ namespace UniverIdle.UI
         var unlocked = SceneProgressRules.IsRegionUnlocked(player, action);
         var canPerform = SceneProgressRules.CanPerform(player, action);
         var sceneProgress = player.GetSceneProgress(action.WorkId, action.SceneId);
+        var metaRight = unlocked
+          ? SceneProgressRules.CanAffordCost(player, action)
+            ? $"熟练 Lv.{sceneProgress.Level}"
+            : SceneProgressRules.FormatCostHint(action)
+          : SceneProgressRules.FormatUnlockHint(action, work?.DisplayName);
 
         actionCards[i].gameObject.SetActive(true);
         actionCards[i].Bind(
           action.DisplayName,
           FormatDuration(action.DurationSeconds),
-          !unlocked
-            ? SceneProgressRules.FormatUnlockHint(action, work?.DisplayName)
-            : $"熟练 Lv.{sceneProgress.Level}",
+          metaRight,
           BuildActionDescription(action, player, work),
           !canPerform,
           action.ThumbColor);
@@ -191,6 +198,13 @@ namespace UniverIdle.UI
       sb.Append($"\n\n{workName}等级：Lv.{workLevel}（升级需 {WorkProgression.XpRequiredForWorkLevel(workLevel, work)} 经验）");
       sb.Append($"\n{action.SceneName}熟练度：Lv.{sceneLevel}（升级需 {WorkProgression.XpRequiredForSceneLevel(sceneLevel, work)} 经验）");
       sb.Append($"\n解锁条件：{workName} Lv.{action.RequiredWorkLevel}");
+      if (action.HasCost)
+      {
+        var costItem = GameContent.GetItem(action.CostItemId);
+        var costName = costItem != null ? costItem.DisplayName : action.CostItemId;
+        var owned = player.GetItemCount(action.CostItemId);
+        sb.Append($"\n每次消耗：{costName} ×{action.CostAmount}（持有 {owned}）");
+      }
       sb.Append("\n\n可能掉落：");
       if (action.LootTable == null || action.LootTable.Count == 0)
       {
@@ -270,6 +284,35 @@ namespace UniverIdle.UI
         if (action != null)
           RefreshActionDetail(action);
       }
+    }
+
+    private void OnInventoryChanged()
+    {
+      RefreshInventory();
+      if (_session?.Runner?.CurrentAction != null &&
+          !SceneProgressRules.CanAffordCost(_session.Player, _session.Runner.CurrentAction))
+        _session.Runner.Stop();
+
+      RefreshActionCardBindings();
+      UpdateActionSelectionUi();
+      if (!string.IsNullOrEmpty(_activeActionId))
+      {
+        var action = GameContent.GetAction(_activeActionId);
+        if (action != null)
+          RefreshActionDetail(action);
+      }
+    }
+
+    private void OnActionStopped(WorkActionDefinition action)
+    {
+      if (action == null || action.WorkId != _activeWorkId) return;
+      _activeActionId = null;
+      if (progressLabelText != null)
+        progressLabelText.text = "材料不足，已停止";
+      if (detailBodyText != null)
+        detailBodyText.text = SceneProgressRules.FormatCostHint(action) + "\n\n请补充道具后重新开始。";
+      RefreshActionCardBindings();
+      UpdateActionSelectionUi();
     }
 
     private void OnActionCompleted(ActionCompleteResult result)

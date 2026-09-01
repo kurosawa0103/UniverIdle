@@ -9,8 +9,22 @@ namespace UniverIdle.Game
       return player.GetWork(action.WorkId).Level >= action.RequiredWorkLevel;
     }
 
+    public static bool CanAffordCost(PlayerState player, WorkActionDefinition action)
+    {
+      if (player == null || action == null || !action.HasCost) return true;
+      return player.GetItemCount(action.CostItemId) >= action.CostAmount;
+    }
+
     public static bool CanPerform(PlayerState player, WorkActionDefinition action) =>
-      IsRegionUnlocked(player, action);
+      IsRegionUnlocked(player, action) && CanAffordCost(player, action);
+
+    public static string FormatCostHint(WorkActionDefinition action)
+    {
+      if (action == null || !action.HasCost) return string.Empty;
+      var item = GameContent.GetItem(action.CostItemId);
+      var name = item != null ? item.DisplayName : action.CostItemId;
+      return $"需 {name} ×{action.CostAmount}";
+    }
 
     public static string FormatUnlockHint(WorkActionDefinition action, string workDisplayName = null)
     {

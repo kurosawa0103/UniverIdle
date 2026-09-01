@@ -43,18 +43,25 @@ namespace UniverIdle.Game
     public bool IsRunning => CurrentAction != null;
 
     public event Action<ActionCompleteResult> OnActionCompleted;
+    public event Action<WorkActionDefinition> OnActionStopped;
 
     public ActionRunner(PlayerState player)
     {
       _player = player;
     }
 
-    public void Start(WorkActionDefinition action)
+    public bool TryStart(WorkActionDefinition action)
     {
-      if (action == null) return;
+      if (action == null || !SceneProgressRules.CanPerform(_player, action)) return false;
       CurrentAction = action;
+      return BeginCycle();
+    }
+
+    public void Stop()
+    {
+      CurrentAction = null;
       Progress = 0f;
-      SecondsRemaining = action.DurationSeconds;
+      SecondsRemaining = 0f;
     }
 
     public void Tick(float deltaTime)
@@ -68,8 +75,29 @@ namespace UniverIdle.Game
       if (Progress < 1f) return;
 
       CompleteCurrentAction();
+      if (CurrentAction == null) return;
+      if (!BeginCycle())
+        StopDueToCost(CurrentAction);
+    }
+
+    private bool BeginCycle()
+    {
+      if (CurrentAction == null) return false;
+      if (!SceneProgressRules.CanAffordCost(_player, CurrentAction)) return false;
+      if (CurrentAction.HasCost && !_player.TryConsumeItem(CurrentAction.CostItemId, CurrentAction.CostAmount))
+        return false;
+
       Progress = 0f;
       SecondsRemaining = CurrentAction.DurationSeconds;
+      return true;
+    }
+
+    private void StopDueToCost(WorkActionDefinition action)
+    {
+      CurrentAction = null;
+      Progress = 0f;
+      SecondsRemaining = 0f;
+      OnActionStopped?.Invoke(action);
     }
 
     private void CompleteCurrentAction()

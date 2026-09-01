@@ -17,6 +17,9 @@ namespace UniverIdle.Game
     public int RequiredWorkLevel { get; set; }
     public string Description { get; set; }
     public Color ThumbColor { get; set; }
+    public string CostItemId { get; set; }
+    public int CostAmount { get; set; }
+    public bool HasCost => !string.IsNullOrEmpty(CostItemId) && CostAmount > 0;
     public IReadOnlyList<LootEntry> LootTable { get; set; }
   }
 }

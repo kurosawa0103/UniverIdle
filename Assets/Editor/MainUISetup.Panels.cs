@@ -84,6 +84,8 @@ namespace UniverIdle.Editor
             var data = new (string workId, string name, string loc, int lv, float xp, Color icon)[]
             {
                 ("scavenge", "拾荒", "萤溪村", 1, 0f, UITheme.SkillForage),
+                ("woodcutting", "砍树", "黑松林", 1, 0f, UITheme.SkillWood),
+                ("monster_explore", "魔物探索", "坠星野外", 1, 0f, UITheme.SkillCombat),
             };
 
             foreach (var d in data)

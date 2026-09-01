@@ -11,12 +11,21 @@ namespace UniverIdle.Game
   }
 
   [Serializable]
-  public class ScavengeDataFile
+  public class WorkContentDataFile
   {
     public int version = 3;
     public WorkRow[] works;
     public ActionRow[] actions;
   }
+
+  [Serializable]
+  public class ScavengeDataFile : WorkContentDataFile { }
+
+  [Serializable]
+  public class WoodcuttingDataFile : WorkContentDataFile { }
+
+  [Serializable]
+  public class MonsterExploreDataFile : WorkContentDataFile { }
 
   [Serializable]
   public class ItemRow
@@ -55,6 +64,8 @@ namespace UniverIdle.Game
     public int requiredWorkLevel;
     public string description;
     public string thumbColor;
+    public string costItemId;
+    public int costAmount;
     public LootRow[] loot;
   }
 

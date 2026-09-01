@@ -1,0 +1,98 @@
+{
+  "version": 3,
+  "works": [
+    {
+      "id": "monster_explore",
+      "name": "魔物探索",
+      "locationName": "坠星野外",
+      "iconColor": "#442828",
+      "xpBase": 45,
+      "xpPerLevel": 22,
+      "sceneXpBase": 45,
+      "sceneXpPerLevel": 22,
+      "grantWorkXp": 1,
+      "grantSceneXp": 1
+    }
+  ],
+  "actions": [
+    {
+      "id": "explore_forest_edge",
+      "workId": "monster_explore",
+      "sceneId": "forest_edge",
+      "sceneName": "林缘哨道",
+      "displayName": "林缘哨道 · 布陷",
+      "durationSeconds": 5,
+      "xpReward": 8,
+      "requiredWorkLevel": 1,
+      "description": "村外林缘常有史莱姆出没。布下小陷阱，等魔物踩中后搜刮残骸。",
+      "thumbColor": "#4A3428",
+      "costItemId": "small_trap",
+      "costAmount": 1,
+      "loot": [
+        { "itemId": "slime_gel", "chance": 0.82 },
+        { "itemId": "tattered_pelt", "chance": 0.18 },
+        { "itemId": "beast_fang", "chance": 0.06 }
+      ]
+    },
+    {
+      "id": "explore_creek_fork",
+      "workId": "monster_explore",
+      "sceneId": "creek_fork",
+      "sceneName": "溪谷岔路",
+      "displayName": "溪谷岔路 · 布陷",
+      "durationSeconds": 6,
+      "xpReward": 11,
+      "requiredWorkLevel": 3,
+      "description": "岔路口泥泞，魔物足迹杂乱。仍用小陷阱，但掉落种类更杂。",
+      "thumbColor": "#3A4838",
+      "costItemId": "small_trap",
+      "costAmount": 1,
+      "loot": [
+        { "itemId": "slime_gel", "chance": 0.65 },
+        { "itemId": "tattered_pelt", "chance": 0.35 },
+        { "itemId": "beast_fang", "chance": 0.14 },
+        { "itemId": "monster_ichor", "chance": 0.05 }
+      ]
+    },
+    {
+      "id": "explore_mine_mouth",
+      "workId": "monster_explore",
+      "sceneId": "mine_mouth",
+      "sceneName": "旧矿道口",
+      "displayName": "旧矿道口 · 布陷",
+      "durationSeconds": 7.5,
+      "xpReward": 16,
+      "requiredWorkLevel": 6,
+      "description": "废弃矿道口盘踞着更凶的魔物，需大陷阱才能稳妥收网。",
+      "thumbColor": "#504038",
+      "costItemId": "large_trap",
+      "costAmount": 1,
+      "loot": [
+        { "itemId": "beast_fang", "chance": 0.55 },
+        { "itemId": "tattered_pelt", "chance": 0.48 },
+        { "itemId": "monster_ichor", "chance": 0.22 },
+        { "itemId": "cracked_core", "chance": 0.04 }
+      ]
+    },
+    {
+      "id": "explore_star_rift",
+      "workId": "monster_explore",
+      "sceneId": "star_rift",
+      "sceneName": "坠星裂隙",
+      "displayName": "坠星裂隙 · 布陷",
+      "durationSeconds": 10,
+      "xpReward": 24,
+      "requiredWorkLevel": 10,
+      "description": "裂隙边缘魔力紊乱，魔物更强也更稀有。大陷阱每次要消耗两份才够稳。",
+      "thumbColor": "#583848",
+      "costItemId": "large_trap",
+      "costAmount": 2,
+      "loot": [
+        { "itemId": "monster_ichor", "chance": 0.42 },
+        { "itemId": "beast_fang", "chance": 0.38 },
+        { "itemId": "cracked_core", "chance": 0.12 },
+        { "itemId": "stardust_shard", "chance": 0.03 }
+      ]
+    }
+  ]
+}

@@ -20,10 +20,10 @@ namespace UniverIdle.Game
       actionsByWork.Clear();
 
       var itemsData = LoadItemsFile();
-      var scavengeData = LoadScavengeFile();
       RegisterItems(itemsData, items);
-      RegisterWorks(scavengeData, works);
-      RegisterActions(scavengeData, actions, actionsByWork, items, works);
+      RegisterWorkContent(LoadScavengeFile(), works, actions, actionsByWork, items);
+      RegisterWorkContent(LoadWoodcuttingFile(), works, actions, actionsByWork, items);
+      RegisterWorkContent(LoadMonsterExploreFile(), works, actions, actionsByWork, items);
     }
 
     public static ItemsDataFile LoadItemsFile() =>
@@ -32,12 +32,24 @@ namespace UniverIdle.Game
     public static ScavengeDataFile LoadScavengeFile() =>
       LoadJsonFile<ScavengeDataFile>(GameDataPaths.ScavengeRelativePath);
 
+    public static WoodcuttingDataFile LoadWoodcuttingFile() =>
+      LoadJsonFile<WoodcuttingDataFile>(GameDataPaths.WoodcuttingRelativePath);
+
+    public static MonsterExploreDataFile LoadMonsterExploreFile() =>
+      LoadJsonFile<MonsterExploreDataFile>(GameDataPaths.MonsterExploreRelativePath);
+
     /// <summary>编辑器合并导出用：JSON 缺失时返回空表，不抛错。</summary>
     public static ItemsDataFile LoadItemsFileIfPresent() =>
       LoadJsonFileIfPresent<ItemsDataFile>(GameDataPaths.ItemsRelativePath) ?? new ItemsDataFile { version = 3 };
 
     public static ScavengeDataFile LoadScavengeFileIfPresent() =>
       LoadJsonFileIfPresent<ScavengeDataFile>(GameDataPaths.ScavengeRelativePath) ?? new ScavengeDataFile { version = 3 };
+
+    public static WoodcuttingDataFile LoadWoodcuttingFileIfPresent() =>
+      LoadJsonFileIfPresent<WoodcuttingDataFile>(GameDataPaths.WoodcuttingRelativePath) ?? new WoodcuttingDataFile { version = 3 };
+
+    public static MonsterExploreDataFile LoadMonsterExploreFileIfPresent() =>
+      LoadJsonFileIfPresent<MonsterExploreDataFile>(GameDataPaths.MonsterExploreRelativePath) ?? new MonsterExploreDataFile { version = 3 };
 
     public static void Validate()
     {
@@ -93,7 +105,19 @@ namespace UniverIdle.Game
       }
     }
 
-    private static void RegisterWorks(ScavengeDataFile data, IDictionary<string, WorkDefinition> works)
+    private static void RegisterWorkContent(
+      WorkContentDataFile data,
+      IDictionary<string, WorkDefinition> works,
+      IDictionary<string, WorkActionDefinition> actions,
+      IDictionary<string, List<WorkActionDefinition>> actionsByWork,
+      IDictionary<string, ItemDefinition> items)
+    {
+      if (data == null) return;
+      RegisterWorks(data, works);
+      RegisterActions(data, actions, actionsByWork, items, works);
+    }
+
+    private static void RegisterWorks(WorkContentDataFile data, IDictionary<string, WorkDefinition> works)
     {
       if (data?.works == null) return;
       foreach (var row in data.works)
@@ -119,7 +143,7 @@ namespace UniverIdle.Game
     }
 
     private static void RegisterActions(
-      ScavengeDataFile data,
+      WorkContentDataFile data,
       IDictionary<string, WorkActionDefinition> actions,
       IDictionary<string, List<WorkActionDefinition>> actionsByWork,
       IDictionary<string, ItemDefinition> items,
@@ -148,6 +172,8 @@ namespace UniverIdle.Game
           RequiredWorkLevel = row.requiredWorkLevel <= 0 ? 1 : row.requiredWorkLevel,
           Description = row.description,
           ThumbColor = GameColorUtility.Parse(row.thumbColor, Color.white),
+          CostItemId = string.IsNullOrWhiteSpace(row.costItemId) ? null : row.costItemId.Trim(),
+          CostAmount = row.costAmount > 0 ? row.costAmount : 0,
           LootTable = loot,
         };
 

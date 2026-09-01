@@ -16,6 +16,7 @@ namespace UniverIdle.Editor
     private readonly Dictionary<string, bool> _selected = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> _sheetStatus = new(StringComparer.OrdinalIgnoreCase);
     private Vector2 _scroll;
+    private string _searchQuery = string.Empty;
     private string _statusMessage = string.Empty;
     private MessageType _statusType = MessageType.Info;
 
@@ -50,14 +51,22 @@ namespace UniverIdle.Editor
 
     private void OnGUI()
     {
+      HandleSearchShortcut();
       EnsureStyles();
       DrawHeader();
       DrawToolbar();
-      EditorGUILayout.Space(8);
+      DrawSearchBar();
+      EditorGUILayout.Space(6);
 
+      var anyVisible = false;
       _scroll = EditorGUILayout.BeginScrollView(_scroll);
       foreach (var workbook in GameDataSheetRegistry.Workbooks)
-        DrawWorkbook(workbook);
+      {
+        if (DrawWorkbook(workbook))
+          anyVisible = true;
+      }
+      if (HasSearchFilter && !anyVisible)
+        EditorGUILayout.HelpBox($"未找到与「{_searchQuery.Trim()}」匹配的 Sheet。", MessageType.Info);
       EditorGUILayout.EndScrollView();
 
       EditorGUILayout.Space(10);
@@ -119,19 +128,65 @@ namespace UniverIdle.Editor
       SirenixEditorGUI.EndHorizontalToolbar();
     }
 
-    private void DrawWorkbook(GameDataSheetRegistry.WorkbookInfo workbook)
+    private void DrawSearchBar()
     {
+      EditorGUILayout.BeginHorizontal();
+      EditorGUILayout.LabelField("搜索", GUILayout.Width(36));
+      GUI.SetNextControlName("GameDataExportSearch");
+      var next = EditorGUILayout.TextField(_searchQuery, GUILayout.MinWidth(120));
+      if (!string.Equals(next, _searchQuery, StringComparison.Ordinal))
+      {
+        _searchQuery = next;
+        Repaint();
+      }
+
+      using (new EditorGUI.DisabledScope(string.IsNullOrWhiteSpace(_searchQuery)))
+      {
+        if (GUILayout.Button("清除", GUILayout.Width(48)))
+        {
+          _searchQuery = string.Empty;
+          GUI.FocusControl(null);
+          Repaint();
+        }
+      }
+
+      if (HasSearchFilter)
+      {
+        var count = CountVisibleSheets();
+        EditorGUILayout.LabelField($"{count} 项", EditorStyles.miniLabel, GUILayout.Width(40));
+      }
+
+      EditorGUILayout.EndHorizontal();
+    }
+
+    private static void HandleSearchShortcut()
+    {
+      var e = Event.current;
+      if (e.type != EventType.KeyDown || e.keyCode != KeyCode.F || (!e.control && !e.command))
+        return;
+      EditorGUI.FocusTextInControl("GameDataExportSearch");
+      e.Use();
+    }
+
+    private bool HasSearchFilter => !string.IsNullOrWhiteSpace(_searchQuery);
+
+    private bool DrawWorkbook(GameDataSheetRegistry.WorkbookInfo workbook)
+    {
+      var visibleSheets = GetVisibleSheets(workbook);
+      if (visibleSheets.Count == 0) return false;
+
       var accent = GetWorkbookAccent(workbook.ExcelKey);
 
       EditorGUILayout.BeginVertical(EditorStyles.helpBox);
       DrawWorkbookHeader(workbook, accent);
       EditorGUILayout.Space(4);
 
-      foreach (var sheet in workbook.Sheets)
+      foreach (var sheet in visibleSheets)
         DrawSheetRow(sheet);
 
       EditorGUILayout.EndVertical();
       EditorGUILayout.Space(8);
+      return true;
     }
 
     private void DrawWorkbookHeader(GameDataSheetRegistry.WorkbookInfo workbook, Color accent)
@@ -172,7 +227,7 @@ namespace UniverIdle.Editor
         SaveSelectionPrefs();
       }
 
-      EditorGUILayout.LabelField(sheet.Id, _sheetIdStyle, GUILayout.Width(80));
+      EditorGUILayout.LabelField(sheet.TabName, _sheetIdStyle, GUILayout.Width(80));
       EditorGUILayout.LabelField(sheet.Title, _sheetTitleStyle);
       GUILayout.FlexibleSpace();
 
@@ -193,16 +248,81 @@ namespace UniverIdle.Editor
       }
     }
 
-    private static Color GetWorkbookAccent(string excelKey) =>
-      excelKey == GameDataSheetRegistry.ItemsExcelKey
-        ? EditorGUIUtility.isProSkin ? new Color(1f, 0.78f, 0.28f) : new Color(0.88f, 0.52f, 0.08f)
-        : EditorGUIUtility.isProSkin ? new Color(0.35f, 0.88f, 0.68f) : new Color(0.1f, 0.62f, 0.42f);
+    private static Color GetWorkbookAccent(string excelKey)
+    {
+      if (excelKey == GameDataSheetRegistry.ItemsExcelKey)
+        return EditorGUIUtility.isProSkin ? new Color(1f, 0.78f, 0.28f) : new Color(0.88f, 0.52f, 0.08f);
+      if (excelKey == GameDataSheetRegistry.WoodcuttingExcelKey)
+        return EditorGUIUtility.isProSkin ? new Color(0.72f, 0.58f, 0.38f) : new Color(0.52f, 0.38f, 0.2f);
+      if (excelKey == GameDataSheetRegistry.MonsterExploreExcelKey)
+        return EditorGUIUtility.isProSkin ? new Color(0.95f, 0.45f, 0.45f) : new Color(0.72f, 0.28f, 0.28f);
+      return EditorGUIUtility.isProSkin ? new Color(0.35f, 0.88f, 0.68f) : new Color(0.1f, 0.62f, 0.42f);
+    }
 
     private void SetAllSelected(bool value)
     {
-      foreach (var sheet in GameDataSheetRegistry.All)
+      foreach (var sheet in EnumerateTargetSheets())
         _selected[sheet.Id] = value;
       SaveSelectionPrefs();
+    }
+
+    private IEnumerable<GameDataSheetRegistry.SheetInfo> EnumerateTargetSheets()
+    {
+      if (!HasSearchFilter)
+      {
+        foreach (var sheet in GameDataSheetRegistry.All)
+          yield return sheet;
+        yield break;
+      }
+
+      foreach (var workbook in GameDataSheetRegistry.Workbooks)
+      {
+        foreach (var sheet in GetVisibleSheets(workbook))
+          yield return sheet;
+      }
+    }
+
+    private int CountVisibleSheets()
+    {
+      var count = 0;
+      foreach (var _ in EnumerateTargetSheets())
+        count++;
+      return count;
+    }
+
+    private List<GameDataSheetRegistry.SheetInfo> GetVisibleSheets(GameDataSheetRegistry.WorkbookInfo workbook)
+    {
+      var list = new List<GameDataSheetRegistry.SheetInfo>();
+      foreach (var sheet in workbook.Sheets)
+      {
+        if (MatchesSearch(sheet, workbook, _searchQuery))
+          list.Add(sheet);
+      }
+      return list;
+    }
+
+    private static bool MatchesSearch(
+      GameDataSheetRegistry.SheetInfo sheet,
+      GameDataSheetRegistry.WorkbookInfo workbook,
+      string query)
+    {
+      if (string.IsNullOrWhiteSpace(query)) return true;
+
+      var haystack = string.Join(" ",
+        sheet.Id,
+        sheet.TabName,
+        sheet.Title,
+        sheet.Description,
+        workbook.Title,
+        workbook.ExcelFileName,
+        workbook.ExcelKey);
+
+      foreach (var token in query.Split((char[])null, StringSplitOptions.RemoveEmptyEntries))
+      {
+        if (haystack.IndexOf(token, StringComparison.OrdinalIgnoreCase) < 0)
+          return false;
+      }
+      return true;
     }
 
     private bool HasAnySelected()
@@ -252,7 +372,7 @@ namespace UniverIdle.Editor
         GameDataExcelExporter.CreateExcelFromJson();
         AssetDatabase.Refresh();
         RefreshSheetStatus();
-        SetStatus("已从 JSON 生成 items.xlsx 与 scavenge.xlsx。", MessageType.Info);
+        SetStatus("已从 JSON 生成 items、scavenge、woodcutting、monster_explore 四套 Excel。", MessageType.Info);
       }
       catch (Exception ex)
       {
@@ -293,7 +413,7 @@ namespace UniverIdle.Editor
             continue;
           }
 
-          var count = GameDataExcelExporter.CountDataRows(sheets, sheet.Id);
+          var count = GameDataExcelExporter.CountDataRows(sheets, sheet);
           _sheetStatus[sheet.Id] = count < 0 ? "无此表" : $"{count} 行";
         }
       }
@@ -321,11 +441,20 @@ namespace UniverIdle.Editor
         _selected[sheet.Id] = false;
       foreach (var id in raw.Split(','))
       {
-        var key = id.Trim();
-        if (key.Length > 0)
+        var key = MapLegacySheetId(id.Trim());
+        if (key.Length > 0 && _selected.ContainsKey(key))
           _selected[key] = true;
       }
     }
+
+    private static string MapLegacySheetId(string id) =>
+      id switch
+      {
+        "works" => "scavenge_works",
+        "actions" => "scavenge_actions",
+        "loot" => "scavenge_loot",
+        _ => id,
+      };
   }
 }
 #endif

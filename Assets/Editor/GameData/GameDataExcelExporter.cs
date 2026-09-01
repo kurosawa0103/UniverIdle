@@ -23,6 +23,7 @@ namespace UniverIdle.Editor
     {
       "id", "workId", "sceneId", "sceneName", "displayName",
       "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
+      "costItemId", "costAmount",
     };
     private static readonly string[] LootHeaders = { "actionId", "itemId", "chance", "min", "max" };
     private static readonly string[] LootExcelHeaders = { "actionId", "itemId", "#itemName", "chance", "min", "max" };
@@ -37,6 +38,7 @@ namespace UniverIdle.Editor
     {
       "动作ID", "所属工作", "地区ID", "地区名称", "卡片标题",
       "时长(秒)", "完成经验", "解锁所需工作等级", "描述", "缩略图颜色",
+      "消耗道具ID", "消耗数量",
     };
     private static readonly string[] LootExcelHeaderComments =
       { "动作ID", "道具ID", "道具名(不导出)", "概率0~1", "最少数量", "最多数量" };
@@ -45,11 +47,15 @@ namespace UniverIdle.Editor
     {
       public readonly ItemsDataFile Items;
       public readonly ScavengeDataFile Scavenge;
+      public readonly WoodcuttingDataFile Woodcutting;
+      public readonly MonsterExploreDataFile MonsterExplore;
 
-      public ExportBundle(ItemsDataFile items, ScavengeDataFile scavenge)
+      public ExportBundle(ItemsDataFile items, ScavengeDataFile scavenge, WoodcuttingDataFile woodcutting, MonsterExploreDataFile monsterExplore)
       {
         Items = items;
         Scavenge = scavenge;
+        Woodcutting = woodcutting;
+        MonsterExplore = monsterExplore;
       }
     }
 
@@ -68,7 +74,7 @@ namespace UniverIdle.Editor
       if (Application.isPlaying)
         GameContent.ReloadForEditor();
 
-      Debug.Log($"[UniverIdle] 导表完成（{string.Join(", ", selected)}）→ {GameDataPaths.ItemsJsonAssetPath}、{GameDataPaths.ScavengeJsonAssetPath}");
+      Debug.Log($"[UniverIdle] 导表完成（{string.Join(", ", selected)}）→ items / scavenge / woodcutting / monster_explore JSON");
     }
 
     public static Dictionary<string, Dictionary<string, List<string[]>>> ReadExcelCache(ISet<string> selectedSheetIds)
@@ -98,54 +104,75 @@ namespace UniverIdle.Editor
 
       var items = GameDataLoader.LoadItemsFileIfPresent();
       var scavenge = GameDataLoader.LoadScavengeFileIfPresent();
+      var woodcutting = GameDataLoader.LoadWoodcuttingFileIfPresent();
+      var monsterExplore = GameDataLoader.LoadMonsterExploreFileIfPresent();
 
       if (selected.Contains("items"))
         items.items = ReadItemSheet(RequireSheet(excelCache, "items")).ToArray();
 
-      var exportActions = selected.Contains("actions");
-      var exportLoot = selected.Contains("loot");
-
-      if (selected.Contains("works"))
-        scavenge.works = ReadWorkSheet(RequireSheet(excelCache, "works")).ToArray();
-
-      if (exportActions || exportLoot)
-      {
-        var actions = exportActions
-          ? ReadActionSheet(RequireSheet(excelCache, "actions"))
-          : (scavenge.actions ?? Array.Empty<ActionRow>()).ToList();
-
-        var lootByAction = exportLoot
-          ? ReadLootSheet(RequireSheet(excelCache, "loot"))
-          : null;
-
-        var oldLoot = BuildLootLookup(scavenge.actions);
-
-        foreach (var action in actions)
-        {
-          if (lootByAction != null)
-            action.loot = lootByAction.TryGetValue(action.id, out var loot) ? loot.ToArray() : Array.Empty<LootRow>();
-          else if (!exportActions && exportLoot)
-            throw new InvalidOperationException("仅导出 loot 时，scavenge.json 中需已有 actions 数据。");
-          else if (oldLoot.TryGetValue(action.id, out var preserved))
-            action.loot = preserved;
-          else
-            action.loot = Array.Empty<LootRow>();
-        }
-
-        scavenge.actions = actions.ToArray();
-      }
+      MergeWorkContent(scavenge, excelCache, selected, "scavenge_works", "scavenge_actions", "scavenge_loot", "scavenge.json");
+      MergeWorkContent(woodcutting, excelCache, selected, "woodcutting_works", "woodcutting_actions", "woodcutting_loot", "woodcutting.json");
+      MergeWorkContent(monsterExplore, excelCache, selected, "monster_explore_works", "monster_explore_actions", "monster_explore_loot", "monster_explore.json");
 
       items.version = Math.Max(items.version, 3);
-      scavenge.version = Math.Max(scavenge.version, 3);
       ValidateItemReferences(items, scavenge);
-      return new ExportBundle(items, scavenge);
+      ValidateItemReferences(items, woodcutting);
+      ValidateItemReferences(items, monsterExplore);
+      return new ExportBundle(items, scavenge, woodcutting, monsterExplore);
+    }
+
+    private static void MergeWorkContent(
+      WorkContentDataFile data,
+      IReadOnlyDictionary<string, Dictionary<string, List<string[]>>> excelCache,
+      ISet<string> selected,
+      string worksSheetId,
+      string actionsSheetId,
+      string lootSheetId,
+      string jsonFileName)
+    {
+      if (data == null) return;
+
+      var exportActions = selected.Contains(actionsSheetId);
+      var exportLoot = selected.Contains(lootSheetId);
+
+      if (selected.Contains(worksSheetId))
+        data.works = ReadWorkSheet(RequireSheet(excelCache, worksSheetId)).ToArray();
+
+      if (!exportActions && !exportLoot) return;
+
+      var actions = exportActions
+        ? ReadActionSheet(RequireSheet(excelCache, actionsSheetId))
+        : (data.actions ?? Array.Empty<ActionRow>()).ToList();
+
+      var lootByAction = exportLoot
+        ? ReadLootSheet(RequireSheet(excelCache, lootSheetId))
+        : null;
+
+      var oldLoot = BuildLootLookup(data.actions);
+
+      foreach (var action in actions)
+      {
+        if (lootByAction != null)
+          action.loot = lootByAction.TryGetValue(action.id, out var loot) ? loot.ToArray() : Array.Empty<LootRow>();
+        else if (!exportActions && exportLoot)
+          throw new InvalidOperationException($"仅导出 loot 时，{jsonFileName} 中需已有 actions 数据。");
+        else if (oldLoot.TryGetValue(action.id, out var preserved))
+          action.loot = preserved;
+        else
+          action.loot = Array.Empty<LootRow>();
+      }
+
+      data.actions = actions.ToArray();
+      data.version = Math.Max(data.version, 3);
     }
 
     public static void EnsureExcelFiles()
     {
       var itemsPath = GetExcelFullPath(GameDataSheetRegistry.ItemsExcelKey);
       var scavengePath = GetExcelFullPath(GameDataSheetRegistry.ScavengeExcelKey);
-      if (File.Exists(itemsPath) && File.Exists(scavengePath))
+      var woodcuttingPath = GetExcelFullPath(GameDataSheetRegistry.WoodcuttingExcelKey);
+      var monsterExplorePath = GetExcelFullPath(GameDataSheetRegistry.MonsterExploreExcelKey);
+      if (File.Exists(itemsPath) && File.Exists(scavengePath) && File.Exists(woodcuttingPath) && File.Exists(monsterExplorePath))
         return;
 
       Debug.LogWarning("[UniverIdle] Excel 缺失，正在从 JSON 生成模板…");
@@ -156,7 +183,9 @@ namespace UniverIdle.Editor
     {
       var items = GameDataLoader.LoadItemsFileIfPresent();
       var scavenge = GameDataLoader.LoadScavengeFileIfPresent();
-      WriteExcelTemplates(items, scavenge);
+      var woodcutting = GameDataLoader.LoadWoodcuttingFileIfPresent();
+      var monsterExplore = GameDataLoader.LoadMonsterExploreFileIfPresent();
+      WriteExcelTemplates(items, scavenge, woodcutting, monsterExplore);
     }
 
     public static void OpenExcel(string excelKey)
@@ -166,23 +195,23 @@ namespace UniverIdle.Editor
       EditorUtility.RevealInFinder(GetExcelFullPath(excelKey));
     }
 
-    public static void WriteExcelTemplates(ItemsDataFile items, ScavengeDataFile scavenge)
+    public static void WriteExcelTemplates(ItemsDataFile items, ScavengeDataFile scavenge, WoodcuttingDataFile woodcutting, MonsterExploreDataFile monsterExplore)
     {
-      var sheets = BuildSheetRows(items, scavenge);
       WriteExcelFile(
         GetExcelFullPath(GameDataSheetRegistry.ItemsExcelKey),
         new Dictionary<string, IList<string[]>>
         {
-          ["items"] = sheets["items"],
+          ["items"] = BuildItemRows(items?.items),
         });
       WriteExcelFile(
         GetExcelFullPath(GameDataSheetRegistry.ScavengeExcelKey),
-        new Dictionary<string, IList<string[]>>
-        {
-          ["works"] = sheets["works"],
-          ["actions"] = sheets["actions"],
-          ["loot"] = sheets["loot"],
-        });
+        BuildWorkbookSheetRows(scavenge, items?.items));
+      WriteExcelFile(
+        GetExcelFullPath(GameDataSheetRegistry.WoodcuttingExcelKey),
+        BuildWorkbookSheetRows(woodcutting, items?.items));
+      WriteExcelFile(
+        GetExcelFullPath(GameDataSheetRegistry.MonsterExploreExcelKey),
+        BuildWorkbookSheetRows(monsterExplore, items?.items));
     }
 
     public static void WriteJsonFiles(ISet<string> selected, ExportBundle bundle)
@@ -196,10 +225,22 @@ namespace UniverIdle.Editor
         written.Add("items.json");
       }
 
-      if (SelectedTouchesScavenge(selected))
+      if (SelectedTouchesWorkbook(selected, GameDataSheetRegistry.ScavengeExcelKey))
       {
-        File.WriteAllText(GetScavengeJsonFullPath(), ToScavengeJson(bundle.Scavenge), new UTF8Encoding(false));
+        File.WriteAllText(GetScavengeJsonFullPath(), ToWorkContentJson(bundle.Scavenge), new UTF8Encoding(false));
         written.Add("scavenge.json");
+      }
+
+      if (SelectedTouchesWorkbook(selected, GameDataSheetRegistry.WoodcuttingExcelKey))
+      {
+        File.WriteAllText(GetWoodcuttingJsonFullPath(), ToWorkContentJson(bundle.Woodcutting), new UTF8Encoding(false));
+        written.Add("woodcutting.json");
+      }
+
+      if (SelectedTouchesWorkbook(selected, GameDataSheetRegistry.MonsterExploreExcelKey))
+      {
+        File.WriteAllText(GetMonsterExploreJsonFullPath(), ToWorkContentJson(bundle.MonsterExplore), new UTF8Encoding(false));
+        written.Add("monster_explore.json");
       }
 
       if (written.Count == 0)
@@ -225,7 +266,7 @@ namespace UniverIdle.Editor
       return sb.ToString();
     }
 
-    public static string ToScavengeJson(ScavengeDataFile data)
+    public static string ToWorkContentJson(WorkContentDataFile data)
     {
       var sb = new StringBuilder();
       sb.Append("{\n  \"version\": ").Append(data.version).Append(",\n");
@@ -238,16 +279,14 @@ namespace UniverIdle.Editor
       return sb.ToString();
     }
 
-    public static Dictionary<string, IList<string[]>> BuildSheetRows(ItemsDataFile items, ScavengeDataFile scavenge)
+    public static Dictionary<string, IList<string[]>> BuildWorkbookSheetRows(WorkContentDataFile data, ItemRow[] items)
     {
-      var sheets = new Dictionary<string, IList<string[]>>(StringComparer.OrdinalIgnoreCase)
+      return new Dictionary<string, IList<string[]>>(StringComparer.OrdinalIgnoreCase)
       {
-        ["items"] = BuildItemRows(items?.items),
-        ["works"] = BuildWorkRows(scavenge?.works),
-        ["actions"] = BuildActionRows(scavenge?.actions),
-        ["loot"] = BuildLootRows(items?.items, scavenge?.actions),
+        ["works"] = BuildWorkRows(data?.works),
+        ["actions"] = BuildActionRows(data?.actions),
+        ["loot"] = BuildLootRows(items, data?.actions),
       };
-      return sheets;
     }
 
     public static string GetExcelFullPath(string excelKey)
@@ -262,6 +301,15 @@ namespace UniverIdle.Editor
     public static string GetScavengeJsonFullPath() =>
       Path.Combine(Application.streamingAssetsPath, UniverIdle.Game.GameDataPaths.ScavengeRelativePath);
 
+    public static string GetWoodcuttingJsonFullPath() =>
+      Path.Combine(Application.streamingAssetsPath, UniverIdle.Game.GameDataPaths.WoodcuttingRelativePath);
+
+    public static string GetMonsterExploreJsonFullPath() =>
+      Path.Combine(Application.streamingAssetsPath, UniverIdle.Game.GameDataPaths.MonsterExploreRelativePath);
+
+    public static int CountDataRows(Dictionary<string, List<string[]>> workbookSheets, GameDataSheetRegistry.SheetInfo sheet) =>
+      CountDataRows(workbookSheets, sheet.TabName, sheet.Kind);
+
     public static int CountDataRows(string excelKey, string sheetId)
     {
       var path = GetExcelFullPath(excelKey);
@@ -269,23 +317,29 @@ namespace UniverIdle.Editor
       return CountDataRows(SimpleXlsx.Read(path), sheetId);
     }
 
-    public static int CountDataRows(Dictionary<string, List<string[]>> workbookSheets, string sheetId)
+    public static int CountDataRows(Dictionary<string, List<string[]>> workbookSheets, string sheetTab, GameDataSheetRegistry.WorkSheetKind kind)
     {
       if (workbookSheets == null ||
-          !workbookSheets.TryGetValue(sheetId, out var rows) ||
+          !workbookSheets.TryGetValue(sheetTab, out var rows) ||
           rows == null ||
           rows.Count == 0)
         return -1;
 
-      var headerIndex = sheetId switch
+      var headerIndex = kind switch
       {
-        "items" => FindHeaderRowIndex(rows, ItemHeaders),
-        "works" => FindHeaderRowIndex(rows, WorkHeaders),
-        "actions" => FindHeaderRowIndex(rows, ActionHeaders),
-        "loot" => FindLootHeaderRowIndex(rows),
+        GameDataSheetRegistry.WorkSheetKind.Items => FindHeaderRowIndex(rows, ItemHeaders),
+        GameDataSheetRegistry.WorkSheetKind.Works => FindHeaderRowIndex(rows, WorkHeaders),
+        GameDataSheetRegistry.WorkSheetKind.Actions => FindHeaderRowIndex(rows, ActionHeaders),
+        GameDataSheetRegistry.WorkSheetKind.Loot => FindLootHeaderRowIndex(rows),
         _ => 0,
       };
       return Math.Max(0, rows.Count - headerIndex - 1);
+    }
+
+    public static int CountDataRows(Dictionary<string, List<string[]>> workbookSheets, string sheetId)
+    {
+      var info = GameDataSheetRegistry.Get(sheetId);
+      return CountDataRows(workbookSheets, info.TabName, info.Kind);
     }
 
     private static void WriteExcelFile(string path, IReadOnlyDictionary<string, IList<string[]>> sheets)
@@ -303,10 +357,17 @@ namespace UniverIdle.Editor
         Directory.CreateDirectory(dir);
     }
 
-    private static bool SelectedTouchesScavenge(ISet<string> selected) =>
-      selected.Contains("works") || selected.Contains("actions") || selected.Contains("loot");
+    private static bool SelectedTouchesWorkbook(ISet<string> selected, string excelKey)
+    {
+      foreach (var sheet in GameDataSheetRegistry.All)
+      {
+        if (sheet.ExcelKey == excelKey && selected.Contains(sheet.Id))
+          return true;
+      }
+      return false;
+    }
 
-    private static void ValidateItemReferences(ItemsDataFile items, ScavengeDataFile scavenge)
+    private static void ValidateItemReferences(ItemsDataFile items, WorkContentDataFile workContent)
     {
       var itemIds = new HashSet<string>(StringComparer.Ordinal);
       if (items?.items != null)
@@ -318,9 +379,12 @@ namespace UniverIdle.Editor
         }
       }
 
-      if (scavenge?.actions == null) return;
-      foreach (var action in scavenge.actions)
+      if (workContent?.actions == null) return;
+      foreach (var action in workContent.actions)
       {
+        if (!string.IsNullOrWhiteSpace(action?.costItemId) && !itemIds.Contains(action.costItemId))
+          throw new InvalidDataException($"actions 引用了未知道具 costItemId：{action.costItemId}（action {action.id}）");
+
         if (action?.loot == null) continue;
         foreach (var loot in action.loot)
         {
@@ -351,8 +415,8 @@ namespace UniverIdle.Editor
       if (!excelCache.TryGetValue(info.ExcelKey, out var fileSheets) || fileSheets == null)
         throw new InvalidDataException($"未加载 Excel：{GameDataSheetRegistry.GetExcelFileName(info.ExcelKey)}");
 
-      if (fileSheets.TryGetValue(sheetId, out var rows)) return rows;
-      throw new InvalidDataException($"{GameDataSheetRegistry.GetExcelFileName(info.ExcelKey)} 缺少工作表：{sheetId}");
+      if (fileSheets.TryGetValue(info.TabName, out var rows)) return rows;
+      throw new InvalidDataException($"{GameDataSheetRegistry.GetExcelFileName(info.ExcelKey)} 缺少工作表：{info.TabName}");
     }
 
     private static List<ItemRow> ReadItemSheet(List<string[]> rows) =>
@@ -392,6 +456,8 @@ namespace UniverIdle.Editor
         requiredWorkLevel = ParseInt(r[7], 1),
         description = r[8],
         thumbColor = r[9],
+        costItemId = r.Length > 10 ? r[10] : string.Empty,
+        costAmount = r.Length > 11 ? ParseInt(r[11]) : 0,
       });
 
     private static Dictionary<string, List<LootRow>> ReadLootSheet(List<string[]> rows)
@@ -611,6 +677,8 @@ namespace UniverIdle.Editor
           action.xpReward.ToString(CultureInfo.InvariantCulture),
           action.requiredWorkLevel.ToString(CultureInfo.InvariantCulture),
           action.description, action.thumbColor,
+          action.costItemId ?? string.Empty,
+          action.costAmount.ToString(CultureInfo.InvariantCulture),
         });
       }
       return rows;
@@ -714,8 +782,13 @@ namespace UniverIdle.Editor
         sb.Append("      \"xpReward\": ").Append(action.xpReward).Append(",\n");
         sb.Append("      \"requiredWorkLevel\": ").Append(action.requiredWorkLevel).Append(",\n");
         sb.Append("      \"description\": ").Append(Q(action.description)).Append(",\n");
-        sb.Append("      \"thumbColor\": ").Append(Q(action.thumbColor)).Append(",\n");
-        sb.Append("      \"loot\": [\n");
+        sb.Append("      \"thumbColor\": ").Append(Q(action.thumbColor));
+        if (!string.IsNullOrWhiteSpace(action.costItemId) && action.costAmount > 0)
+        {
+          sb.Append(",\n      \"costItemId\": ").Append(Q(action.costItemId));
+          sb.Append(",\n      \"costAmount\": ").Append(action.costAmount);
+        }
+        sb.Append(",\n      \"loot\": [\n");
         WriteLootRows(sb, action.loot);
         sb.Append("      ]\n");
         sb.Append("    }");
