@@ -1,99 +1,220 @@
 #if UNITY_EDITOR
+
 namespace UniverIdle.Editor
+
 {
-    /// <summary>与 docs/设计/概念图/主界面-概念.html 一致的排布常量（1200×680 基准）。</summary>
+
     public static partial class MainUISetup
+
     {
+
+        private static MainUILayoutParams _layout;
+
+
+
+        private static void SetActiveLayout(MainUILayoutParams layout) => _layout = layout;
+
+
+
+        private static MainUILayoutParams L => _layout;
+
+
+
         private static class ConceptLayout
+
         {
-            public const float DividerThickness = 1f;
 
-            public const float TopBarHeight = 100f;
-            public const float TopBarPaddingH = 20f;
-            public const float TopBarPadV = 14f;
-            public const float TopBarGap = 14f;
-            public const float TopBarContentHeight = 72f;
-            public const float LogoIconSize = 44f;
-            public const float LogoGap = 10f;
-            public const float TitleFont = 18f;
-            public const float SubtitleFont = 13f;
-            public const float CurrencyGap = 16f;
-            public const float TopBtnPadH = 12f;
-            public const float TopBtnPadV = 8f;
-            public const float TopBtnFont = 14f;
-            public const float TopBarCurrencyFont = 14f;
-            public const float TopBarLogoGlyphFont = 20f;
+            public static float DividerThickness => L.dividerThickness;
 
-            // Body 横排：Center 固定宽；超宽屏多余空间由 BodyFlexSpacer 吸收
-            public const float SidebarWidth = 120f;
-            public const float CenterWidth = 800f;
-            public const float SidebarPadH = 8f;
-            public const float SidebarPadV = 10f;
-            public const float SidebarGap = 6f;
+            public static bool UseBodyFlexSpacer => L.useBodyFlexSpacer;
+
+            public static bool BodyChildForceExpandWidth => L.bodyChildForceExpandWidth;
+
+
+
+            public static float TopBarHeight => L.topBarHeight;
+
+            public static float TopBarPaddingH => L.topBarPaddingH;
+
+            public static float TopBarPadV => L.topBarPadV;
+
+            public static float TopBarGap => L.topBarGap;
+
+            public static float TopBarContentHeight => L.topBarContentHeight;
+
+            public static float LogoIconSize => L.logoIconSize;
+
+            public static float LogoGap => L.logoGap;
+
+            public static float TitleFont => L.titleFont;
+
+            public static float SubtitleFont => L.subtitleFont;
+
+            public static float CurrencyGap => L.currencyGap;
+
+            public static float TopBtnPadH => L.topBtnPadH;
+
+            public static float TopBtnPadV => L.topBtnPadV;
+
+            public static float TopBtnFont => L.topBtnFont;
+
+            public static float TopBarCurrencyFont => L.topBarCurrencyFont;
+
+            public static float TopBarLogoGlyphFont => L.topBarLogoGlyphFont;
+
+
+
+            public static float SidebarWidth => L.sidebarWidth;
+
+            public static float CenterPreferredWidth => L.centerPreferredWidth;
+
+            public static float CenterFlexibleWidth => L.centerFlexibleWidth;
+
+            public static float DetailPreferredWidth => L.detailPreferredWidth;
+
+            public static float DetailMinWidth => L.detailMinWidth;
+
+            public static float DetailFlexibleWidth => L.detailFlexibleWidth;
+
+
+
+            public static float SidebarPadH => L.sidebarPadH;
+
+            public static float SidebarPadV => L.sidebarPadV;
+
+            public static float SidebarGap => L.sidebarGap;
+
             public const float SkillMinHeight = 52f;
+
             public const float SkillPadH = 10f;
+
             public const float SkillPadV = 8f;
+
             public const float SkillGap = 10f;
+
             public const float SkillIconSize = 40f;
+
             public const float SkillAccentWidth = 3f;
+
             public const float SkillBarHeight = 3f;
+
             public const float SkillNameFont = 14f;
+
             public const float SkillLvFont = 11f;
 
-            public const float CenterPadding = 14f;
-            public const float CenterGap = 12f;
-            public const float BannerHeight = 130f;
-            public const float BannerOverlayPadH = 20f;
-            public const float BannerOverlayPadV = 16f;
-            public const float BannerTitleFont = 22f;
-            public const float TagGap = 8f;
-            public const float TagFont = 11f;
 
-            public const float CardGap = 10f;
-            public const float CardPadding = 10f;
-            public const float CardMinHeight = 100f;
-            public const float ActionCardsRowHeight = 100f;
-            public const float CardThumbHeight = 56f;
-            public const float CardTitleFont = 14f;
-            public const float CardMetaFont = 12f;
-            public const float CardYieldFont = 11f;
 
-            public const float RunningPadH = 16f;
-            public const float RunningPadV = 14f;
-            public const float RunningGap = 14f;
-            public const float RunningThumb = 56f;
-            public const float RunningLabelFont = 15f;
-            public const float RunningLabelToBar = 8f;
-            public const float RunningBarHeight = 10f;
-            public const float RunningBarTotalHeight = 84f;
-            public const float RunningTimeWidth = 48f;
-            public const float RunningTimeFont = 13f;
+            public static float CenterPadding => L.centerPadding;
 
-            public const float DetailWidth = 160f;
-            public const float DetailPadding = 14f;
-            public const float DetailGap = 12f;
-            public const float DetailTitleFont = 16f;
-            public const float DetailBodyFont = 13f;
-            public const float DetailReqFont = 12f;
+            public static float CenterGap => L.centerGap;
 
-            public const float InvBarHeight = 76f;
-            public const float InvPadH = 16f;
-            public const float InvPadV = 10f;
-            public const float InvGap = 10f;
-            public const float InvLabelWidth = 24f;
-            public const float SlotSize = 52f;
-            public const float SlotIconSize = 36f;
-            public const float SlotCountFont = 11f;
+            public static float BannerHeight => L.bannerHeight;
 
-            public const float InvPanelPadding = 16f;
-            public const float InvPanelGap = 12f;
-            public const float InvPanelHeaderHeight = 36f;
-            public const float InvPanelTitleFont = 18f;
-            public const float InvPanelCloseSize = 32f;
-            public const float InvPanelSlotWidth = 88f;
-            public const float InvPanelSlotHeight = 96f;
-            public const float InvPanelSlotGap = 8f;
+            public static float BannerOverlayPadH => L.bannerOverlayPadH;
+
+            public static float BannerOverlayPadV => L.bannerOverlayPadV;
+
+            public static float BannerTitleFont => L.bannerTitleFont;
+
+            public static float TagGap => L.tagGap;
+
+            public static float TagFont => L.tagFont;
+
+            public static bool UseCenterFlexSpacer => L.useCenterFlexSpacer;
+
+
+
+            public static float CardGap => L.cardGap;
+
+            public static float CardPadding => L.cardPadding;
+
+            public static float CardMinHeight => L.cardMinHeight;
+
+            public static float ActionCardsRowHeight => L.actionCardsRowHeight;
+
+            public static float CardThumbHeight => L.cardThumbHeight;
+
+            public static float CardTitleFont => L.cardTitleFont;
+
+            public static float CardMetaFont => L.cardMetaFont;
+
+            public static float CardYieldFont => L.cardYieldFont;
+
+
+
+            public static float RunningPadH => L.runningPadH;
+
+            public static float RunningPadV => L.runningPadV;
+
+            public static float RunningGap => L.runningGap;
+
+            public static float RunningThumb => L.runningThumb;
+
+            public static float RunningLabelFont => L.runningLabelFont;
+
+            public static float RunningLabelToBar => L.runningLabelToBar;
+
+            public static float RunningBarHeight => L.runningBarHeight;
+
+            public static float RunningBarTotalHeight => L.runningBarTotalHeight;
+
+            public static float RunningTimeWidth => L.runningTimeWidth;
+
+            public static float RunningTimeFont => L.runningTimeFont;
+
+
+
+            public static float DetailWidth => L.detailPreferredWidth;
+
+            public static float DetailPadding => L.detailPadding;
+
+            public static float DetailGap => L.detailGap;
+
+            public static float DetailHeroHeight => L.detailHeroHeight;
+
+            public static float DetailTitleHeight => L.detailTitleHeight;
+
+            public static float DetailBodyHeight => L.detailBodyHeight;
+
+            public static float DetailBodyFlexibleHeight => L.detailBodyFlexibleHeight;
+
+            public static float DetailReqLineHeight => L.detailReqLineHeight;
+
+            public static float DetailBodyLineSpacing => L.detailBodyLineSpacing;
+
+            public static float DetailTitleFont => L.detailTitleFont;
+
+            public static float DetailBodyFont => L.detailBodyFont;
+
+            public static float DetailReqFont => L.detailReqFont;
+
+            public static bool DetailChildForceExpandWidth => L.detailChildForceExpandWidth;
+
+
+
+            public static float InvPanelPadding => L.invPanelPadding;
+
+            public static float InvPanelGap => L.invPanelGap;
+
+            public static float InvPanelHeaderHeight => L.invPanelHeaderHeight;
+
+            public static float InvPanelTitleFont => L.invPanelTitleFont;
+
+            public static float InvPanelCloseSize => L.invPanelCloseSize;
+
+            public static float InvPanelSlotWidth => L.invPanelSlotWidth;
+
+            public static float InvPanelSlotHeight => L.invPanelSlotHeight;
+
+            public static float InvPanelSlotGap => L.invPanelSlotGap;
+
+            public static UnityEngine.Vector2 InvPanelSize => L.invPanelSize;
+
         }
+
     }
+
 }
+
 #endif
+

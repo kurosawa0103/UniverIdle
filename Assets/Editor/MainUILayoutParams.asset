@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87241bda0808d6f4c96406949235071a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  referenceResolution: {x: 1920, y: 1080}
+  matchWidthOrHeight: 0.5
+  topBarHeight: 100
+  topBarPaddingH: 20
+  topBarPadV: 14
+  topBarGap: 14
+  topBarContentHeight: 72
+  logoIconSize: 44
+  logoGap: 10
+  titleFont: 18
+  subtitleFont: 13
+  currencyGap: 16
+  topBtnPadH: 12
+  topBtnPadV: 8
+  topBtnFont: 14
+  topBarCurrencyFont: 14
+  topBarLogoGlyphFont: 20
+  dividerThickness: 1
+  useBodyFlexSpacer: 1
+  bodyChildForceExpandWidth: 0
+  sidebarWidth: 380
+  centerPreferredWidth: 1200
+  centerFlexibleWidth: 1
+  detailPreferredWidth: 418.01
+  detailMinWidth: -1
+  detailFlexibleWidth: 0
+  sidebarPadH: 8
+  sidebarPadV: 10
+  sidebarGap: 6
+  centerPadding: 14
+  centerGap: 12
+  bannerHeight: 130
+  bannerOverlayPadH: 20
+  bannerOverlayPadV: 16
+  bannerTitleFont: 22
+  tagGap: 8
+  tagFont: 11
+  cardGap: 10
+  cardPadding: 10
+  cardMinHeight: 100
+  actionCardsRowHeight: 100
+  cardThumbHeight: 56
+  cardTitleFont: 14
+  cardMetaFont: 12
+  cardYieldFont: 11
+  useCenterFlexSpacer: 1
+  runningPadH: 16
+  runningPadV: 14
+  runningGap: 14
+  runningThumb: 56
+  runningLabelFont: 15
+  runningLabelToBar: 8
+  runningBarHeight: 10
+  runningBarTotalHeight: 84
+  runningTimeWidth: 48
+  runningTimeFont: 13
+  detailPadding: 14
+  detailGap: 12
+  detailHeroHeight: 132
+  detailTitleHeight: 22
+  detailBodyHeight: 64
+  detailBodyFlexibleHeight: 1
+  detailReqLineHeight: 18
+  detailBodyLineSpacing: 6
+  detailTitleFont: 16
+  detailBodyFont: 13
+  detailReqFont: 12
+  detailChildForceExpandWidth: 1
+  invPanelPadding: 16
+  invPanelGap: 12
+  invPanelHeaderHeight: 36
+  invPanelTitleFont: 18
+  invPanelCloseSize: 32
+  invPanelSlotWidth: 88
+  invPanelSlotHeight: 96
+  invPanelSlotGap: 8
+  invPanelSize: {x: 520, y: 560}

@@ -31,6 +31,7 @@ namespace UniverIdle.Editor
         private static void Build()
         {
             EnsureEventSystem();
+            SetActiveLayout(ResolveLayoutForBuild());
             RemoveExistingRoot();
 
             var font = GetChineseFontAsset();
@@ -38,7 +39,7 @@ namespace UniverIdle.Editor
 
             Selection.activeGameObject = root;
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-            Debug.Log("[UniverIdle] 主界面已创建（排布对齐主界面-概念.html）。运行场景即可预览。");
+            Debug.Log("[UniverIdle] 主界面已重建（参数来自场景或 MainUILayoutParams.asset）。");
         }
 
         private static void EnsureEventSystem()
@@ -117,8 +118,8 @@ namespace UniverIdle.Editor
             canvasGo.AddComponent<MainUIInputBootstrap>();
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1920, 1080);
-            scaler.matchWidthOrHeight = 0.5f;
+            scaler.referenceResolution = L.referenceResolution;
+            scaler.matchWidthOrHeight = L.matchWidthOrHeight;
             canvasGo.AddComponent<GraphicRaycaster>();
 
             var app = CreateRect("App", canvasGo.transform);
@@ -146,8 +147,8 @@ namespace UniverIdle.Editor
             var bodyLE = body.gameObject.AddComponent<LayoutElement>();
             bodyLE.flexibleHeight = 1;
             var bodyHLG = body.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(bodyHLG, expandWidth: true, expandHeight: true);
-            bodyHLG.childForceExpandWidth = false;
+            ConfigureLayoutGroup(bodyHLG, expandWidth: ConceptLayout.BodyChildForceExpandWidth, expandHeight: true);
+            bodyHLG.childForceExpandWidth = ConceptLayout.BodyChildForceExpandWidth;
             bodyHLG.spacing = 0;
 
             var sidebar = CreatePanel(body, "Sidebar", UITheme.SidebarBg, -1, ConceptLayout.SidebarWidth);
@@ -155,7 +156,10 @@ namespace UniverIdle.Editor
             CreateDivider(body, vertical: true);
 
             var center = CreateRect("Center", body);
-            LockLayoutWidth(center, ConceptLayout.CenterWidth);
+            var centerLE = center.gameObject.AddComponent<LayoutElement>();
+            if (ConceptLayout.CenterPreferredWidth > 0f)
+                centerLE.preferredWidth = ConceptLayout.CenterPreferredWidth;
+            centerLE.flexibleWidth = ConceptLayout.CenterFlexibleWidth;
             var centerHost = center.gameObject.AddComponent<WorkCenterHost>();
 
             CreateStandardWorkCenter(center, font, GameContent.WorkScavengeId, centerHost);
@@ -163,11 +167,22 @@ namespace UniverIdle.Editor
             CreateStandardWorkCenter(center, font, GameContent.WorkMiningId, centerHost);
             CreateStandardWorkCenter(center, font, GameContent.WorkMonsterExploreId, centerHost);
 
-            var bodySpacer = CreateRect("BodyFlexSpacer", body);
-            bodySpacer.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+            if (ConceptLayout.UseBodyFlexSpacer)
+            {
+                var bodySpacer = CreateRect("BodyFlexSpacer", body);
+                bodySpacer.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+            }
 
             CreateDivider(body, vertical: true);
-            var detail = CreatePanel(body, "Detail", UITheme.SidebarBg, -1, ConceptLayout.DetailWidth);
+            var detail = CreatePanel(body, "Detail", UITheme.SidebarBg, -1,
+                ConceptLayout.DetailPreferredWidth > 0f ? ConceptLayout.DetailPreferredWidth : -1f);
+            var detailLE = detail.GetComponent<LayoutElement>();
+            if (detailLE != null)
+            {
+                detailLE.flexibleWidth = ConceptLayout.DetailFlexibleWidth;
+                if (ConceptLayout.DetailMinWidth > 0f)
+                    detailLE.minWidth = ConceptLayout.DetailMinWidth;
+            }
             AddDetailPanel(detail, font, out var detailTitle, out var detailBody);
 
             var inventoryPanel = CreateInventoryPanel(canvasGo.transform, font);

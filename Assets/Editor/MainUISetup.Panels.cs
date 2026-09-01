@@ -178,8 +178,11 @@ namespace UniverIdle.Editor
             cardsLE.preferredHeight = ConceptLayout.ActionCardsRowHeight;
             cardsLE.flexibleHeight = 0;
 
-            var centerSpacer = CreateRect("FlexSpacer", root);
-            centerSpacer.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1;
+            if (ConceptLayout.UseCenterFlexSpacer)
+            {
+                var centerSpacer = CreateRect("FlexSpacer", root);
+                centerSpacer.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1;
+            }
 
             var runningBar = CreateRunningBar(root, font, out var progressFill, out var progressLabel, out var progressTime);
             var runningLE = runningBar.gameObject.AddComponent<LayoutElement>();
@@ -383,27 +386,34 @@ namespace UniverIdle.Editor
         {
             var pad = Mathf.RoundToInt(ConceptLayout.DetailPadding);
             var vlg = detail.gameObject.AddComponent<VerticalLayoutGroup>();
-            ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: false);
+            ConfigureLayoutGroup(vlg, expandWidth: ConceptLayout.DetailChildForceExpandWidth, expandHeight: false);
             vlg.padding = new RectOffset(pad, pad, pad, pad);
             vlg.spacing = ConceptLayout.DetailGap;
 
             var hero = CreateColorBlock("Hero", detail, UITheme.Panel, Vector2.zero);
             var heroLE = hero.gameObject.AddComponent<LayoutElement>();
             heroLE.flexibleWidth = 1;
-            heroLE.preferredHeight = ConceptLayout.DetailWidth - ConceptLayout.DetailPadding * 2f;
+            heroLE.preferredHeight = ConceptLayout.DetailHeroHeight;
             StyleOutline(hero, UITheme.Border, new Vector2(1, -1));
             var heroInner = CreateColorBlock("Shrimp", hero.rectTransform, UITheme.Accent, new Vector2(80, 80));
             Center(heroInner.rectTransform, 80, 80);
 
-            title = CreateLayoutTMP("村口 · 拾荒", detail, font, ConceptLayout.DetailTitleFont, UITheme.Text, TextAlignmentOptions.Left, 22);
-            body = CreateLayoutTMP("拾荒分多个场景，每个地点掉落不同。选动作后横幅显示当前场景。", detail, font, ConceptLayout.DetailBodyFont, UITheme.Muted, TextAlignmentOptions.TopLeft, 64);
+            title = CreateLayoutTMP("村口 · 拾荒", detail, font, ConceptLayout.DetailTitleFont, UITheme.Text,
+                TextAlignmentOptions.Left, ConceptLayout.DetailTitleHeight);
+            body = CreateLayoutTMP("拾荒分多个场景，每个地点掉落不同。选动作后横幅显示当前场景。", detail, font,
+                ConceptLayout.DetailBodyFont, UITheme.Muted, TextAlignmentOptions.TopLeft, ConceptLayout.DetailBodyHeight);
             body.enableWordWrapping = true;
-            body.lineSpacing = 6f;
-            body.gameObject.GetComponent<LayoutElement>().flexibleHeight = 1;
+            body.lineSpacing = ConceptLayout.DetailBodyLineSpacing;
+            var bodyLE = body.gameObject.GetComponent<LayoutElement>();
+            if (bodyLE != null && ConceptLayout.DetailBodyFlexibleHeight >= 0f)
+                bodyLE.flexibleHeight = ConceptLayout.DetailBodyFlexibleHeight;
 
-            CreateLayoutTMP("✓ 拾荒 Lv.1", detail, font, ConceptLayout.DetailReqFont, UITheme.Teal, TextAlignmentOptions.Left, 18);
-            CreateLayoutTMP("场景：村口、街道、谷仓后…", detail, font, ConceptLayout.DetailReqFont, UITheme.Teal, TextAlignmentOptions.Left, 18);
-            CreateLayoutTMP("掉落：按动作独立概率", detail, font, ConceptLayout.DetailReqFont, UITheme.Muted, TextAlignmentOptions.Left, 18);
+            CreateLayoutTMP("✓ 拾荒 Lv.1", detail, font, ConceptLayout.DetailReqFont, UITheme.Teal,
+                TextAlignmentOptions.Left, ConceptLayout.DetailReqLineHeight);
+            CreateLayoutTMP("场景：村口、街道、谷仓后…", detail, font, ConceptLayout.DetailReqFont, UITheme.Teal,
+                TextAlignmentOptions.Left, ConceptLayout.DetailReqLineHeight);
+            CreateLayoutTMP("掉落：按动作独立概率", detail, font, ConceptLayout.DetailReqFont, UITheme.Muted,
+                TextAlignmentOptions.Left, ConceptLayout.DetailReqLineHeight);
         }
 
         private static InventoryPanelView CreateInventoryPanel(Transform canvas, TMP_FontAsset font)
@@ -422,7 +432,7 @@ namespace UniverIdle.Editor
             var panel = CreateRect("Panel", overlay);
             panel.anchorMin = panel.anchorMax = new Vector2(0.5f, 0.5f);
             panel.pivot = new Vector2(0.5f, 0.5f);
-            panel.sizeDelta = new Vector2(520, 560);
+            panel.sizeDelta = ConceptLayout.InvPanelSize;
             var panelImg = panel.gameObject.AddComponent<Image>();
             panelImg.color = UITheme.Panel;
             StyleOutline(panelImg, UITheme.Border, new Vector2(1, -1));
