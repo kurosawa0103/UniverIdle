@@ -42,7 +42,7 @@ namespace UniverIdle.UI
             if (border != null)
             {
                 border.enabled = selected;
-                border.effectColor = selected ? UITheme.Teal : UITheme.Border;
+                border.effectColor = UITheme.Teal;
             }
             if (accentBar != null)
                 accentBar.enabled = selected;

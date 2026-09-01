@@ -52,7 +52,7 @@ namespace UniverIdle.UI
             if (background != null)
                 background.color = selected ? UITheme.CardHover : UITheme.Panel;
             if (border != null)
-                border.effectColor = selected ? UITheme.Accent : UITheme.Border;
+                border.effectColor = selected ? UITheme.Accent : UITheme.BorderSubtle;
         }
     }
 }

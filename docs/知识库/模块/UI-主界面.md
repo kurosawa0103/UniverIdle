@@ -31,10 +31,11 @@ Assets/Res/fonts/unifont-15.asset   # 主界面 TMP 默认字体
 
 | 项 | 值 |
 |----|-----|
-| Canvas | Screen Space Overlay，全屏拉伸，参考 1920×1080 |
-| 根面板 `App` | 铺满画布 |
-| 顶栏 / 底栏 | 56px / 80px |
-| 左栏 / 右栏 | 180px / 240px |
+| Canvas | Screen Space Overlay，全屏；**内部尺寸对齐** [主界面-概念.html](../../设计/概念图/主界面-概念.html) |
+| 顶栏 / 底栏 | 52px / 76px |
+| 左栏 / 右栏 | 172px / 228px |
+| 中栏 | padding 14px，区块间距 12px |
+| 横幅 / 动作卡 / 进度条 | 130px / 3 列 grid 等效 / 自适应高度 |
 
 ## 左栏技能（当前占位 8 项）
 

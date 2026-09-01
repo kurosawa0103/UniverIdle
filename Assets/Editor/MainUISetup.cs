@@ -37,7 +37,7 @@ namespace UniverIdle.Editor
 
             Selection.activeGameObject = root;
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-            Debug.Log("[UniverIdle] 主界面已创建（全屏）。运行场景即可预览。");
+            Debug.Log("[UniverIdle] 主界面已创建（排布对齐主界面-概念.html）。运行场景即可预览。");
         }
 
         private static void EnsureEventSystem()
@@ -127,7 +127,7 @@ namespace UniverIdle.Editor
             var skills = new List<SkillNavItemView>();
             var actions = new List<ActionCardView>();
 
-            var topBar = CreatePanel(app, "TopBar", UITheme.TopBarBottom, 56);
+            var topBar = CreatePanel(app, "TopBar", UITheme.TopBarBottom, ConceptLayout.TopBarHeight);
             AttachTopGradient(topBar);
             AddTopBar(topBar, font, out var goldText);
             CreateDivider(app, vertical: false);
@@ -135,12 +135,11 @@ namespace UniverIdle.Editor
             var body = CreateRect("Body", app);
             var bodyLE = body.gameObject.AddComponent<LayoutElement>();
             bodyLE.flexibleHeight = 1;
-            bodyLE.minHeight = 400;
             var bodyHLG = body.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(bodyHLG, expandWidth: true, expandHeight: true);
             bodyHLG.spacing = 0;
 
-            var sidebar = CreatePanel(body, "Sidebar", UITheme.SidebarBg, -1, 180);
+            var sidebar = CreatePanel(body, "Sidebar", UITheme.SidebarBg, -1, ConceptLayout.SidebarWidth);
             AddSkillNav(sidebar, font, skills);
             CreateDivider(body, vertical: true);
 
@@ -149,8 +148,9 @@ namespace UniverIdle.Editor
             centerLE.flexibleWidth = 1;
             var centerVLG = center.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(centerVLG, expandWidth: true, expandHeight: false);
-            centerVLG.padding = new RectOffset(16, 16, 16, 16);
-            centerVLG.spacing = 12;
+            var cp = Mathf.RoundToInt(ConceptLayout.CenterPadding);
+            centerVLG.padding = new RectOffset(cp, cp, cp, cp);
+            centerVLG.spacing = ConceptLayout.CenterGap;
 
             var banner = CreateBanner(center, font, out var locationTitle);
             var cardsRow = CreateActionCards(center, font, actions);
@@ -158,14 +158,14 @@ namespace UniverIdle.Editor
 
             var cardsLE = cardsRow.gameObject.AddComponent<LayoutElement>();
             cardsLE.flexibleHeight = 1;
-            cardsLE.minHeight = 128;
+            cardsLE.minHeight = ConceptLayout.CardMinHeight;
 
             CreateDivider(body, vertical: true);
-            var detail = CreatePanel(body, "Detail", UITheme.SidebarBg, -1, 240);
+            var detail = CreatePanel(body, "Detail", UITheme.SidebarBg, -1, ConceptLayout.DetailWidth);
             AddDetailPanel(detail, font, out var detailTitle, out var detailBody);
 
             CreateDivider(app, vertical: false);
-            var invBar = CreatePanel(app, "InventoryBar", UITheme.InventoryBg, 80);
+            var invBar = CreatePanel(app, "InventoryBar", UITheme.InventoryBg, ConceptLayout.InvBarHeight);
             AddInventoryBar(invBar, font);
 
             controller.SetReferences(skills, locationTitle, actions, progressFill, progressLabel, progressTime, detailTitle, detailBody, goldText);

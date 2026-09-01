@@ -64,18 +64,10 @@ namespace UniverIdle.Editor
             return img;
         }
 
-        private static TextMeshProUGUI CreateSectionLabel(RectTransform parent, TMP_FontAsset font, string text)
-        {
-            var label = CreateLayoutTMP(text, parent, font, 11, UITheme.Muted, TextAlignmentOptions.Left, 18);
-            label.fontStyle = FontStyles.Bold;
-            label.characterSpacing = 2f;
-            return label;
-        }
-
         private static void AttachTopGradient(RectTransform panel)
         {
             var strip = CreateRect("TopGradient", panel);
-            strip.anchorMin = new Vector2(0, 0.45f);
+            strip.anchorMin = new Vector2(0, 0.5f);
             strip.anchorMax = Vector2.one;
             strip.offsetMin = Vector2.zero;
             strip.offsetMax = Vector2.zero;

@@ -13,35 +13,42 @@ namespace UniverIdle.Editor
         {
             var hlg = top.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(hlg, expandWidth: false, expandHeight: true);
-            hlg.padding = new RectOffset(20, 20, 8, 8);
-            hlg.spacing = 14;
+            var padH = Mathf.RoundToInt(ConceptLayout.TopBarPaddingH);
+            hlg.padding = new RectOffset(padH, padH, 0, 0);
+            hlg.spacing = ConceptLayout.TopBarGap;
             hlg.childAlignment = TextAnchor.MiddleLeft;
 
-            var logoIcon = CreateColorBlock("LogoIcon", top, UITheme.Hex("#3A5A4A"), new Vector2(40, 40));
-            AddLayout(logoIcon.gameObject, 40, 40);
+            var logo = CreateRect("Logo", top);
+            AddLayout(logo.gameObject, 0, ConceptLayout.LogoIconSize);
+            var logoHLG = logo.gameObject.AddComponent<HorizontalLayoutGroup>();
+            ConfigureLayoutGroup(logoHLG, expandWidth: false, expandHeight: true);
+            logoHLG.spacing = ConceptLayout.LogoGap;
+            logoHLG.childAlignment = TextAnchor.MiddleLeft;
+
+            var logoIcon = CreateColorBlock("LogoIcon", logo, UITheme.LogoBg, new Vector2(ConceptLayout.LogoIconSize, ConceptLayout.LogoIconSize));
+            AddLayout(logoIcon.gameObject, ConceptLayout.LogoIconSize, ConceptLayout.LogoIconSize);
             StyleOutline(logoIcon, UITheme.Border, new Vector2(1, -1));
             CreateTMP("✦", logoIcon.rectTransform, font, 18, UITheme.Gold, TextAlignmentOptions.Center);
 
-            var titleBlock = CreateRect("TitleBlock", top);
-            AddLayout(titleBlock.gameObject, 120, 40);
-            var titleVLG = titleBlock.gameObject.AddComponent<VerticalLayoutGroup>();
-            ConfigureLayoutGroup(titleVLG, expandWidth: true, expandHeight: false);
-            titleVLG.spacing = 0;
-            titleVLG.childAlignment = TextAnchor.MiddleLeft;
-
-            var title = CreateLayoutTMP("坠星谷", titleBlock, font, 17, UITheme.Cream, TextAlignmentOptions.Left, 22);
+            var title = CreateLayoutTMP(
+                $"坠星谷 <size={ConceptLayout.SubtitleFont}><color=#{ColorUtility.ToHtmlStringRGB(UITheme.Muted)}>萤溪村</color></size>",
+                logo, font, ConceptLayout.TitleFont, UITheme.Cream, TextAlignmentOptions.Left, ConceptLayout.LogoIconSize);
+            title.richText = true;
             title.fontStyle = FontStyles.Bold;
-            CreateLayoutTMP("萤溪村", titleBlock, font, 12, UITheme.Muted, TextAlignmentOptions.Left, 16);
+            var titleLE = title.gameObject.GetComponent<LayoutElement>();
+            titleLE.flexibleWidth = 1;
 
             var spacer = CreateRect("Spacer", top);
-            var spLE = spacer.gameObject.AddComponent<LayoutElement>();
-            spLE.flexibleWidth = 1;
+            spacer.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
 
-            goldText = CreateLayoutTMP("🪙 1,240", top, font, 14, UITheme.Gold, TextAlignmentOptions.Right, 36);
-            AddLayout(goldText.gameObject, 96, 36);
+            var currency = CreateRect("Currency", top);
+            var currencyHLG = currency.gameObject.AddComponent<HorizontalLayoutGroup>();
+            ConfigureLayoutGroup(currencyHLG, expandWidth: false, expandHeight: true);
+            currencyHLG.spacing = ConceptLayout.CurrencyGap;
+            currencyHLG.childAlignment = TextAnchor.MiddleRight;
 
-            CreateLayoutTMP("声望 ★★☆", top, font, 14, UITheme.Muted, TextAlignmentOptions.Right, 36)
-                .gameObject.AddComponent<LayoutElement>().preferredWidth = 108;
+            goldText = CreateLayoutTMP("🪙 1,240", currency, font, 14, UITheme.Gold, TextAlignmentOptions.Right, ConceptLayout.LogoIconSize);
+            CreateLayoutTMP("声望 ★★☆", currency, font, 14, UITheme.Muted, TextAlignmentOptions.Right, ConceptLayout.LogoIconSize);
 
             CreateTopButton(top, font, "图鉴");
             CreateTopButton(top, font, "背包");
@@ -51,35 +58,39 @@ namespace UniverIdle.Editor
         private static void CreateTopButton(RectTransform parent, TMP_FontAsset font, string label)
         {
             var rt = CreateRect($"Btn_{label}", parent);
-            AddLayout(rt.gameObject, 60, 34);
+            var le = rt.gameObject.AddComponent<LayoutElement>();
+            le.minHeight = ConceptLayout.TopBtnFont + ConceptLayout.TopBtnPadV * 2f + 8f;
             var img = rt.gameObject.AddComponent<Image>();
             img.color = UITheme.PanelLight;
             StyleOutline(img, UITheme.Border, new Vector2(1, -1));
             var btn = rt.gameObject.AddComponent<Button>();
             btn.targetGraphic = img;
-            ConfigureButton(btn, UITheme.PanelLight, UITheme.CardHover, UITheme.Hex("#4A5A50"));
-            CreateTMP(label, rt, font, 13, UITheme.Cream, TextAlignmentOptions.Center);
+            ConfigureButton(btn, UITheme.PanelLight, UITheme.CardHover, UITheme.ButtonPressed);
+            var tmp = CreateTMP(label, rt, font, ConceptLayout.TopBtnFont, UITheme.Cream, TextAlignmentOptions.Center);
+            tmp.margin = new Vector4(ConceptLayout.TopBtnPadH, ConceptLayout.TopBtnPadV, ConceptLayout.TopBtnPadH, ConceptLayout.TopBtnPadV);
         }
 
         private static void AddSkillNav(RectTransform sidebar, TMP_FontAsset font, List<SkillNavItemView> list)
         {
             var vlg = sidebar.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: false);
-            vlg.padding = new RectOffset(10, 10, 12, 12);
-            vlg.spacing = 6;
-
-            CreateSectionLabel(sidebar, font, "工作");
+            vlg.padding = new RectOffset(
+                Mathf.RoundToInt(ConceptLayout.SidebarPadH),
+                Mathf.RoundToInt(ConceptLayout.SidebarPadH),
+                Mathf.RoundToInt(ConceptLayout.SidebarPadV),
+                Mathf.RoundToInt(ConceptLayout.SidebarPadV));
+            vlg.spacing = ConceptLayout.SidebarGap;
 
             var data = new (string name, string loc, int lv, float xp, Color icon)[]
             {
-                ("打猎", "谷仓", 8, 0.4f, UITheme.Hex("#3A2820")),
-                ("伐木", "村外", 5, 0.32f, UITheme.Hex("#2A3820")),
-                ("溪钓", "萤溪", 12, 0.65f, UITheme.Hex("#2A4858")),
-                ("野拾", "林缘", 6, 0.28f, UITheme.Hex("#2A4838")),
-                ("掘矿", "矮洞", 10, 0.52f, UITheme.Hex("#383028")),
-                ("炼药", "工坊", 9, 0.48f, UITheme.Hex("#3A2830")),
-                ("锻造", "铁砧", 7, 0.35f, UITheme.Hex("#303028")),
-                ("讨伐", "林缘", 11, 0.58f, UITheme.Hex("#382828")),
+                ("打猎", "谷仓", 8, 0.4f, UITheme.SkillHunt),
+                ("伐木", "村外", 5, 0.32f, UITheme.SkillWood),
+                ("溪钓", "萤溪", 12, 0.65f, UITheme.SkillFish),
+                ("野拾", "林缘", 6, 0.28f, UITheme.SkillForage),
+                ("掘矿", "矮洞", 10, 0.52f, UITheme.SkillMine),
+                ("炼药", "工坊", 9, 0.48f, UITheme.SkillAlchemy),
+                ("锻造", "铁砧", 7, 0.35f, UITheme.SkillSmith),
+                ("讨伐", "林缘", 11, 0.58f, UITheme.SkillCombat),
             };
 
             foreach (var d in data)
@@ -90,14 +101,13 @@ namespace UniverIdle.Editor
             string skillName, string location, int level, float xp, Color iconColor)
         {
             var rt = CreateRect($"Skill_{skillName}", parent);
-            AddLayout(rt.gameObject, 0, 56);
-            var le = rt.gameObject.GetComponent<LayoutElement>();
-            le.flexibleWidth = 1;
+            AddLayout(rt.gameObject, 0, ConceptLayout.SkillMinHeight);
+            rt.gameObject.GetComponent<LayoutElement>().flexibleWidth = 1;
 
             var bg = rt.gameObject.AddComponent<Image>();
             bg.color = UITheme.Transparent;
             var border = bg.gameObject.AddComponent<Outline>();
-            border.effectColor = UITheme.Border;
+            border.effectColor = UITheme.Teal;
             border.effectDistance = new Vector2(1, -1);
             border.useGraphicAlpha = true;
             border.enabled = false;
@@ -108,33 +118,32 @@ namespace UniverIdle.Editor
 
             var hlg = rt.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(hlg, expandWidth: true, expandHeight: true);
-            hlg.padding = new RectOffset(8, 10, 8, 8);
-            hlg.spacing = 10;
+            hlg.padding = new RectOffset(
+                Mathf.RoundToInt(ConceptLayout.SkillPadH),
+                Mathf.RoundToInt(ConceptLayout.SkillPadH),
+                Mathf.RoundToInt(ConceptLayout.SkillPadV),
+                Mathf.RoundToInt(ConceptLayout.SkillPadV));
+            hlg.spacing = ConceptLayout.SkillGap;
             hlg.childAlignment = TextAnchor.MiddleLeft;
 
-            var accent = CreateColorBlock("Accent", rt, UITheme.Teal, new Vector2(3, 40));
-            AddLayout(accent.gameObject, 3, 40);
+            var accent = CreateColorBlock("Accent", rt, UITheme.Teal, new Vector2(ConceptLayout.SkillAccentWidth, ConceptLayout.SkillIconSize));
+            AddLayout(accent.gameObject, ConceptLayout.SkillAccentWidth, ConceptLayout.SkillIconSize);
             accent.enabled = false;
 
-            var iconFrame = CreateColorBlock("IconFrame", rt, iconColor, new Vector2(40, 40));
-            AddLayout(iconFrame.gameObject, 40, 40);
+            var iconFrame = CreateColorBlock("IconFrame", rt, iconColor, new Vector2(ConceptLayout.SkillIconSize, ConceptLayout.SkillIconSize));
+            AddLayout(iconFrame.gameObject, ConceptLayout.SkillIconSize, ConceptLayout.SkillIconSize);
             StyleOutline(iconFrame, UITheme.Border, new Vector2(1, -1));
-            var iconInner = CreateColorBlock("IconInner", iconFrame.rectTransform, UITheme.PanelLight, new Vector2(18, 18));
-            Center(iconInner.rectTransform, 18, 18);
-            iconInner.color = new Color(iconColor.r, iconColor.g, iconColor.b, 0.55f);
 
             var info = CreateRect("Info", rt);
-            var infoLE = info.gameObject.AddComponent<LayoutElement>();
-            infoLE.flexibleWidth = 1;
+            info.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
             var infoVLG = info.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(infoVLG, expandWidth: true, expandHeight: false);
-            infoVLG.spacing = 3;
+            infoVLG.spacing = 2;
             infoVLG.childAlignment = TextAnchor.UpperLeft;
 
-            var nameT = CreateLayoutTMP(skillName, info, font, 14, UITheme.Text, TextAlignmentOptions.Left, 20);
-            nameT.fontStyle = FontStyles.Bold;
-            var lvT = CreateLayoutTMP($"Lv. {level}", info, font, 11, UITheme.Muted, TextAlignmentOptions.Left, 16);
-            var barFill = CreateFilledBar(info, 4f, UITheme.BarTrack, UITheme.Teal, xp, "XpBg", "XpFill");
+            var nameT = CreateLayoutTMP(skillName, info, font, ConceptLayout.SkillNameFont, UITheme.Text, TextAlignmentOptions.Left, 18);
+            var lvT = CreateLayoutTMP($"Lv. {level}", info, font, ConceptLayout.SkillLvFont, UITheme.Muted, TextAlignmentOptions.Left, 14);
+            var barFill = CreateFilledBar(info, ConceptLayout.SkillBarHeight, UITheme.BarTrack, UITheme.Teal, xp, "XpBg", "XpFill");
 
             var view = rt.gameObject.AddComponent<SkillNavItemView>();
             view.Setup(bg, border, accent, iconFrame, nameT, lvT, barFill, skillName, location, level, xp, iconColor);
@@ -144,7 +153,7 @@ namespace UniverIdle.Editor
         private static RectTransform CreateBanner(RectTransform parent, TMP_FontAsset font, out TextMeshProUGUI title)
         {
             var banner = CreateRect("LocationBanner", parent);
-            AddLayout(banner.gameObject, 0, 136);
+            AddLayout(banner.gameObject, 0, ConceptLayout.BannerHeight);
 
             var bg = banner.gameObject.AddComponent<Image>();
             bg.color = UITheme.BannerBg;
@@ -154,42 +163,42 @@ namespace UniverIdle.Editor
             var gradMidRt = gradMid.rectTransform;
             gradMidRt.anchorMin = Vector2.zero;
             gradMidRt.anchorMax = Vector2.one;
-            gradMidRt.offsetMin = new Vector2(0, 24);
+            gradMidRt.offsetMin = Vector2.zero;
             gradMidRt.offsetMax = Vector2.zero;
-            gradMid.color = new Color(UITheme.BannerMid.r, UITheme.BannerMid.g, UITheme.BannerMid.b, 0.75f);
+            gradMid.color = new Color(UITheme.BannerMid.r, UITheme.BannerMid.g, UITheme.BannerMid.b, 0.85f);
 
-            var gradBottom = CreateColorBlock("GradBottom", banner, UITheme.BannerAccent, Vector2.zero);
-            var gradBottomRt = gradBottom.rectTransform;
-            gradBottomRt.anchorMin = new Vector2(0, 0);
-            gradBottomRt.anchorMax = new Vector2(1, 0);
-            gradBottomRt.pivot = new Vector2(0.5f, 0);
-            gradBottomRt.sizeDelta = new Vector2(0, 52);
-            gradBottomRt.anchoredPosition = Vector2.zero;
+            CreateBannerStar(banner, 0.78f, 0.72f, 4f, UITheme.StarLight);
+            CreateBannerStar(banner, 0.84f, 0.58f, 3f, UITheme.StarLight);
+            CreateBannerStar(banner, 0.9f, 0.78f, 3f, UITheme.StarWarm);
 
             var overlay = CreateColorBlock("Overlay", banner, Color.black, Vector2.zero);
-            Stretch(overlay.rectTransform);
-            overlay.color = new Color(0, 0, 0, 0.35f);
-
-            CreateBannerStar(banner, 0.78f, 0.72f, 4f, UITheme.Hex("#C8E8FF"));
-            CreateBannerStar(banner, 0.84f, 0.58f, 3f, UITheme.Hex("#C8E8FF"));
-            CreateBannerStar(banner, 0.9f, 0.78f, 3f, UITheme.Hex("#E8D8A8"));
+            var overlayRt = overlay.rectTransform;
+            overlayRt.anchorMin = Vector2.zero;
+            overlayRt.anchorMax = new Vector2(0.65f, 1f);
+            overlayRt.offsetMin = Vector2.zero;
+            overlayRt.offsetMax = Vector2.zero;
+            overlay.color = new Color(0, 0, 0, 0.65f);
 
             var textArea = CreateRect("BannerText", banner);
             Stretch(textArea);
             var pad = textArea.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(pad, expandWidth: true, expandHeight: false);
-            pad.padding = new RectOffset(20, 20, 18, 16);
+            pad.padding = new RectOffset(
+                Mathf.RoundToInt(ConceptLayout.BannerOverlayPadH),
+                Mathf.RoundToInt(ConceptLayout.BannerOverlayPadH),
+                Mathf.RoundToInt(ConceptLayout.BannerOverlayPadV),
+                Mathf.RoundToInt(ConceptLayout.BannerOverlayPadV));
             pad.childAlignment = TextAnchor.LowerLeft;
             pad.spacing = 6;
 
-            title = CreateLayoutTMP("萤溪", textArea, font, 24, Color.white, TextAlignmentOptions.Left, 32);
+            title = CreateLayoutTMP("萤溪", textArea, font, ConceptLayout.BannerTitleFont, Color.white, TextAlignmentOptions.Left, 28);
             title.fontStyle = FontStyles.Bold;
 
             var tags = CreateRect("Tags", textArea);
-            AddLayout(tags.gameObject, 0, 24);
+            AddLayout(tags.gameObject, 0, 22);
             var tagHLG = tags.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(tagHLG, expandWidth: false, expandHeight: true);
-            tagHLG.spacing = 8;
+            tagHLG.spacing = ConceptLayout.TagGap;
             CreateTag(tags, font, "微光");
             CreateTag(tags, font, "安全");
             CreateTag(tags, font, "★☆☆");
@@ -210,13 +219,13 @@ namespace UniverIdle.Editor
         {
             var rt = CreateRect($"Tag_{text}", parent);
             var le = rt.gameObject.AddComponent<LayoutElement>();
-            le.preferredHeight = 24;
-            le.minWidth = 52;
+            le.preferredHeight = 22;
+            le.minWidth = 48;
             var img = rt.gameObject.AddComponent<Image>();
             img.color = UITheme.TagBg;
-            StyleOutline(img, UITheme.Teal, new Vector2(1, -1));
-            var tmp = CreateTMP(text, rt, font, 11, UITheme.TagText, TextAlignmentOptions.Center);
-            tmp.margin = new Vector4(10, 2, 10, 2);
+            StyleOutline(img, new Color(UITheme.Teal.r, UITheme.Teal.g, UITheme.Teal.b, 0.5f), new Vector2(1, -1));
+            var tmp = CreateTMP(text, rt, font, ConceptLayout.TagFont, UITheme.TagText, TextAlignmentOptions.Center);
+            tmp.margin = new Vector4(8, 3, 8, 3);
         }
 
         private static RectTransform CreateActionCards(RectTransform parent, TMP_FontAsset font, List<ActionCardView> list)
@@ -224,14 +233,14 @@ namespace UniverIdle.Editor
             var row = CreateRect("ActionCards", parent);
             var hlg = row.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(hlg, expandWidth: true, expandHeight: true);
-            hlg.spacing = 12;
+            hlg.spacing = ConceptLayout.CardGap;
             hlg.childAlignment = TextAnchor.UpperLeft;
 
             var cards = new[]
             {
-                ("钓萤虾", "8.0 秒", "+1 萤虾", "萤溪浅水的小虾，夜间会发光。炼药常用基材，也可直接出售。", false, UITheme.Hex("#2A5850")),
-                ("淘星沙", "12 秒", "+1 星沙", "溪底沉积的星尘碎屑，附魔与炼金都需要。", false, UITheme.Hex("#4A4030")),
-                ("钓鳟鱼", "需 Lv.10", "🔒", "更深处才有鳟鱼，需要更高的溪钓等级。", true, UITheme.Hex("#3A5858")),
+                ("钓萤虾", "8.0 秒", "+1 萤虾", "萤溪浅水的小虾，夜间会发光。炼药常用基材，也可直接出售。", false, UITheme.ThumbFish),
+                ("淘星沙", "12 秒", "+1 星沙", "溪底沉积的星尘碎屑，附魔与炼金都需要。", false, UITheme.ThumbSand),
+                ("钓鳟鱼", "需 Lv.10", "🔒", "更深处才有鳟鱼，需要更高的溪钓等级。", true, UITheme.ThumbLocked),
             };
 
             foreach (var c in cards)
@@ -258,30 +267,27 @@ namespace UniverIdle.Editor
 
             var cardLE = rt.gameObject.AddComponent<LayoutElement>();
             cardLE.flexibleWidth = 1;
-            cardLE.minHeight = 124;
+            cardLE.minHeight = ConceptLayout.CardMinHeight;
 
+            var pad = Mathf.RoundToInt(ConceptLayout.CardPadding);
             var vlg = rt.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: false);
-            vlg.padding = new RectOffset(12, 12, 12, 12);
+            vlg.padding = new RectOffset(pad, pad, pad, pad);
             vlg.spacing = 8;
 
-            var thumbFrame = CreateColorBlock("Thumb", rt, UITheme.PanelLight, new Vector2(0, 60));
-            AddLayout(thumbFrame.gameObject, 0, 60);
-            StyleOutline(thumbFrame, UITheme.Border, new Vector2(1, -1));
+            var thumbFrame = CreateColorBlock("Thumb", rt, UITheme.PanelLight, new Vector2(0, ConceptLayout.CardThumbHeight));
+            AddLayout(thumbFrame.gameObject, 0, ConceptLayout.CardThumbHeight);
             var thumb = CreateColorBlock("ThumbInner", thumbFrame.rectTransform, thumbColor, new Vector2(36, 36));
             Center(thumb.rectTransform, 36, 36);
-            var thumbAccent = CreateColorBlock("ThumbAccent", thumb.rectTransform, UITheme.Accent, new Vector2(14, 14));
-            Center(thumbAccent.rectTransform, 14, 14);
 
-            var titleT = CreateLayoutTMP(title, rt, font, 14, UITheme.Text, TextAlignmentOptions.Left, 20);
-            titleT.fontStyle = FontStyles.Bold;
+            var titleT = CreateLayoutTMP(title, rt, font, ConceptLayout.CardTitleFont, UITheme.Text, TextAlignmentOptions.Left, 18);
             var metaRow = CreateRect("Meta", rt);
-            AddLayout(metaRow.gameObject, 0, 18);
+            AddLayout(metaRow.gameObject, 0, 16);
             var metaHLG = metaRow.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(metaHLG, expandWidth: true, expandHeight: true);
-            var metaL_T = CreateLayoutTMP(metaL, metaRow, font, 12, UITheme.Muted, TextAlignmentOptions.Left, 18);
+            var metaL_T = CreateLayoutTMP(metaL, metaRow, font, ConceptLayout.CardMetaFont, UITheme.Muted, TextAlignmentOptions.Left, 16);
             metaL_T.gameObject.GetComponent<LayoutElement>().flexibleWidth = 1;
-            var metaR_T = CreateLayoutTMP(metaR, metaRow, font, 11, UITheme.Teal, TextAlignmentOptions.Right, 18);
+            var metaR_T = CreateLayoutTMP(metaR, metaRow, font, ConceptLayout.CardYieldFont, UITheme.Teal, TextAlignmentOptions.Right, 16);
 
             var view = rt.gameObject.AddComponent<ActionCardView>();
             view.Setup(bg, border, thumb, titleT, metaL_T, metaR_T, cg, title, metaL, metaR, desc, locked, thumbColor);
@@ -292,36 +298,36 @@ namespace UniverIdle.Editor
             out Image fill, out TextMeshProUGUI label, out TextMeshProUGUI time)
         {
             var rt = CreateRect("RunningBar", parent);
-            AddLayout(rt.gameObject, 0, 84);
             var bg = rt.gameObject.AddComponent<Image>();
             bg.color = UITheme.Panel;
             StyleOutline(bg, UITheme.Border, new Vector2(1, -1));
 
             var hlg = rt.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(hlg, expandWidth: true, expandHeight: true);
-            hlg.padding = new RectOffset(16, 16, 14, 14);
-            hlg.spacing = 14;
+            hlg.padding = new RectOffset(
+                Mathf.RoundToInt(ConceptLayout.RunningPadH),
+                Mathf.RoundToInt(ConceptLayout.RunningPadH),
+                Mathf.RoundToInt(ConceptLayout.RunningPadV),
+                Mathf.RoundToInt(ConceptLayout.RunningPadV));
+            hlg.spacing = ConceptLayout.RunningGap;
             hlg.childAlignment = TextAnchor.MiddleLeft;
 
-            var thumb = CreateColorBlock("Thumb", rt, UITheme.Hex("#2A3830"), new Vector2(56, 56));
-            AddLayout(thumb.gameObject, 56, 56);
-            StyleOutline(thumb, UITheme.Border, new Vector2(1, -1));
-            var thumbInner = CreateColorBlock("Inner", thumb.rectTransform, UITheme.Accent, new Vector2(26, 26));
-            Center(thumbInner.rectTransform, 26, 26);
+            var thumb = CreateColorBlock("Thumb", rt, UITheme.RunningThumb, new Vector2(ConceptLayout.RunningThumb, ConceptLayout.RunningThumb));
+            AddLayout(thumb.gameObject, ConceptLayout.RunningThumb, ConceptLayout.RunningThumb);
+            var thumbInner = CreateColorBlock("Inner", thumb.rectTransform, UITheme.Accent, new Vector2(24, 24));
+            Center(thumbInner.rectTransform, 24, 24);
 
             var mid = CreateRect("Mid", rt);
-            var midLE = mid.gameObject.AddComponent<LayoutElement>();
-            midLE.flexibleWidth = 1;
+            mid.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
             var midVLG = mid.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(midVLG, expandWidth: true, expandHeight: false);
-            midVLG.spacing = 10;
+            midVLG.spacing = ConceptLayout.RunningLabelToBar;
 
-            label = CreateLayoutTMP("进行中 · 钓萤虾", mid, font, 15, UITheme.Text, TextAlignmentOptions.Left, 22);
-            label.fontStyle = FontStyles.Bold;
-            fill = CreateFilledBar(mid, 10f, UITheme.BarTrack, UITheme.Accent, 0.62f);
+            label = CreateLayoutTMP("进行中 · 钓萤虾", mid, font, ConceptLayout.RunningLabelFont, UITheme.Text, TextAlignmentOptions.Left, 20);
+            fill = CreateFilledBar(mid, ConceptLayout.RunningBarHeight, UITheme.BarTrack, UITheme.Accent, 0.62f);
 
-            time = CreateLayoutTMP("00:06", rt, font, 13, UITheme.Gold, TextAlignmentOptions.Right, 36);
-            AddLayout(time.gameObject, 52, 36);
+            time = CreateLayoutTMP("00:06", rt, font, ConceptLayout.RunningTimeFont, UITheme.Gold, TextAlignmentOptions.Right, ConceptLayout.RunningThumb);
+            AddLayout(time.gameObject, ConceptLayout.RunningTimeWidth, ConceptLayout.RunningThumb);
 
             return rt;
         }
@@ -329,69 +335,69 @@ namespace UniverIdle.Editor
         private static void AddDetailPanel(RectTransform detail, TMP_FontAsset font,
             out TextMeshProUGUI title, out TextMeshProUGUI body)
         {
+            var pad = Mathf.RoundToInt(ConceptLayout.DetailPadding);
             var vlg = detail.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: false);
-            vlg.padding = new RectOffset(16, 16, 16, 16);
-            vlg.spacing = 12;
+            vlg.padding = new RectOffset(pad, pad, pad, pad);
+            vlg.spacing = ConceptLayout.DetailGap;
 
-            CreateSectionLabel(detail, font, "详情");
-
-            var hero = CreateColorBlock("Hero", detail, UITheme.Panel, new Vector2(200, 200));
-            AddLayout(hero.gameObject, 0, 188);
+            var hero = CreateColorBlock("Hero", detail, UITheme.Panel, Vector2.zero);
+            var heroLE = hero.gameObject.AddComponent<LayoutElement>();
+            heroLE.flexibleWidth = 1;
+            heroLE.preferredHeight = ConceptLayout.DetailWidth - ConceptLayout.DetailPadding * 2f;
             StyleOutline(hero, UITheme.Border, new Vector2(1, -1));
-            var heroInner = CreateColorBlock("Shrimp", hero.rectTransform, UITheme.Accent, new Vector2(88, 88));
-            Center(heroInner.rectTransform, 88, 88);
-            var heroGlow = CreateColorBlock("Glow", hero.rectTransform, UITheme.Teal, new Vector2(120, 120));
-            Center(heroGlow.rectTransform, 120, 120);
-            heroGlow.transform.SetAsFirstSibling();
-            heroGlow.color = new Color(UITheme.Teal.r, UITheme.Teal.g, UITheme.Teal.b, 0.12f);
+            var heroInner = CreateColorBlock("Shrimp", hero.rectTransform, UITheme.Accent, new Vector2(80, 80));
+            Center(heroInner.rectTransform, 80, 80);
 
-            title = CreateLayoutTMP("萤虾", detail, font, 17, UITheme.Text, TextAlignmentOptions.Left, 24);
-            title.fontStyle = FontStyles.Bold;
-            body = CreateLayoutTMP("萤溪浅水的小虾，夜间会发光。炼药常用基材，也可直接出售。", detail, font, 13, UITheme.Muted, TextAlignmentOptions.TopLeft, 72);
+            title = CreateLayoutTMP("萤虾", detail, font, ConceptLayout.DetailTitleFont, UITheme.Text, TextAlignmentOptions.Left, 22);
+            body = CreateLayoutTMP("萤溪浅水的小虾，夜间会发光。炼药常用基材，也可直接出售。", detail, font, ConceptLayout.DetailBodyFont, UITheme.Muted, TextAlignmentOptions.TopLeft, 64);
             body.enableWordWrapping = true;
-            body.lineSpacing = 4f;
+            body.lineSpacing = 6f;
             body.gameObject.GetComponent<LayoutElement>().flexibleHeight = 1;
 
-            CreateDivider(detail, vertical: false);
-            CreateLayoutTMP("✓ 溪钓 Lv.1", detail, font, 12, UITheme.Teal, TextAlignmentOptions.Left, 20);
-            CreateLayoutTMP("✓ 地点：萤溪", detail, font, 12, UITheme.Teal, TextAlignmentOptions.Left, 20);
-            CreateLayoutTMP("稀有：星沙 2%", detail, font, 12, UITheme.Muted, TextAlignmentOptions.Left, 20);
+            CreateLayoutTMP("✓ 溪钓 Lv.1", detail, font, ConceptLayout.DetailReqFont, UITheme.Teal, TextAlignmentOptions.Left, 18);
+            CreateLayoutTMP("✓ 地点：萤溪", detail, font, ConceptLayout.DetailReqFont, UITheme.Teal, TextAlignmentOptions.Left, 18);
+            CreateLayoutTMP("稀有：星沙 2%", detail, font, ConceptLayout.DetailReqFont, UITheme.Muted, TextAlignmentOptions.Left, 18);
         }
 
         private static void AddInventoryBar(RectTransform inv, TMP_FontAsset font)
         {
             var hlg = inv.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(hlg, expandWidth: false, expandHeight: true);
-            hlg.padding = new RectOffset(18, 18, 12, 12);
-            hlg.spacing = 12;
+            hlg.padding = new RectOffset(
+                Mathf.RoundToInt(ConceptLayout.InvPadH),
+                Mathf.RoundToInt(ConceptLayout.InvPadH),
+                Mathf.RoundToInt(ConceptLayout.InvPadV),
+                Mathf.RoundToInt(ConceptLayout.InvPadV));
+            hlg.spacing = ConceptLayout.InvGap;
             hlg.childAlignment = TextAnchor.MiddleLeft;
 
             var label = CreateTMP("物品", inv, font, 12, UITheme.Muted, TextAlignmentOptions.Center);
-            AddLayout(label.gameObject, 28, 56);
+            AddLayout(label.gameObject, ConceptLayout.InvLabelWidth, ConceptLayout.SlotSize);
+            label.characterSpacing = 2f;
 
-            CreateInvSlot(inv, font, UITheme.Accent, "48");
-            CreateInvSlot(inv, font, UITheme.Teal, "22");
-            CreateInvSlot(inv, font, UITheme.Hex("#C84848"), "3");
-            CreateInvSlot(inv, font, UITheme.Hex("#A88858"), "6");
+            CreateInvSlot(inv, font, UITheme.ItemShrimp, "48");
+            CreateInvSlot(inv, font, UITheme.ItemHerb, "22");
+            CreateInvSlot(inv, font, UITheme.ItemPotion, "3");
+            CreateInvSlot(inv, font, UITheme.ItemOre, "6");
             CreateInvSlot(inv, font, UITheme.Gold, "31");
         }
 
         private static void CreateInvSlot(RectTransform parent, TMP_FontAsset font, Color color, string count)
         {
             var rt = CreateRect("Slot", parent);
-            AddLayout(rt.gameObject, 56, 56);
+            AddLayout(rt.gameObject, ConceptLayout.SlotSize, ConceptLayout.SlotSize);
             var bg = rt.gameObject.AddComponent<Image>();
             bg.color = UITheme.Panel;
             StyleOutline(bg, UITheme.Border, new Vector2(1, -1));
-            var icon = CreateColorBlock("Icon", rt, color, new Vector2(30, 30));
-            Center(icon.rectTransform, 30, 30);
-            var cnt = CreateTMP(count, rt, font, 11, UITheme.Cream, TextAlignmentOptions.BottomRight);
+            var icon = CreateColorBlock("Icon", rt, color, new Vector2(ConceptLayout.SlotIconSize, ConceptLayout.SlotIconSize));
+            Center(icon.rectTransform, ConceptLayout.SlotIconSize, ConceptLayout.SlotIconSize);
+            var cnt = CreateTMP(count, rt, font, ConceptLayout.SlotCountFont, UITheme.Cream, TextAlignmentOptions.BottomRight);
             var cntRt = cnt.rectTransform;
             cntRt.anchorMin = new Vector2(1, 0);
             cntRt.anchorMax = new Vector2(1, 0);
             cntRt.pivot = new Vector2(1, 0);
-            cntRt.anchoredPosition = new Vector2(-5, 3);
+            cntRt.anchoredPosition = new Vector2(-4, 2);
             cntRt.sizeDelta = new Vector2(30, 16);
             cnt.fontStyle = FontStyles.Bold;
         }
