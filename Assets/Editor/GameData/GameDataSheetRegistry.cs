@@ -72,17 +72,6 @@ namespace UniverIdle.Editor
         "魔物探索 · loot", "随机掉落：actionId + itemId + chance"),
     };
 
-    public static string[] AllIds
-    {
-      get
-      {
-        var ids = new string[All.Length];
-        for (var i = 0; i < All.Length; i++)
-          ids[i] = All[i].Id;
-        return ids;
-      }
-    }
-
     public static SheetInfo Get(string sheetId)
     {
       foreach (var sheet in All)

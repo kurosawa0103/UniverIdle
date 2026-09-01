@@ -239,25 +239,25 @@ namespace UniverIdle.Editor
 
       if (selected.Contains("items"))
       {
-        File.WriteAllText(GetItemsJsonFullPath(), ToItemsJson(bundle.Items), new UTF8Encoding(false));
+        File.WriteAllText(GameDataPaths.GetJsonFullPath(UniverIdle.Game.GameDataPaths.ItemsRelativePath), ToItemsJson(bundle.Items), new UTF8Encoding(false));
         written.Add("items.json");
       }
 
       if (SelectedTouchesWorkbook(selected, GameDataSheetRegistry.ScavengeExcelKey))
       {
-        File.WriteAllText(GetScavengeJsonFullPath(), ToWorkContentJson(bundle.Scavenge), new UTF8Encoding(false));
+        File.WriteAllText(GameDataPaths.GetJsonFullPath(UniverIdle.Game.GameDataPaths.ScavengeRelativePath), ToWorkContentJson(bundle.Scavenge), new UTF8Encoding(false));
         written.Add("scavenge.json");
       }
 
       if (SelectedTouchesWorkbook(selected, GameDataSheetRegistry.WoodcuttingExcelKey))
       {
-        File.WriteAllText(GetWoodcuttingJsonFullPath(), ToWorkContentJson(bundle.Woodcutting), new UTF8Encoding(false));
+        File.WriteAllText(GameDataPaths.GetJsonFullPath(UniverIdle.Game.GameDataPaths.WoodcuttingRelativePath), ToWorkContentJson(bundle.Woodcutting), new UTF8Encoding(false));
         written.Add("woodcutting.json");
       }
 
       if (SelectedTouchesWorkbook(selected, GameDataSheetRegistry.MonsterExploreExcelKey))
       {
-        File.WriteAllText(GetMonsterExploreJsonFullPath(), ToWorkContentJson(bundle.MonsterExplore), new UTF8Encoding(false));
+        File.WriteAllText(GameDataPaths.GetJsonFullPath(UniverIdle.Game.GameDataPaths.MonsterExploreRelativePath), ToWorkContentJson(bundle.MonsterExplore), new UTF8Encoding(false));
         written.Add("monster_explore.json");
       }
 
@@ -310,23 +310,8 @@ namespace UniverIdle.Editor
       };
     }
 
-    public static string GetExcelFullPath(string excelKey)
-    {
-      var relative = GameDataSheetRegistry.GetExcelRelativePath(excelKey);
-      return Path.Combine(Application.dataPath, relative.Replace('/', Path.DirectorySeparatorChar));
-    }
-
-    public static string GetItemsJsonFullPath() =>
-      Path.Combine(Application.streamingAssetsPath, UniverIdle.Game.GameDataPaths.ItemsRelativePath);
-
-    public static string GetScavengeJsonFullPath() =>
-      Path.Combine(Application.streamingAssetsPath, UniverIdle.Game.GameDataPaths.ScavengeRelativePath);
-
-    public static string GetWoodcuttingJsonFullPath() =>
-      Path.Combine(Application.streamingAssetsPath, UniverIdle.Game.GameDataPaths.WoodcuttingRelativePath);
-
-    public static string GetMonsterExploreJsonFullPath() =>
-      Path.Combine(Application.streamingAssetsPath, UniverIdle.Game.GameDataPaths.MonsterExploreRelativePath);
+    public static string GetExcelFullPath(string excelKey) =>
+      Path.Combine(Application.dataPath, GameDataSheetRegistry.GetExcelRelativePath(excelKey).Replace('/', Path.DirectorySeparatorChar));
 
     public static int CountDataRows(Dictionary<string, List<string[]>> workbookSheets, GameDataSheetRegistry.SheetInfo sheet) =>
       CountDataRows(workbookSheets, sheet.TabName, sheet.Kind);
@@ -373,7 +358,7 @@ namespace UniverIdle.Editor
 
     private static void EnsureJsonDirectory()
     {
-      var dir = Path.GetDirectoryName(GetItemsJsonFullPath());
+      var dir = Path.GetDirectoryName(GameDataPaths.GetJsonFullPath(UniverIdle.Game.GameDataPaths.ItemsRelativePath));
       if (!string.IsNullOrEmpty(dir))
         Directory.CreateDirectory(dir);
     }

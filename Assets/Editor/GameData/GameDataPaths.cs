@@ -1,4 +1,7 @@
 #if UNITY_EDITOR
+using System.IO;
+using UnityEngine;
+
 namespace UniverIdle.Editor
 {
   public static class GameDataPaths
@@ -16,6 +19,9 @@ namespace UniverIdle.Editor
     public static string ScavengeJsonAssetPath => "Assets/StreamingAssets/" + UniverIdle.Game.GameDataPaths.ScavengeRelativePath;
     public static string WoodcuttingJsonAssetPath => "Assets/StreamingAssets/" + UniverIdle.Game.GameDataPaths.WoodcuttingRelativePath;
     public static string MonsterExploreJsonAssetPath => "Assets/StreamingAssets/" + UniverIdle.Game.GameDataPaths.MonsterExploreRelativePath;
+
+    public static string GetJsonFullPath(string relativePath) =>
+      Path.Combine(Application.streamingAssetsPath, relativePath);
   }
 }
 #endif
