@@ -30,7 +30,19 @@ namespace UniverIdle.UI
       nameText = name;
       levelText = lv;
       xpFill = xp;
+      ApplyConfig(workId, skillName, locationName, level, xpRatio, iconTint, available);
+    }
 
+    /// <summary>预制体已挂好引用时，仅写入运行时数据。</summary>
+    public void Configure(string workId, string skillName, string locationName, int level, float xpRatio, Color iconTint,
+      bool available = true)
+    {
+      ApplyConfig(workId, skillName, locationName, level, xpRatio, iconTint, available);
+    }
+
+    private void ApplyConfig(string workId, string skillName, string locationName, int level, float xpRatio,
+      Color iconTint, bool available)
+    {
       WorkId = workId;
       LocationName = locationName;
       _iconTint = iconTint;

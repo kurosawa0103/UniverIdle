@@ -6,19 +6,27 @@ namespace UniverIdle.Editor
     {
         private static class ConceptLayout
         {
-            public const float TopBarHeight = 52f;
-            public const float TopBarPaddingH = 20f;
-            public const float TopBarGap = 16f;
-            public const float LogoIconSize = 36f;
-            public const float LogoGap = 10f;
-            public const float TitleFont = 17f;
-            public const float SubtitleFont = 12f;
-            public const float CurrencyGap = 20f;
-            public const float TopBtnPadH = 14f;
-            public const float TopBtnPadV = 6f;
-            public const float TopBtnFont = 13f;
+            public const float DividerThickness = 1f;
 
-            public const float SidebarWidth = 172f;
+            public const float TopBarHeight = 100f;
+            public const float TopBarPaddingH = 20f;
+            public const float TopBarPadV = 14f;
+            public const float TopBarGap = 14f;
+            public const float TopBarContentHeight = 72f;
+            public const float LogoIconSize = 44f;
+            public const float LogoGap = 10f;
+            public const float TitleFont = 18f;
+            public const float SubtitleFont = 13f;
+            public const float CurrencyGap = 16f;
+            public const float TopBtnPadH = 12f;
+            public const float TopBtnPadV = 8f;
+            public const float TopBtnFont = 14f;
+            public const float TopBarCurrencyFont = 14f;
+            public const float TopBarLogoGlyphFont = 20f;
+
+            // Body 横排：Center 固定宽；超宽屏多余空间由 BodyFlexSpacer 吸收
+            public const float SidebarWidth = 120f;
+            public const float CenterWidth = 800f;
             public const float SidebarPadH = 8f;
             public const float SidebarPadV = 10f;
             public const float SidebarGap = 6f;
@@ -44,6 +52,7 @@ namespace UniverIdle.Editor
             public const float CardGap = 10f;
             public const float CardPadding = 10f;
             public const float CardMinHeight = 100f;
+            public const float ActionCardsRowHeight = 100f;
             public const float CardThumbHeight = 56f;
             public const float CardTitleFont = 14f;
             public const float CardMetaFont = 12f;
@@ -56,10 +65,11 @@ namespace UniverIdle.Editor
             public const float RunningLabelFont = 15f;
             public const float RunningLabelToBar = 8f;
             public const float RunningBarHeight = 10f;
+            public const float RunningBarTotalHeight = 84f;
             public const float RunningTimeWidth = 48f;
             public const float RunningTimeFont = 13f;
 
-            public const float DetailWidth = 228f;
+            public const float DetailWidth = 160f;
             public const float DetailPadding = 14f;
             public const float DetailGap = 12f;
             public const float DetailTitleFont = 16f;

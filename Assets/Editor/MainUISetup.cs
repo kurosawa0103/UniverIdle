@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
 using TMPro;
+using UniverIdle.Game;
 using UniverIdle.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -42,7 +43,17 @@ namespace UniverIdle.Editor
 
         private static void EnsureEventSystem()
         {
-            MainUIInputBootstrap.EnsureEventSystem();
+            if (EventSystem.current != null)
+            {
+                if (EventSystem.current.GetComponent<StandaloneInputModule>() == null)
+                    Undo.AddComponent<StandaloneInputModule>(EventSystem.current.gameObject);
+                return;
+            }
+
+            var es = new GameObject("EventSystem");
+            Undo.RegisterCreatedObjectUndo(es, "Create EventSystem");
+            es.AddComponent<EventSystem>();
+            es.AddComponent<StandaloneInputModule>();
         }
 
         private static void RemoveExistingRoot()
@@ -117,25 +128,26 @@ namespace UniverIdle.Editor
             appImg.raycastTarget = false;
 
             var vlg = app.gameObject.AddComponent<VerticalLayoutGroup>();
-            ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: true);
+            ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: false);
+            vlg.childForceExpandHeight = false;
             vlg.spacing = 0;
             vlg.padding = new RectOffset(0, 0, 0, 0);
 
             var controller = app.gameObject.AddComponent<MainUIController>();
             app.gameObject.AddComponent<UniverIdle.Game.GameSession>();
             var skills = new List<SkillNavItemView>();
-            var actions = new List<ActionCardView>();
 
             var topBar = CreatePanel(app, "TopBar", UITheme.TopBarBottom, ConceptLayout.TopBarHeight);
+            LockLayoutHeight(topBar, ConceptLayout.TopBarHeight);
             AttachTopGradient(topBar);
             AddTopBar(topBar, font, out var inventoryButton);
-            CreateDivider(app, vertical: false);
 
             var body = CreateRect("Body", app);
             var bodyLE = body.gameObject.AddComponent<LayoutElement>();
             bodyLE.flexibleHeight = 1;
             var bodyHLG = body.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(bodyHLG, expandWidth: true, expandHeight: true);
+            bodyHLG.childForceExpandWidth = false;
             bodyHLG.spacing = 0;
 
             var sidebar = CreatePanel(body, "Sidebar", UITheme.SidebarBg, -1, ConceptLayout.SidebarWidth);
@@ -143,21 +155,16 @@ namespace UniverIdle.Editor
             CreateDivider(body, vertical: true);
 
             var center = CreateRect("Center", body);
-            var centerLE = center.gameObject.AddComponent<LayoutElement>();
-            centerLE.flexibleWidth = 1;
-            var centerVLG = center.gameObject.AddComponent<VerticalLayoutGroup>();
-            ConfigureLayoutGroup(centerVLG, expandWidth: true, expandHeight: false);
-            var cp = Mathf.RoundToInt(ConceptLayout.CenterPadding);
-            centerVLG.padding = new RectOffset(cp, cp, cp, cp);
-            centerVLG.spacing = ConceptLayout.CenterGap;
+            LockLayoutWidth(center, ConceptLayout.CenterWidth);
+            var centerHost = center.gameObject.AddComponent<WorkCenterHost>();
 
-            var banner = CreateBanner(center, font, out var locationTitle);
-            var cardsRow = CreateActionCards(center, font, actions);
-            CreateRunningBar(center, font, out var progressFill, out var progressLabel, out var progressTime);
+            CreateStandardWorkCenter(center, font, GameContent.WorkScavengeId, centerHost);
+            CreateStandardWorkCenter(center, font, GameContent.WorkWoodcuttingId, centerHost);
+            CreateStandardWorkCenter(center, font, GameContent.WorkMiningId, centerHost);
+            CreateStandardWorkCenter(center, font, GameContent.WorkMonsterExploreId, centerHost);
 
-            var cardsLE = cardsRow.gameObject.AddComponent<LayoutElement>();
-            cardsLE.flexibleHeight = 1;
-            cardsLE.minHeight = ConceptLayout.CardMinHeight;
+            var bodySpacer = CreateRect("BodyFlexSpacer", body);
+            bodySpacer.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
 
             CreateDivider(body, vertical: true);
             var detail = CreatePanel(body, "Detail", UITheme.SidebarBg, -1, ConceptLayout.DetailWidth);
@@ -165,9 +172,10 @@ namespace UniverIdle.Editor
 
             var inventoryPanel = CreateInventoryPanel(canvasGo.transform, font);
 
-            controller.SetReferences(skills, locationTitle, actions, progressFill, progressLabel, progressTime, detailTitle, detailBody, inventoryPanel, inventoryButton);
+            controller.SetReferences(skills, centerHost, detailTitle, detailBody, inventoryPanel, inventoryButton);
 
             EditorUtility.SetDirty(controller);
+            EditorUtility.SetDirty(centerHost);
             EditorUtility.SetDirty(inventoryPanel);
             EditorUtility.SetDirty(canvasGo);
 

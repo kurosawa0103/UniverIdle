@@ -26,8 +26,37 @@ namespace UniverIdle.UI
 
     private void Awake()
     {
+      ResolveReferences();
       WireCloseHandlers();
       SetOpen(false);
+    }
+
+    private void ResolveReferences()
+    {
+      if (overlayRoot == null)
+        overlayRoot = gameObject;
+
+      if (grid == null)
+        grid = GetComponentInChildren<InventoryGridView>(true);
+
+      if (closeButton == null)
+      {
+        foreach (var btn in GetComponentsInChildren<Button>(true))
+        {
+          if (btn.gameObject.name == "Btn_Close")
+          {
+            closeButton = btn;
+            break;
+          }
+        }
+      }
+
+      if (backdropButton == null)
+      {
+        var backdrop = transform.Find("Backdrop");
+        if (backdrop != null)
+          backdropButton = backdrop.GetComponent<Button>();
+      }
     }
 
     private void WireCloseHandlers()

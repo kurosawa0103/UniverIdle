@@ -43,18 +43,24 @@ namespace UniverIdle.Editor
             button.colors = colors;
         }
 
-        private static Image CreateDivider(RectTransform parent, bool vertical, float thickness = 1f)
+        private static Image CreateDivider(RectTransform parent, bool vertical, float thickness = -1f)
         {
+            if (thickness < 0f) thickness = ConceptLayout.DividerThickness;
+
             var rt = CreateRect(vertical ? "VDivider" : "HDivider", parent);
             var le = rt.gameObject.AddComponent<LayoutElement>();
             if (vertical)
             {
                 le.preferredWidth = thickness;
+                le.minWidth = thickness;
+                le.flexibleWidth = 0;
                 le.flexibleHeight = 1;
             }
             else
             {
                 le.preferredHeight = thickness;
+                le.minHeight = thickness;
+                le.flexibleHeight = 0;
                 le.flexibleWidth = 1;
             }
 
@@ -175,6 +181,24 @@ namespace UniverIdle.Editor
             rt.pivot = new Vector2(0.5f, 0.5f);
             rt.sizeDelta = new Vector2(w, h);
             rt.anchoredPosition = Vector2.zero;
+        }
+
+        private static void LockLayoutWidth(RectTransform rt, float width)
+        {
+            var le = rt.GetComponent<LayoutElement>();
+            if (le == null) le = rt.gameObject.AddComponent<LayoutElement>();
+            le.preferredWidth = width;
+            le.minWidth = width;
+            le.flexibleWidth = 0;
+        }
+
+        private static void LockLayoutHeight(RectTransform rt, float height)
+        {
+            var le = rt.GetComponent<LayoutElement>();
+            if (le == null) le = rt.gameObject.AddComponent<LayoutElement>();
+            le.preferredHeight = height;
+            le.minHeight = height;
+            le.flexibleHeight = 0;
         }
 
         private static void AddLayout(GameObject go, float w, float h)

@@ -1,7 +1,9 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
 using TMPro;
+using UniverIdle.Game;
 using UniverIdle.UI;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,30 +11,35 @@ namespace UniverIdle.Editor
 {
     public static partial class MainUISetup
     {
+        private const string SkillItemPrefabPath = "Assets/GameResources/Prefab/Skill_打猎.prefab";
+
         private static void AddTopBar(RectTransform top, TMP_FontAsset font, out Button inventoryButton)
         {
             var hlg = top.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(hlg, expandWidth: false, expandHeight: true);
+            ConfigureLayoutGroup(hlg, expandWidth: true, expandHeight: false);
+            hlg.childForceExpandHeight = false;
             var padH = Mathf.RoundToInt(ConceptLayout.TopBarPaddingH);
-            hlg.padding = new RectOffset(padH, padH, 0, 0);
+            hlg.padding = new RectOffset(padH, padH,
+                Mathf.RoundToInt(ConceptLayout.TopBarPadV),
+                Mathf.RoundToInt(ConceptLayout.TopBarPadV));
             hlg.spacing = ConceptLayout.TopBarGap;
             hlg.childAlignment = TextAnchor.MiddleLeft;
 
             var logo = CreateRect("Logo", top);
-            AddLayout(logo.gameObject, 0, ConceptLayout.LogoIconSize);
+            AddLayout(logo.gameObject, 0, ConceptLayout.TopBarContentHeight);
             var logoHLG = logo.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(logoHLG, expandWidth: false, expandHeight: true);
+            ConfigureLayoutGroup(logoHLG, expandWidth: false, expandHeight: false);
             logoHLG.spacing = ConceptLayout.LogoGap;
             logoHLG.childAlignment = TextAnchor.MiddleLeft;
 
             var logoIcon = CreateColorBlock("LogoIcon", logo, UITheme.LogoBg, new Vector2(ConceptLayout.LogoIconSize, ConceptLayout.LogoIconSize));
             AddLayout(logoIcon.gameObject, ConceptLayout.LogoIconSize, ConceptLayout.LogoIconSize);
             StyleOutline(logoIcon, UITheme.Border, new Vector2(1, -1));
-            CreateTMP("✦", logoIcon.rectTransform, font, 18, UITheme.Gold, TextAlignmentOptions.Center);
+            CreateTMP("✦", logoIcon.rectTransform, font, ConceptLayout.TopBarLogoGlyphFont, UITheme.Gold, TextAlignmentOptions.Center);
 
             var title = CreateLayoutTMP(
                 $"坠星谷 <size={ConceptLayout.SubtitleFont}><color=#{ColorUtility.ToHtmlStringRGB(UITheme.Muted)}>萤溪村</color></size>",
-                logo, font, ConceptLayout.TitleFont, UITheme.Cream, TextAlignmentOptions.Left, ConceptLayout.LogoIconSize);
+                logo, font, ConceptLayout.TitleFont, UITheme.Cream, TextAlignmentOptions.Left, ConceptLayout.TopBarContentHeight);
             title.richText = true;
             title.fontStyle = FontStyles.Bold;
             var titleLE = title.gameObject.GetComponent<LayoutElement>();
@@ -43,12 +50,12 @@ namespace UniverIdle.Editor
 
             var currency = CreateRect("Currency", top);
             var currencyHLG = currency.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(currencyHLG, expandWidth: false, expandHeight: true);
+            ConfigureLayoutGroup(currencyHLG, expandWidth: false, expandHeight: false);
             currencyHLG.spacing = ConceptLayout.CurrencyGap;
             currencyHLG.childAlignment = TextAnchor.MiddleRight;
 
-            CreateLayoutTMP("🪙 0", currency, font, 14, UITheme.Gold, TextAlignmentOptions.Right, ConceptLayout.LogoIconSize);
-            CreateLayoutTMP("声望 ★★☆", currency, font, 14, UITheme.Muted, TextAlignmentOptions.Right, ConceptLayout.LogoIconSize);
+            CreateLayoutTMP("🪙 1,240 铜", currency, font, ConceptLayout.TopBarCurrencyFont, UITheme.Gold, TextAlignmentOptions.Right, ConceptLayout.TopBarContentHeight);
+            CreateLayoutTMP("声望 ★★☆", currency, font, ConceptLayout.TopBarCurrencyFont, UITheme.Muted, TextAlignmentOptions.Right, ConceptLayout.TopBarContentHeight);
 
             CreateTopButton(top, font, "图鉴");
             inventoryButton = CreateTopButton(top, font, "背包");
@@ -59,7 +66,8 @@ namespace UniverIdle.Editor
         {
             var rt = CreateRect($"Btn_{label}", parent);
             var le = rt.gameObject.AddComponent<LayoutElement>();
-            le.minHeight = ConceptLayout.TopBtnFont + ConceptLayout.TopBtnPadV * 2f + 8f;
+            le.preferredHeight = ConceptLayout.TopBarContentHeight;
+            le.flexibleHeight = 0;
             var img = rt.gameObject.AddComponent<Image>();
             img.color = UITheme.PanelLight;
             StyleOutline(img, UITheme.Border, new Vector2(1, -1));
@@ -83,6 +91,7 @@ namespace UniverIdle.Editor
             Stretch(viewport);
             var viewportImg = viewport.gameObject.AddComponent<Image>();
             viewportImg.color = Color.white;
+            viewportImg.raycastTarget = false;
             viewport.gameObject.AddComponent<Mask>().showMaskGraphic = false;
 
             var content = CreateRect("Content", viewport);
@@ -120,63 +129,66 @@ namespace UniverIdle.Editor
             };
 
             foreach (var d in data)
-                list.Add(CreateSkillItem(content, font, d.workId, d.name, d.loc, d.lv, d.xp, d.icon, d.available));
+                list.Add(InstantiateSkillItem(content, d.workId, d.name, d.loc, d.lv, d.xp, d.icon, d.available));
         }
 
-        private static SkillNavItemView CreateSkillItem(RectTransform parent, TMP_FontAsset font,
-            string workId, string skillName, string location, int level, float xp, Color iconColor, bool available = true)
+        private static SkillNavItemView InstantiateSkillItem(RectTransform parent,
+            string workId, string skillName, string location, int level, float xp, Color iconColor, bool available)
         {
-            var rt = CreateRect($"Skill_{skillName}", parent);
-            AddLayout(rt.gameObject, 0, ConceptLayout.SkillMinHeight);
-            rt.gameObject.GetComponent<LayoutElement>().flexibleWidth = 1;
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(SkillItemPrefabPath);
+            if (prefab == null)
+                throw new System.IO.FileNotFoundException($"[UniverIdle] 找不到技能预制体：{SkillItemPrefabPath}");
 
-            var bg = rt.gameObject.AddComponent<Image>();
-            bg.color = UITheme.Transparent;
-            var border = bg.gameObject.AddComponent<Outline>();
-            border.effectColor = UITheme.Teal;
-            border.effectDistance = new Vector2(1, -1);
-            border.useGraphicAlpha = true;
-            border.enabled = false;
+            var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            go.name = $"Skill_{skillName}";
 
-            var btn = rt.gameObject.AddComponent<Button>();
-            btn.targetGraphic = bg;
-            btn.interactable = available;
-            ConfigureButton(btn, UITheme.Transparent, UITheme.Panel, UITheme.PanelLight);
+            var le = go.GetComponent<LayoutElement>();
+            if (le != null)
+                le.flexibleWidth = 1;
 
-            var hlg = rt.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(hlg, expandWidth: true, expandHeight: true);
-            hlg.padding = new RectOffset(
-                Mathf.RoundToInt(ConceptLayout.SkillPadH),
-                Mathf.RoundToInt(ConceptLayout.SkillPadH),
-                Mathf.RoundToInt(ConceptLayout.SkillPadV),
-                Mathf.RoundToInt(ConceptLayout.SkillPadV));
-            hlg.spacing = ConceptLayout.SkillGap;
-            hlg.childAlignment = TextAnchor.MiddleLeft;
+            var view = go.GetComponent<SkillNavItemView>();
+            if (view == null)
+                throw new System.InvalidOperationException($"[UniverIdle] {SkillItemPrefabPath} 缺少 SkillNavItemView");
 
-            var accent = CreateColorBlock("Accent", rt, UITheme.Teal, new Vector2(ConceptLayout.SkillAccentWidth, 0));
-            var accentLE = accent.gameObject.AddComponent<LayoutElement>();
-            accentLE.minWidth = ConceptLayout.SkillAccentWidth;
-            accentLE.preferredWidth = ConceptLayout.SkillAccentWidth;
-            accentLE.flexibleHeight = 1;
-            accent.enabled = false;
+            view.Configure(workId, skillName, location, level, xp, iconColor, available);
 
-            var iconFrame = CreateColorBlock("IconFrame", rt, iconColor, new Vector2(ConceptLayout.SkillIconSize, ConceptLayout.SkillIconSize));
-            AddLayout(iconFrame.gameObject, ConceptLayout.SkillIconSize, ConceptLayout.SkillIconSize);
-            StyleOutline(iconFrame, UITheme.Border, new Vector2(1, -1));
+            var btn = go.GetComponent<Button>();
+            if (btn != null)
+                btn.interactable = available && !string.IsNullOrEmpty(workId);
 
-            var info = CreateRect("Info", rt);
-            info.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
-            var infoVLG = info.gameObject.AddComponent<VerticalLayoutGroup>();
-            ConfigureLayoutGroup(infoVLG, expandWidth: true, expandHeight: false);
-            infoVLG.spacing = 2;
-            infoVLG.childAlignment = TextAnchor.UpperLeft;
+            return view;
+        }
 
-            var nameT = CreateLayoutTMP(skillName, info, font, ConceptLayout.SkillNameFont, UITheme.Text, TextAlignmentOptions.Left, 18);
-            var lvT = CreateLayoutTMP($"Lv. {level}", info, font, ConceptLayout.SkillLvFont, UITheme.Muted, TextAlignmentOptions.Left, 14);
-            var barFill = CreateFilledBar(info, ConceptLayout.SkillBarHeight, UITheme.BarTrack, UITheme.Teal, xp, "XpBg", "XpFill");
+        private static StandardWorkCenterView CreateStandardWorkCenter(
+            RectTransform host, TMP_FontAsset font, string workId, WorkCenterHost centerHost)
+        {
+            var root = CreateRect($"WorkView_{workId}", host);
+            Stretch(root);
 
-            var view = rt.gameObject.AddComponent<SkillNavItemView>();
-            view.Setup(bg, border, accent, iconFrame, nameT, lvT, barFill, workId, skillName, location, level, xp, iconColor, available);
+            var vlg = root.gameObject.AddComponent<VerticalLayoutGroup>();
+            ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: false);
+            var cp = Mathf.RoundToInt(ConceptLayout.CenterPadding);
+            vlg.padding = new RectOffset(cp, cp, cp, cp);
+            vlg.spacing = ConceptLayout.CenterGap;
+
+            var banner = CreateBanner(root, font, out var locationTitle);
+            var actions = new List<ActionCardView>();
+            var cardsRow = CreateActionCards(root, font, actions);
+            var cardsLE = cardsRow.gameObject.AddComponent<LayoutElement>();
+            cardsLE.preferredHeight = ConceptLayout.ActionCardsRowHeight;
+            cardsLE.flexibleHeight = 0;
+
+            var centerSpacer = CreateRect("FlexSpacer", root);
+            centerSpacer.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1;
+
+            var runningBar = CreateRunningBar(root, font, out var progressFill, out var progressLabel, out var progressTime);
+            var runningLE = runningBar.gameObject.AddComponent<LayoutElement>();
+            runningLE.preferredHeight = ConceptLayout.RunningBarTotalHeight;
+            runningLE.flexibleHeight = 0;
+
+            var view = root.gameObject.AddComponent<StandardWorkCenterView>();
+            view.Configure(workId, locationTitle, actions, progressFill, progressLabel, progressTime);
+            centerHost.Register(view);
             return view;
         }
 
@@ -187,6 +199,7 @@ namespace UniverIdle.Editor
 
             var bg = banner.gameObject.AddComponent<Image>();
             bg.color = UITheme.BannerBg;
+            bg.raycastTarget = false;
             StyleOutline(bg, UITheme.Border, new Vector2(1, -1));
 
             var gradMid = CreateColorBlock("GradMid", banner, UITheme.BannerMid, Vector2.zero);
@@ -261,17 +274,15 @@ namespace UniverIdle.Editor
         private static RectTransform CreateActionCards(RectTransform parent, TMP_FontAsset font, List<ActionCardView> list)
         {
             var row = CreateRect("ActionCards", parent);
-            var grid = row.gameObject.AddComponent<GridLayoutGroup>();
-            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            grid.constraintCount = 3;
-            grid.spacing = new Vector2(ConceptLayout.CardGap, ConceptLayout.CardGap);
-            grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
-            grid.startAxis = GridLayoutGroup.Axis.Horizontal;
-            grid.childAlignment = TextAnchor.UpperLeft;
-            grid.cellSize = new Vector2(220, ConceptLayout.CardMinHeight);
-            row.gameObject.AddComponent<ActionCardGridSizer>();
+            var hlg = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            ConfigureLayoutGroup(hlg, expandWidth: true, expandHeight: false);
+            hlg.spacing = ConceptLayout.CardGap;
+            hlg.childAlignment = TextAnchor.UpperLeft;
+            hlg.childForceExpandWidth = true;
+            hlg.childForceExpandHeight = false;
+            hlg.childControlHeight = true;
 
-            const int slotCount = 9;
+            const int slotCount = 3;
             for (var i = 0; i < slotCount; i++)
             {
                 list.Add(CreateActionCard(row, font,
@@ -299,7 +310,10 @@ namespace UniverIdle.Editor
 
             var cardLE = rt.gameObject.AddComponent<LayoutElement>();
             cardLE.ignoreLayout = false;
-            cardLE.minHeight = ConceptLayout.CardMinHeight;
+            cardLE.preferredHeight = ConceptLayout.CardMinHeight;
+            cardLE.flexibleHeight = 0;
+            cardLE.flexibleWidth = 1;
+            cardLE.minWidth = 140f;
 
             var pad = Mathf.RoundToInt(ConceptLayout.CardPadding);
             var vlg = rt.gameObject.AddComponent<VerticalLayoutGroup>();

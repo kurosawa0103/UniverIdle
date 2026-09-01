@@ -33,7 +33,8 @@ namespace UniverIdle.UI
             if (canvasGroup != null)
             {
                 canvasGroup.alpha = locked ? 0.45f : 1f;
-                canvasGroup.interactable = !locked;
+                canvasGroup.interactable = true;
+                canvasGroup.blocksRaycasts = true;
             }
             SetSelected(false);
         }
