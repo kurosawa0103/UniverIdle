@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
-using System.IO;
 using TMPro;
 using UniverIdle.UI;
 using UnityEditor;
@@ -14,8 +13,6 @@ namespace UniverIdle.Editor
     public static partial class MainUISetup
     {
         private const string RootName = "UniverIdle_MainUI";
-        private const float RefWidth = 1200f;
-        private const float RefHeight = 680f;
 
         [MenuItem("UniverIdle/创建主界面（当前场景）")]
         public static void CreateMainUI()
@@ -40,7 +37,7 @@ namespace UniverIdle.Editor
 
             Selection.activeGameObject = root;
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-            Debug.Log("[UniverIdle] 主界面已创建。运行场景即可预览；分辨率建议 1920×1080。");
+            Debug.Log("[UniverIdle] 主界面已创建（全屏）。运行场景即可预览。");
         }
 
         private static void EnsureEventSystem()
@@ -61,41 +58,21 @@ namespace UniverIdle.Editor
 
         private static TMP_FontAsset GetChineseFontAsset()
         {
-            const string projectFontPath = "Assets/UI/Fonts/NotoSansSC-Regular SDF.asset";
+            const string projectFontPath = "Assets/Res/fonts/unifont-15.asset";
 
             var asset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(projectFontPath);
-            if (asset != null) return asset;
-
-            asset = TryCreateChineseFontAsset(projectFontPath);
             if (asset != null) return asset;
 
             asset = FindFallbackTmpFont();
             if (asset != null)
             {
                 Debug.LogWarning(
-                    "[UniverIdle] 未能自动生成中文 SDF 字体，暂用 TMP 内置字体；中文可能显示为方框。" +
-                    "可在 Window → TextMeshPro → Font Asset Creator 生成 NotoSansSC-Regular SDF 到 Assets/UI/Fonts/。");
+                    $"[UniverIdle] 未找到 {projectFontPath}，暂用备用 TMP 字体；请确认 unifont-15 资源存在。");
                 return asset;
             }
 
             throw new System.InvalidOperationException(
                 "[UniverIdle] 未找到任何 TMP_FontAsset。请先导入 TextMeshPro Essential Resources（Window → TextMeshPro → Import TMP Essential Resources）。");
-        }
-
-        private static TMP_FontAsset TryCreateChineseFontAsset(string savePath)
-        {
-            var osFont = Font.CreateDynamicFontFromOSFont(
-                new[] { "Microsoft YaHei UI", "Microsoft YaHei", "SimHei", "Noto Sans CJK SC", "Arial Unicode MS", "Arial" },
-                32);
-            if (osFont == null) return null;
-
-            var asset = TMP_FontAsset.CreateFontAsset(osFont);
-            if (asset == null) return null;
-
-            Directory.CreateDirectory("Assets/UI/Fonts");
-            AssetDatabase.CreateAsset(asset, savePath);
-            AssetDatabase.SaveAssets();
-            return asset;
         }
 
         private static TMP_FontAsset FindFallbackTmpFont()
@@ -136,18 +113,13 @@ namespace UniverIdle.Editor
             scaler.matchWidthOrHeight = 0.5f;
             canvasGo.AddComponent<GraphicRaycaster>();
 
-            var safe = CreateRect("SafeArea", canvasGo.transform);
-            Stretch(safe);
-            var safeImg = safe.gameObject.AddComponent<Image>();
-            safeImg.color = new Color(0.07f, 0.09f, 0.08f, 1f);
-
-            var app = CreateRect("App", safe);
-            Center(app, RefWidth, RefHeight);
+            var app = CreateRect("App", canvasGo.transform);
+            Stretch(app);
             var appImg = app.gameObject.AddComponent<Image>();
             appImg.color = UITheme.Background;
 
             var vlg = app.gameObject.AddComponent<VerticalLayoutGroup>();
-            ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: false);
+            ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: true);
             vlg.spacing = 0;
             vlg.padding = new RectOffset(0, 0, 0, 0);
 
@@ -155,8 +127,10 @@ namespace UniverIdle.Editor
             var skills = new List<SkillNavItemView>();
             var actions = new List<ActionCardView>();
 
-            var topBar = CreatePanel(app, "TopBar", UITheme.TopBarBottom, 52);
+            var topBar = CreatePanel(app, "TopBar", UITheme.TopBarBottom, 56);
+            AttachTopGradient(topBar);
             AddTopBar(topBar, font, out var goldText);
+            CreateDivider(app, vertical: false);
 
             var body = CreateRect("Body", app);
             var bodyLE = body.gameObject.AddComponent<LayoutElement>();
@@ -166,19 +140,16 @@ namespace UniverIdle.Editor
             ConfigureLayoutGroup(bodyHLG, expandWidth: true, expandHeight: true);
             bodyHLG.spacing = 0;
 
-            var sidebar = CreatePanel(body, "Sidebar", UITheme.SidebarBg, -1, 172);
-            var sidebarVLG = sidebar.gameObject.AddComponent<VerticalLayoutGroup>();
-            ConfigureLayoutGroup(sidebarVLG, expandWidth: true, expandHeight: false);
-            sidebarVLG.padding = new RectOffset(8, 8, 10, 10);
-            sidebarVLG.spacing = 6;
+            var sidebar = CreatePanel(body, "Sidebar", UITheme.SidebarBg, -1, 180);
             AddSkillNav(sidebar, font, skills);
+            CreateDivider(body, vertical: true);
 
             var center = CreateRect("Center", body);
             var centerLE = center.gameObject.AddComponent<LayoutElement>();
             centerLE.flexibleWidth = 1;
             var centerVLG = center.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(centerVLG, expandWidth: true, expandHeight: false);
-            centerVLG.padding = new RectOffset(14, 14, 14, 14);
+            centerVLG.padding = new RectOffset(16, 16, 16, 16);
             centerVLG.spacing = 12;
 
             var banner = CreateBanner(center, font, out var locationTitle);
@@ -187,12 +158,14 @@ namespace UniverIdle.Editor
 
             var cardsLE = cardsRow.gameObject.AddComponent<LayoutElement>();
             cardsLE.flexibleHeight = 1;
-            cardsLE.minHeight = 120;
+            cardsLE.minHeight = 128;
 
-            var detail = CreatePanel(body, "Detail", UITheme.SidebarBg, -1, 228);
+            CreateDivider(body, vertical: true);
+            var detail = CreatePanel(body, "Detail", UITheme.SidebarBg, -1, 240);
             AddDetailPanel(detail, font, out var detailTitle, out var detailBody);
 
-            var invBar = CreatePanel(app, "InventoryBar", UITheme.InventoryBg, 76);
+            CreateDivider(app, vertical: false);
+            var invBar = CreatePanel(app, "InventoryBar", UITheme.InventoryBg, 80);
             AddInventoryBar(invBar, font);
 
             controller.SetReferences(skills, locationTitle, actions, progressFill, progressLabel, progressTime, detailTitle, detailBody, goldText);

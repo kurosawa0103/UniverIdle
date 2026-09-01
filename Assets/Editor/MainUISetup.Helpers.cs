@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using TMPro;
+using UniverIdle.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +22,66 @@ namespace UniverIdle.Editor
             barFill.fillAmount = fillAmount;
             Stretch(barFill.rectTransform);
             return barFill;
+        }
+
+        private static void StyleOutline(Graphic graphic, Color color, Vector2 distance)
+        {
+            var outline = graphic.gameObject.AddComponent<Outline>();
+            outline.effectColor = color;
+            outline.effectDistance = distance;
+            outline.useGraphicAlpha = true;
+        }
+
+        private static void ConfigureButton(Button button, Color normal, Color highlighted, Color pressed)
+        {
+            var colors = button.colors;
+            colors.normalColor = normal;
+            colors.highlightedColor = highlighted;
+            colors.pressedColor = pressed;
+            colors.selectedColor = highlighted;
+            colors.fadeDuration = 0.08f;
+            button.colors = colors;
+        }
+
+        private static Image CreateDivider(RectTransform parent, bool vertical, float thickness = 1f)
+        {
+            var rt = CreateRect(vertical ? "VDivider" : "HDivider", parent);
+            var le = rt.gameObject.AddComponent<LayoutElement>();
+            if (vertical)
+            {
+                le.preferredWidth = thickness;
+                le.flexibleHeight = 1;
+            }
+            else
+            {
+                le.preferredHeight = thickness;
+                le.flexibleWidth = 1;
+            }
+
+            var img = rt.gameObject.AddComponent<Image>();
+            img.color = UITheme.Border;
+            img.raycastTarget = false;
+            return img;
+        }
+
+        private static TextMeshProUGUI CreateSectionLabel(RectTransform parent, TMP_FontAsset font, string text)
+        {
+            var label = CreateLayoutTMP(text, parent, font, 11, UITheme.Muted, TextAlignmentOptions.Left, 18);
+            label.fontStyle = FontStyles.Bold;
+            label.characterSpacing = 2f;
+            return label;
+        }
+
+        private static void AttachTopGradient(RectTransform panel)
+        {
+            var strip = CreateRect("TopGradient", panel);
+            strip.anchorMin = new Vector2(0, 0.45f);
+            strip.anchorMax = Vector2.one;
+            strip.offsetMin = Vector2.zero;
+            strip.offsetMax = Vector2.zero;
+            var img = strip.gameObject.AddComponent<Image>();
+            img.color = UITheme.TopBarTop;
+            img.raycastTarget = false;
         }
 
         private static RectTransform CreateRect(string name, Transform parent)

@@ -8,6 +8,7 @@ namespace UniverIdle.UI
         public static readonly Color Background = Hex("#1E2420");
         public static readonly Color Panel = Hex("#2A322C");
         public static readonly Color PanelLight = Hex("#354038");
+        public static readonly Color CardHover = Hex("#3D4A42");
         public static readonly Color Border = Hex("#4A5A50");
         public static readonly Color Gold = Hex("#E8B84A");
         public static readonly Color Teal = Hex("#5A9A8A");
@@ -21,7 +22,11 @@ namespace UniverIdle.UI
         public static readonly Color InventoryBg = Hex("#1C221E");
         public static readonly Color BarTrack = Hex("#1A201C");
         public static readonly Color BannerBg = Hex("#1A3040");
-        public static readonly Color BannerAccent = Hex("#2A5048");
+        public static readonly Color BannerMid = Hex("#2A5048");
+        public static readonly Color BannerAccent = Hex("#1A2820");
+        public static readonly Color TagText = Hex("#B8E0D4");
+        public static readonly Color TagBg = new Color(0.353f, 0.604f, 0.541f, 0.35f);
+        public static readonly Color Transparent = new Color(0, 0, 0, 0);
 
         public static Color Hex(string hex)
         {

@@ -4,7 +4,7 @@
 
 ## 职责
 
-- 提供与 [主界面-概念.html](../../设计/概念图/主界面-概念.html) 一致的 **PC 主界面布局**
+- 提供与 [02-界面](../../设计/02-界面.md) / [主界面-概念.html](../../设计/概念图/主界面-概念.html) 一致的 **PC 主界面布局**
 - 左栏技能导航、中栏地点横幅 + 动作卡 + 进度、右栏详情、底栏物品
 - 运行时：切换技能选中态、切换动作卡（占位数据）
 
@@ -24,18 +24,17 @@ Assets/Scripts/UI/UITheme.cs       # 配色常量
 Assets/Scripts/UI/MainUIController.cs
 Assets/Scripts/UI/SkillNavItemView.cs
 Assets/Scripts/UI/ActionCardView.cs
-Assets/UI/Art/主界面-概念图.png     # 地点横幅占位图
-Assets/UI/Fonts/                   # 首次生成时创建 TMP 中文字体
+Assets/Res/fonts/unifont-15.asset   # 主界面 TMP 默认字体
 ```
 
 ## 布局参数
 
 | 项 | 值 |
 |----|-----|
-| Canvas | Screen Space Overlay，参考 1920×1080 |
-| App 面板 | 1200×680 居中 |
-| 顶栏 / 底栏 | 52px / 76px |
-| 左栏 / 右栏 | 172px / 228px |
+| Canvas | Screen Space Overlay，全屏拉伸，参考 1920×1080 |
+| 根面板 `App` | 铺满画布 |
+| 顶栏 / 底栏 | 56px / 80px |
+| 左栏 / 右栏 | 180px / 240px |
 
 ## 左栏技能（当前占位 8 项）
 

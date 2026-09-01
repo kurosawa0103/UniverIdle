@@ -7,6 +7,7 @@ namespace UniverIdle.UI
     public class ActionCardView : MonoBehaviour
     {
         [SerializeField] private Image background;
+        [SerializeField] private Outline border;
         [SerializeField] private Image thumb;
         [SerializeField] private TextMeshProUGUI titleText;
         [SerializeField] private TextMeshProUGUI metaLeftText;
@@ -17,11 +18,12 @@ namespace UniverIdle.UI
         public string Description { get; private set; }
         public bool IsLocked { get; private set; }
 
-        public void Setup(Image bg, Image thumbImg, TextMeshProUGUI title, TextMeshProUGUI metaL, TextMeshProUGUI metaR,
+        public void Setup(Image bg, Outline outline, Image thumbImg, TextMeshProUGUI title, TextMeshProUGUI metaL, TextMeshProUGUI metaR,
             CanvasGroup group, string displayTitle, string metaLeft, string metaRight, string description, bool locked,
             Color thumbColor)
         {
             background = bg;
+            border = outline;
             thumb = thumbImg;
             titleText = title;
             metaLeftText = metaL;
@@ -47,8 +49,10 @@ namespace UniverIdle.UI
 
         public void SetSelected(bool selected)
         {
-            if (background == null) return;
-            background.color = selected ? UITheme.PanelLight : UITheme.Panel;
+            if (background != null)
+                background.color = selected ? UITheme.CardHover : UITheme.Panel;
+            if (border != null)
+                border.effectColor = selected ? UITheme.Accent : UITheme.Border;
         }
     }
 }
