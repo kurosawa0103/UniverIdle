@@ -1,0 +1,61 @@
+{
+    "csvPath": "E:/MemeEcho/Assets/Resources/Language/钓鱼竿.csv",
+    "entries": [
+        {
+            "key": "SAY.事件.1.",
+            "chinese": "你在海岸边发现了一根旧钓竿。"
+        },
+        {
+            "key": "SAY.事件.2.",
+            "chinese": "不知道是谁丢在这里的。"
+        },
+        {
+            "key": "SAY.事件.223.",
+            "chinese": "钓竿很破旧，似乎已经没有人要了。"
+        },
+        {
+            "key": "SAY.事件.217.",
+            "chinese": "你听说在旧吊杆之上还有好钓竿。"
+        },
+        {
+            "key": "SAY.事件.218.",
+            "chinese": "而在好钓竿之上还有厉害钓竿。"
+        },
+        {
+            "key": "SAY.事件.219.",
+            "chinese": "但是你并不介意使用这根旧钓杆。"
+        },
+        {
+            "key": "SAY.事件.224.",
+            "chinese": "新手就应该从最简单的用起。"
+        },
+        {
+            "key": "SAY.事件.216.",
+            "chinese": "也许只要有水域，就能钓出些什么。"
+        },
+        {
+            "key": "SAY.事件.221.",
+            "chinese": "捡起 【旧钓杆】？"
+        },
+        {
+            "key": "MENU.事件.222",
+            "chinese": "是"
+        },
+        {
+            "key": "SAY.事件.188.",
+            "chinese": "你捡起了【旧钓竿】！"
+        },
+        {
+            "key": "SAY.事件.196.",
+            "chinese": "它已被放入重要道具栏。"
+        },
+        {
+            "key": "SAY._CommandCopyBuffer.231.",
+            "chinese": "你蹲下身子，伸手捡起这块石头。"
+        },
+        {
+            "key": "CHARACTER.门",
+            "chinese": "门"
+        }
+    ]
+}

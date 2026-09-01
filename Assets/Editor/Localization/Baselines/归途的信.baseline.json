@@ -1,0 +1,73 @@
+{
+    "csvPath": "E:/MemeEcho/Assets/Resources/Language/归途的信.csv",
+    "entries": [
+        {
+            "key": "SAY.事件.1.",
+            "chinese": "你发现在无人在意的角落里有一枚信封。"
+        },
+        {
+            "key": "SAY.事件.2.",
+            "chinese": "微弱的光芒洒落在信封上，映出分明的边缘。"
+        },
+        {
+            "key": "MENU.事件.173",
+            "chinese": "打开信封"
+        },
+        {
+            "key": "SAY.事件.175.",
+            "chinese": "「致归途」"
+        },
+        {
+            "key": "SAY.事件.176.",
+            "chinese": "街角的风像疲惫的低语"
+        },
+        {
+            "key": "SAY.事件.183.",
+            "chinese": "提醒我该放慢自己的脚步。"
+        },
+        {
+            "key": "SAY.事件.200.",
+            "chinese": "我究竟该前往何处？"
+        },
+        {
+            "key": "SAY.事件.198.",
+            "chinese": "或许，是时候停下来休息了。"
+        },
+        {
+            "key": "SAY.事件.199.",
+            "chinese": "我知道"
+        },
+        {
+            "key": "SAY.事件.182.",
+            "chinese": "有一个地方，在静静等着我。"
+        },
+        {
+            "key": "SAY.事件.181.",
+            "chinese": "一个能让我停靠、歇息的地方。"
+        },
+        {
+            "key": "SAY.事件.180.",
+            "chinese": "在那里，我可以放下所有。"
+        },
+        {
+            "key": "SAY.事件.185.",
+            "chinese": "那里，是属于我的归途。"
+        },
+        {
+            "key": "MENU.事件.197",
+            "chinese": "收起信件"
+        },
+        {
+            "key": "SAY.事件.188.",
+            "chinese": "你轻轻合上信封"
+        },
+        {
+            "key": "SAY.事件.196.",
+            "chinese": "也许这封不起眼的信件是某个人落下的"
+        },
+        {
+            "key": "SAY._CommandCopyBuffer.528.",
+            "chinese": "从进入房间的那一刻开始，你就已经开始了体验。"
+        }
+    ]
+}

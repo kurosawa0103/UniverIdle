@@ -1,0 +1,9 @@
+{
+    "csvPath": "E:/MemeEcho/Assets/Resources/Language/老旧硬币.csv",
+    "entries": [
+        {
+            "key": "SAY.事件.1.",
+            "chinese": "你在路边的缝隙里，捡到一枚老旧的硬币"
+        }
+    ]
+}

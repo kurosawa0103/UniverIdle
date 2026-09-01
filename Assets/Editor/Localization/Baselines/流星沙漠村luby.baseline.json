@@ -1,0 +1,417 @@
+{
+    "csvPath": "E:/MemeEcho/Assets/Resources/Language/流星沙漠村luby.csv",
+    "entries": [
+        {
+            "key": "SAY.事件.3.",
+            "chinese": "你来到了沙漠聚落的外围。"
+        },
+        {
+            "key": "SAY.事件.307.",
+            "chinese": "这里好像被称为“星落之地”。"
+        },
+        {
+            "key": "SAY.事件.136.",
+            "chinese": "地表上布满了坑洞，这些都是天上的流星砸出来的。"
+        },
+        {
+            "key": "SAY.事件.308.",
+            "chinese": "在一座小小沙丘上，你发现了一个熟悉的身影。"
+        },
+        {
+            "key": "MENU.事件.152",
+            "chinese": "是Luby！"
+        },
+        {
+            "key": "SAY.事件.313.",
+            "chinese": "你们在风车平原短暂地相遇，然后匆匆分别。"
+        },
+        {
+            "key": "SAY.事件.327.",
+            "chinese": "如今Luby已经抵达了流星沙漠，你又一次遇见它了！"
+        },
+        {
+            "key": "SAY.事件.314.",
+            "chinese": "确实，这一定是缘分呀！"
+        },
+        {
+            "key": "SAY.事件.344.兔子luby",
+            "chinese": "你是之前的那个人啊"
+        },
+        {
+            "key": "SAY.事件.343.兔子luby",
+            "chinese": "我们又见面了呢"
+        },
+        {
+            "key": "SAY.事件.342.",
+            "chinese": "Luby还是老样子，带着它的斜挎包。"
+        },
+        {
+            "key": "MENU.事件.345",
+            "chinese": "你找到Shio了吗"
+        },
+        {
+            "key": "SAY.事件.319.",
+            "chinese": "你向兔子Luby道别。"
+        },
+        {
+            "key": "SAY.事件.386.",
+            "chinese": "它旅途的目的地已经不再是为了寻找Shio或者宝物。"
+        },
+        {
+            "key": "SAY.事件.385.",
+            "chinese": "它为了自己，去更远的世界，去相遇去发现。"
+        },
+        {
+            "key": "SAY.事件.347.",
+            "chinese": "Luby摇了摇头。"
+        },
+        {
+            "key": "SAY.事件.348.兔子luby",
+            "chinese": "很遗憾，shio已经不在了"
+        },
+        {
+            "key": "SAY.事件.349.兔子luby",
+            "chinese": "我已经不用再去找shio了"
+        },
+        {
+            "key": "SAY.事件.354.兔子luby",
+            "chinese": "这里是shio降临的地方"
+        },
+        {
+            "key": "SAY.事件.427.兔子luby",
+            "chinese": "来到这里后，我全部想起来了"
+        },
+        {
+            "key": "SAY.事件.350.",
+            "chinese": "你和Luby坐在星落之地，天边的流星划过。"
+        },
+        {
+            "key": "MENU.事件.353",
+            "chinese": "跟我说说Shio呗"
+        },
+        {
+            "key": "SAY.事件.356.",
+            "chinese": "Luby点了点头。"
+        },
+        {
+            "key": "SAY.事件.362.兔子luby",
+            "chinese": "其实，shio跟这些流星一样，也是从天外降临的"
+        },
+        {
+            "key": "MENU.事件.361",
+            "chinese": "Shio也是外星人吗"
+        },
+        {
+            "key": "SAY.事件.418.兔子luby",
+            "chinese": "我还会继续去旅行吧"
+        },
+        {
+            "key": "SAY.事件.419.兔子luby",
+            "chinese": "不用再去寻找宝物，而是去看看更加广阔的世界"
+        },
+        {
+            "key": "SAY.事件.420.兔子luby",
+            "chinese": "也许有机会的话，我也想去shio的故乡看看"
+        },
+        {
+            "key": "SAY.事件.421.",
+            "chinese": "Luby抬头望着星空，沉默了许久。"
+        },
+        {
+            "key": "SAY.事件.423.兔子luby",
+            "chinese": "那这次就真的再见啦"
+        },
+        {
+            "key": "SAY.事件.425.兔子luby",
+            "chinese": "luby挥了挥手，它的背影逐渐融入流星沙漠的夜色里"
+        },
+        {
+            "key": "MENU.事件.422",
+            "chinese": "再见咯"
+        },
+        {
+            "key": "SAY.事件.431.兔子luby",
+            "chinese": "它好像是从银之河来到这里的"
+        },
+        {
+            "key": "SAY.事件.456.兔子luby",
+            "chinese": "那时候的luby们并不像现在这样有自己的思维和想法"
+        },
+        {
+            "key": "SAY.事件.457.兔子luby",
+            "chinese": "luby们住在地洞里"
+        },
+        {
+            "key": "SAY.事件.433.兔子luby",
+            "chinese": "饿了就吃地底植物的根茎，困了就钻到洞里睡上一觉"
+        },
+        {
+            "key": "SAY.事件.458.兔子luby",
+            "chinese": "luby们世世代代是这么生活的"
+        },
+        {
+            "key": "SAY.事件.434.兔子luby",
+            "chinese": "直到shio来到luby们的身边"
+        },
+        {
+            "key": "SAY.事件.435.兔子luby",
+            "chinese": "它虽然不会说话，但是luby们很喜欢它"
+        },
+        {
+            "key": "SAY.事件.436.兔子luby",
+            "chinese": "于是luby们从地底搬到地表上，和shio生活在一起"
+        },
+        {
+            "key": "SAY.事件.459.兔子luby",
+            "chinese": "它给luby们分享许多故事，那些故事是整天在地洞里的luby们闻所未闻的"
+        },
+        {
+            "key": "SAY.事件.493.兔子luby",
+            "chinese": "luby们很快，学会了各种新鲜的事物"
+        },
+        {
+            "key": "SAY.事件.437.兔子luby",
+            "chinese": "在和shio生活的那段时间，luby们逐渐听到了shio的声音，听到了自己内心的声音"
+        },
+        {
+            "key": "SAY.事件.438.兔子luby",
+            "chinese": "luby们学会了交流，不同的luby都有自己不同的个性"
+        },
+        {
+            "key": "SAY.事件.439.兔子luby",
+            "chinese": "有时候会有争吵，但大家一起在微风平原生活着"
+        },
+        {
+            "key": "SAY.事件.460.",
+            "chinese": "luby停顿了一下。"
+        },
+        {
+            "key": "SAY.事件.440.兔子luby",
+            "chinese": "情感"
+        },
+        {
+            "key": "SAY.事件.441.兔子luby",
+            "chinese": "也许这就是shio赐予我们的宝物"
+        },
+        {
+            "key": "SAY.事件.442.兔子luby",
+            "chinese": "有一天，我倚靠着shio睡午觉的时候，发现它有点不对劲"
+        },
+        {
+            "key": "SAY.事件.443.兔子luby",
+            "chinese": "它的声音直接传递到心里，好像在跟我们道别"
+        },
+        {
+            "key": "SAY.事件.444.兔子luby",
+            "chinese": "这一天的夜晚，shio消失了，我看到shio化为微光飞向天边"
+        },
+        {
+            "key": "SAY.事件.445.兔子luby",
+            "chinese": "其实那时候shio就离开了吧"
+        },
+        {
+            "key": "SAY.事件.494.兔子luby",
+            "chinese": "luby们并没有失去宝物，相反因为shio赐予了我们宝物"
+        },
+        {
+            "key": "SAY.事件.446.兔子luby",
+            "chinese": "只是，对shio的不舍让我们怅然若失"
+        },
+        {
+            "key": "SAY.事件.447.兔子luby",
+            "chinese": "而风车平原的旋律充满了和shio的回忆的余音"
+        },
+        {
+            "key": "SAY.事件.448.兔子luby",
+            "chinese": "和shio生活的那段时光，才是我们独一无二的宝物吧"
+        },
+        {
+            "key": "SAY.事件.449.",
+            "chinese": "兔子翻了翻背包。"
+        },
+        {
+            "key": "SAY.事件.450.",
+            "chinese": "给了你一块小小的发着微光的枝叶。"
+        },
+        {
+            "key": "SAY.事件.451.",
+            "chinese": "这是Shio的一部分，我在这片沙漠里找到的。"
+        },
+        {
+            "key": "SAY.事件.452.",
+            "chinese": "枝叶上微光零散地飘动着。"
+        },
+        {
+            "key": "SAY.事件.453.兔子luby",
+            "chinese": "你能帮我把shio的碎片带回风车平原吗"
+        },
+        {
+            "key": "SAY.事件.454.兔子luby",
+            "chinese": "这是属于我们luby和shio的回忆"
+        },
+        {
+            "key": "MENU.事件.455",
+            "chinese": "你不回去吗"
+        },
+        {
+            "key": "CHARACTER.兔子luby",
+            "chinese": "兔子luby"
+        },
+        {
+            "key": "SAY.事件.344.兔子Luby",
+            "chinese": "你是之前的那个人啊。"
+        },
+        {
+            "key": "SAY.事件.343.兔子Luby",
+            "chinese": "我们又见面了呢。"
+        },
+        {
+            "key": "SAY.事件.348.兔子Luby",
+            "chinese": "很遗憾，Shio已经不在了。"
+        },
+        {
+            "key": "SAY.事件.349.兔子Luby",
+            "chinese": "我已经不用再去找shio了。"
+        },
+        {
+            "key": "SAY.事件.427.兔子Luby",
+            "chinese": "来到这里后，我全部想起来了。"
+        },
+        {
+            "key": "SAY.事件.362.兔子Luby",
+            "chinese": "其实，Shio跟这些流星一样，也是从天外降临的。"
+        },
+        {
+            "key": "SAY.事件.418.兔子Luby",
+            "chinese": "我还会还会继续去旅行吧。"
+        },
+        {
+            "key": "SAY.事件.354.兔子Luby",
+            "chinese": "这里...就是Shio降临的地方。"
+        },
+        {
+            "key": "SAY.事件.419.兔子Luby",
+            "chinese": "不用再去寻找宝物，而是去看看更加广阔的世界。"
+        },
+        {
+            "key": "SAY.事件.420.兔子Luby",
+            "chinese": "也许有机会的话，我也想去Shio的故乡看看。"
+        },
+        {
+            "key": "SAY.事件.508.兔子Luby",
+            "chinese": "那里一定很漂亮吧。"
+        },
+        {
+            "key": "SAY.事件.423.兔子Luby",
+            "chinese": "这次就真的再见啦。"
+        },
+        {
+            "key": "SAY.事件.453.兔子Luby",
+            "chinese": "你能帮我把Shio的枝条带回风车平原吗？"
+        },
+        {
+            "key": "SAY.事件.454.兔子Luby",
+            "chinese": "这是属于我们Luby和Shio的回忆。"
+        },
+        {
+            "key": "CHARACTER.兔子Luby",
+            "chinese": "兔子Luby"
+        },
+        {
+            "key": "SAY.事件.425.兔子Luby",
+            "chinese": "Luby挥了挥手，它的背影逐渐融入流星沙漠的夜色里。"
+        },
+        {
+            "key": "SAY.事件.431.兔子Luby",
+            "chinese": "它好像是从银之河来到这里的。"
+        },
+        {
+            "key": "SAY.事件.456.兔子Luby",
+            "chinese": "那时候的Luby们并不像现在这样有自己的思维和想法。"
+        },
+        {
+            "key": "SAY.事件.446.兔子Luby",
+            "chinese": "只是，对Shio的不舍让我们怅然若失"
+        },
+        {
+            "key": "SAY.事件.447.兔子Luby",
+            "chinese": "而风车平原的飘荡的旋律充满了和Shio的回忆的余音。"
+        },
+        {
+            "key": "SAY.事件.448.兔子Luby",
+            "chinese": "和Shio生活的那段时光，才是我们独一无二的宝物吧"
+        },
+        {
+            "key": "SAY.事件.443.兔子Luby",
+            "chinese": "它的声音直接传递到心里，好像在跟我们道别。"
+        },
+        {
+            "key": "SAY.事件.444.兔子Luby",
+            "chinese": "这一天的夜晚，Shio消失了，我看到Shio化为微光飞向天边。"
+        },
+        {
+            "key": "SAY.事件.445.兔子Luby",
+            "chinese": "其实那时候Shio就离开了吧。"
+        },
+        {
+            "key": "SAY.事件.494.兔子Luby",
+            "chinese": "Luby们并没有失去宝物，相反Shio赐予了我们宝物。"
+        },
+        {
+            "key": "SAY.事件.440.兔子Luby",
+            "chinese": "情感..."
+        },
+        {
+            "key": "SAY.事件.441.兔子Luby",
+            "chinese": "也许这就是Shio赐予我们的宝物。"
+        },
+        {
+            "key": "SAY.事件.442.兔子Luby",
+            "chinese": "有一天，我倚靠着Shio睡午觉的时候，发现它有点不对劲。"
+        },
+        {
+            "key": "SAY.事件.457.兔子Luby",
+            "chinese": "Luby们住在地洞里。"
+        },
+        {
+            "key": "SAY.事件.433.兔子Luby",
+            "chinese": "饿了就吃地底植物的根茎，困了就钻到洞里睡上一觉。"
+        },
+        {
+            "key": "SAY.事件.458.兔子Luby",
+            "chinese": "毕竟...Luby们世世代代是这么生活的。"
+        },
+        {
+            "key": "SAY.事件.434.兔子Luby",
+            "chinese": "直到Shio来到Luby们的身边。"
+        },
+        {
+            "key": "SAY.事件.437.兔子Luby",
+            "chinese": "在和shio生活的那段时间，Luby们逐渐听到了Shio的声音，听到了自己内心的声音。"
+        },
+        {
+            "key": "SAY.事件.438.兔子Luby",
+            "chinese": "Luby们学会了交流，不同的Luby都有自己不同的个性。"
+        },
+        {
+            "key": "SAY.事件.439.兔子Luby",
+            "chinese": "有时候也会聚在一起聊天，有时候会有争吵，但大家一起在微风平原平和地生活着。"
+        },
+        {
+            "key": "SAY.事件.435.兔子Luby",
+            "chinese": "它虽然不会说话，但是Luby们很喜欢它。"
+        },
+        {
+            "key": "SAY.事件.436.兔子Luby",
+            "chinese": "于是Luby们从地底搬到地表上，和Shio生活在一起。"
+        },
+        {
+            "key": "SAY.事件.459.兔子Luby",
+            "chinese": "它给Luby们分享了许多故事，那些故事是整天在地洞里的Luby们闻所未闻的。"
+        },
+        {
+            "key": "SAY.事件.493.兔子Luby",
+            "chinese": "Luby们很快，学会了各种新鲜的事物。"
+        }
+    ]
+}

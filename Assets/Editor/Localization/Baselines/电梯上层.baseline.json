@@ -1,0 +1,89 @@
+{
+    "csvPath": "E:/MemeEcho/Assets/Resources/Language/电梯上层.csv",
+    "entries": [
+        {
+            "key": "SAY.事件.401.",
+            "chinese": "你再次进入电梯间"
+        },
+        {
+            "key": "SAY.事件.558.",
+            "chinese": "随着你的到来，铁门自动打开了。"
+        },
+        {
+            "key": "MENU.事件.551",
+            "chinese": "进入下层"
+        },
+        {
+            "key": "MENU.事件.395",
+            "chinese": "离开"
+        },
+        {
+            "key": "SAY.事件.590.",
+            "chinese": "你离开了电梯间"
+        },
+        {
+            "key": "SAY.事件.591.",
+            "chinese": "没过一会你抵达了下层"
+        },
+        {
+            "key": "SAY.事件.688.",
+            "chinese": "你又来了啊，其实我最近感觉好多了。"
+        },
+        {
+            "key": "SAY.事件.1146.",
+            "chinese": "而且我悟出了一个道理。"
+        },
+        {
+            "key": "SAY.事件.689.",
+            "chinese": "作为上下层的衔接电梯，我也肩负着伟大的使命。"
+        },
+        {
+            "key": "SAY.事件.690.",
+            "chinese": "那就是带着人们从上层抵达下层，再从下层抵达上层。"
+        },
+        {
+            "key": "SAY.事件.691.",
+            "chinese": "我觉得这大概就是我的人生吧，虽然平凡枯燥，但是却伟大。"
+        },
+        {
+            "key": "SAY.事件.692.",
+            "chinese": "电梯按钮说完，按钮上闪过一丝布灵布灵的光芒。"
+        },
+        {
+            "key": "SAY.事件.693.",
+            "chinese": "它似乎变得开朗了起来。"
+        },
+        {
+            "key": "MENU.事件.695",
+            "chinese": "进入上层"
+        },
+        {
+            "key": "MENU.事件.696",
+            "chinese": "离开"
+        },
+        {
+            "key": "SAY.事件.1142.",
+            "chinese": "你再次进入电梯间"
+        },
+        {
+            "key": "SAY.事件.1144.",
+            "chinese": "随着你的到来，铁门自动打开了。"
+        },
+        {
+            "key": "MENU.事件.1145",
+            "chinese": "最近感觉怎么样"
+        },
+        {
+            "key": "SAY._CommandCopyBuffer.688.",
+            "chinese": "你又来了啊，其实我最近感觉好多了。"
+        },
+        {
+            "key": "CHARACTER.电梯按钮",
+            "chinese": "电梯按钮"
+        },
+        {
+            "key": "CHARACTER.未知声音",
+            "chinese": "未知声音"
+        }
+    ]
+}

@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UniverIdle.UI;
 using UnityEditor;
@@ -44,7 +45,7 @@ namespace UniverIdle.Editor
 
         private static void EnsureEventSystem()
         {
-            if (Object.FindObjectOfType<EventSystem>() != null) return;
+            if (UnityEngine.Object.FindObjectOfType<EventSystem>() != null) return;
             var es = new GameObject("EventSystem");
             es.AddComponent<EventSystem>();
             es.AddComponent<StandaloneInputModule>();
@@ -60,16 +61,66 @@ namespace UniverIdle.Editor
 
         private static TMP_FontAsset GetChineseFontAsset()
         {
-            var path = "Assets/UI/Fonts/NotoSansSC-Regular SDF.asset";
-            var asset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path);
+            const string projectFontPath = "Assets/UI/Fonts/NotoSansSC-Regular SDF.asset";
+
+            var asset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(projectFontPath);
             if (asset != null) return asset;
 
-            var osFont = Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei", "SimHei", "Noto Sans CJK SC", "Arial" }, 32);
-            asset = TMP_FontAsset.CreateFontAsset(osFont);
-            System.IO.Directory.CreateDirectory("Assets/UI/Fonts");
-            AssetDatabase.CreateAsset(asset, path);
+            asset = TryCreateChineseFontAsset(projectFontPath);
+            if (asset != null) return asset;
+
+            asset = FindFallbackTmpFont();
+            if (asset != null)
+            {
+                Debug.LogWarning(
+                    "[UniverIdle] 未能自动生成中文 SDF 字体，暂用 TMP 内置字体；中文可能显示为方框。" +
+                    "可在 Window → TextMeshPro → Font Asset Creator 生成 NotoSansSC-Regular SDF 到 Assets/UI/Fonts/。");
+                return asset;
+            }
+
+            throw new System.InvalidOperationException(
+                "[UniverIdle] 未找到任何 TMP_FontAsset。请先导入 TextMeshPro Essential Resources（Window → TextMeshPro → Import TMP Essential Resources）。");
+        }
+
+        private static TMP_FontAsset TryCreateChineseFontAsset(string savePath)
+        {
+            var osFont = Font.CreateDynamicFontFromOSFont(
+                new[] { "Microsoft YaHei UI", "Microsoft YaHei", "SimHei", "Noto Sans CJK SC", "Arial Unicode MS", "Arial" },
+                32);
+            if (osFont == null) return null;
+
+            var asset = TMP_FontAsset.CreateFontAsset(osFont);
+            if (asset == null) return null;
+
+            Directory.CreateDirectory("Assets/UI/Fonts");
+            AssetDatabase.CreateAsset(asset, savePath);
             AssetDatabase.SaveAssets();
             return asset;
+        }
+
+        private static TMP_FontAsset FindFallbackTmpFont()
+        {
+            if (TMP_Settings.defaultFontAsset != null)
+                return TMP_Settings.defaultFontAsset;
+
+            var paths = new[]
+            {
+                "Packages/com.unity.textmeshpro/Resources/Fonts & Materials/LiberationSans SDF.asset",
+                "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset",
+            };
+            foreach (var path in paths)
+            {
+                var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path);
+                if (font != null) return font;
+            }
+
+            foreach (var guid in AssetDatabase.FindAssets("t:TMP_FontAsset"))
+            {
+                var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetDatabase.GUIDToAssetPath(guid));
+                if (font != null) return font;
+            }
+
+            return null;
         }
 
         private static GameObject BuildUI(TMP_FontAsset font)
