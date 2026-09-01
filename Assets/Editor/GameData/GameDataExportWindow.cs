@@ -199,7 +199,7 @@ namespace UniverIdle.Editor
           : new Color(0.95f, 0.72f, 0.72f, 1f);
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         GUI.backgroundColor = prevBg;
-        DrawSheetRowContent(sheet, hasError, errorMessage);
+        DrawSheetRowContent(sheet, hasError);
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(34);
         EditorGUILayout.LabelField(errorMessage, _sheetErrorHintStyle);
@@ -208,10 +208,10 @@ namespace UniverIdle.Editor
         return;
       }
 
-      DrawSheetRowContent(sheet, false, null);
+      DrawSheetRowContent(sheet, false);
     }
 
-    private void DrawSheetRowContent(GameDataSheetRegistry.SheetInfo sheet, bool hasError, string _)
+    private void DrawSheetRowContent(GameDataSheetRegistry.SheetInfo sheet, bool hasError)
     {
       EditorGUILayout.BeginHorizontal();
       GUILayout.Space(16);

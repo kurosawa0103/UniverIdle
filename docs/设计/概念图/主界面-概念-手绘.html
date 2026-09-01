@@ -4,115 +4,152 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>UniverIdle — 主界面概念（极简手绘）</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #121816;
-      --panel: #24302a;
-      --panel-light: #2f3c36;
-      --border: #4a5c54;
-      --gold: #f0c96e;
-      --teal: #66b8a8;
-      --cream: #f5f0e6;
-      --text: #ece9e2;
-      --muted: #90a098;
-      --accent: #e88860;
-      --card-hover: #3a4842;
+      --page: #3c3a36;
+      --paper: #4a4844;
+      --paper-dark: #444240;
+      --paper-deep: #565450;
+      --ink: #e4e0d8;
+      --muted: #9a948c;
+      --teal: #72a898;
+      --accent: #c87048;
+      --gold: #d4a858;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: "Noto Sans SC", sans-serif;
-      background: #121614;
+      font-family: "Noto Serif SC", serif;
+      background: var(--page);
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(212,204,192,0.04) 0 1px, transparent 1px),
+        radial-gradient(circle at 70% 60%, rgba(212,204,192,0.03) 0 1px, transparent 1px);
+      background-size: 24px 24px, 31px 31px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 16px;
-      color: var(--text);
+      color: var(--ink);
     }
-    .hint { font-size: 12px; color: #6a756c; margin-bottom: 10px; }
+    .hint { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+
+    /* 手绘框：优先 ui_frame_panel.png，无图时 CSS 回退 */
+    .sketch-frame {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 4px 7px 5px 6px;
+      box-shadow: 3px 4px 0 var(--ink);
+    }
+    .sketch-frame-inset {
+      background: var(--paper);
+      border: 1.5px solid var(--ink);
+      border-radius: 3px 5px 4px 4px;
+    }
+    .sketch-divider {
+      height: 0;
+      border: none;
+      border-top: 1.5px solid var(--ink);
+      opacity: 0.35;
+      margin: 0;
+    }
+    .sketch-divider-dashed {
+      height: 1px;
+      background: repeating-linear-gradient(90deg, var(--ink) 0, var(--ink) 5px, transparent 5px, transparent 10px);
+      opacity: 0.3;
+    }
+
     .app {
       width: 1200px;
       max-width: 100%;
       height: 680px;
-      background: var(--bg);
-      border-radius: 12px;
-      border: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.45);
     }
+    .app.sketch-frame { padding: 0; }
+
     .topbar {
       height: 52px;
       padding: 0 20px;
       display: flex;
       align-items: center;
       gap: 16px;
-      background: linear-gradient(180deg, #2e3832, #252d28);
-      border-bottom: 1px solid var(--border);
+      background: var(--paper-dark);
+      border-bottom: 2px solid var(--ink);
     }
     .logo { display: flex; align-items: center; gap: 10px; }
     .logo-img {
-      width: 36px; height: 36px; border-radius: 8px;
+      width: 36px; height: 36px;
       flex-shrink: 0; overflow: hidden;
-      border: 1px solid var(--border);
-      background: var(--panel);
       display: flex; align-items: center; justify-content: center;
     }
     .logo-img img { width: 100%; height: 100%; object-fit: contain; }
-    .logo h1 { font-size: 17px; font-weight: 600; color: var(--cream); }
-    .logo span { font-size: 12px; color: var(--muted); margin-left: 6px; }
-    .currency { margin-left: auto; display: flex; gap: 20px; font-size: 14px; }
-    .currency .gold { color: var(--gold); }
-    .top-btn {
-      padding: 6px 14px; border-radius: 8px; font-size: 13px;
-      background: var(--panel-light); border: 1px solid var(--border);
-      color: var(--cream); cursor: default;
+    .logo h1 {
+      font-family: "Ma Shan Zheng", cursive;
+      font-size: 24px; font-weight: 400; color: var(--ink);
     }
-    .top-btn:hover { background: var(--card-hover); }
-    .body { flex: 1; display: flex; min-height: 0; }
+    .logo span { font-size: 13px; color: var(--muted); margin-left: 6px; font-family: "Noto Serif SC", serif; }
+    .currency { margin-left: auto; display: flex; gap: 20px; font-size: 14px; }
+    .currency .gold { color: var(--accent); font-weight: 500; }
+    .top-btn {
+      padding: 5px 14px;
+      font-size: 13px;
+      color: var(--ink);
+      cursor: default;
+      background: var(--paper);
+    }
+    .top-btn.sketch-frame-inset { box-shadow: 2px 2px 0 var(--ink); }
+    .top-btn:hover { background: var(--paper-deep); }
+
+    .body { flex: 1; display: flex; min-height: 0; background: var(--paper); }
+
     .sidebar {
       width: 172px;
-      background: #222a24;
-      border-right: 1px solid var(--border);
+      border-right: 2px solid var(--ink);
       padding: 10px 8px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 6px;
+      background: var(--paper-dark);
     }
     .skill {
       display: flex;
       align-items: center;
       gap: 10px;
       padding: 8px 10px;
-      border-radius: 10px;
       cursor: default;
-      border: 1px solid transparent;
       min-height: 52px;
+      border: 1.5px solid transparent;
+      border-radius: 3px 6px 4px 5px;
     }
-    .skill:hover { background: var(--panel); }
+    .skill:hover { background: rgba(200, 112, 72, 0.1); }
     .skill.active {
-      background: var(--panel-light);
-      border-color: var(--teal);
-      box-shadow: inset 3px 0 0 var(--teal);
+      background: rgba(200, 112, 72, 0.16);
+      border-color: var(--ink);
+      box-shadow: inset 3px 0 0 var(--accent);
     }
     .skill-icon {
-      width: 40px; height: 40px; border-radius: 8px;
+      width: 40px; height: 40px;
       flex-shrink: 0; overflow: hidden;
-      border: 1px solid var(--border);
-      background: #1a201c;
       display: flex; align-items: center; justify-content: center;
+      background: var(--paper);
     }
+    .skill-icon.sketch-frame-inset { border-width: 1.5px; }
     .skill-icon img { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
-    .skill-info { flex: 1; min-width: 0; }
     .skill-name { font-size: 14px; font-weight: 500; }
     .skill-lv { font-size: 11px; color: var(--muted); margin-top: 2px; }
     .skill-bar {
-      height: 3px; background: #1a201c; border-radius: 2px; margin-top: 4px;
+      height: 4px;
+      background: var(--paper-deep);
+      border: 1px solid var(--ink);
+      border-radius: 2px;
+      margin-top: 4px;
+      overflow: hidden;
     }
-    .skill-bar i { display: block; height: 100%; background: var(--teal); border-radius: 2px; }
+    .skill-bar i { display: block; height: 100%; background: var(--teal); }
+
     .center {
       flex: 1;
       display: flex;
@@ -121,34 +158,38 @@
       padding: 14px;
       gap: 12px;
     }
+
     .banner {
       height: 130px;
-      border-radius: 12px;
       overflow: hidden;
       position: relative;
-      border: 1px solid var(--border);
-      background: #1a2820;
     }
-    .banner-bg {
-      width: 100%; height: 100%; object-fit: cover; object-position: center;
-      display: block;
-    }
+    .banner.sketch-frame-inset { border-width: 2px; border-radius: 5px 8px 6px 7px; }
+    .banner-bg { width: 100%; height: 100%; object-fit: cover; display: block; }
     .banner-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(90deg, rgba(0,0,0,0.65) 0%, transparent 60%);
+      background: linear-gradient(90deg, rgba(60,58,54,0.88) 0%, rgba(60,58,54,0.3) 55%, transparent 100%);
       padding: 16px 20px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       pointer-events: none;
     }
-    .banner h2 { font-size: 22px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+    .banner h2 {
+      font-family: "Ma Shan Zheng", cursive;
+      font-size: 26px; color: var(--ink);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.6);
+    }
     .tags { display: flex; gap: 8px; margin-top: 6px; }
     .tag {
-      font-size: 11px; padding: 3px 8px; border-radius: 12px;
-      background: rgba(90,154,138,0.35); color: #b8e0d4;
-      border: 1px solid rgba(90,154,138,0.5);
+      font-size: 11px; padding: 2px 8px;
+      background: var(--paper);
+      color: var(--teal);
+      border: 1.5px solid var(--ink);
+      border-radius: 10px 12px 11px 13px;
+      font-family: "Noto Serif SC", serif;
     }
+
     .cards {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -158,150 +199,150 @@
       align-content: start;
     }
     .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
       padding: 10px;
       cursor: default;
-      transition: transform 0.15s, border-color 0.15s;
       min-height: 100px;
+      transition: transform 0.12s;
     }
-    .card:hover { transform: translateY(-2px); border-color: var(--teal); background: var(--card-hover); }
-    .card.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-    .card.locked { opacity: 0.45; filter: grayscale(0.6); }
+    .card.sketch-frame-inset { background: var(--paper); }
+    .card:hover { transform: translateY(-2px); }
+    .card.active {
+      border-color: var(--accent);
+      box-shadow: 3px 3px 0 var(--accent), inset 0 0 0 1px var(--accent);
+    }
+    .card.locked { opacity: 0.45; filter: grayscale(0.5); }
     .card-thumb {
-      width: 100%; height: 56px; border-radius: 8px; margin-bottom: 8px;
-      background: #1a201c;
-      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 56px;
+      margin-bottom: 8px;
       overflow: hidden;
+      background: var(--paper-deep);
     }
+    .card-thumb.sketch-frame-inset { border-width: 1px; }
     .card-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .card-title { font-size: 14px; font-weight: 500; }
     .card-meta { font-size: 12px; color: var(--muted); margin-top: 4px; display: flex; justify-content: space-between; }
     .card-yield { color: var(--teal); font-size: 11px; }
+
     .running {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
       padding: 14px 16px;
       display: flex;
       align-items: center;
       gap: 14px;
+      background: var(--paper-dark);
     }
+    .running.sketch-frame-inset { border-width: 2px; }
     .running-thumb {
-      width: 56px; height: 56px; border-radius: 10px; overflow: hidden; flex-shrink: 0;
-      background: #1a201c; border: 1px solid var(--border);
+      width: 56px; height: 56px;
+      overflow: hidden; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
+      background: var(--paper);
     }
-    .running-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+    .running-thumb.sketch-frame-inset img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
     .running-info { flex: 1; }
-    .running-info h3 { font-size: 15px; margin-bottom: 8px; }
-    .bar-wrap { height: 10px; background: #1a201c; border-radius: 5px; overflow: hidden; }
-    .bar-fill { height: 100%; width: 62%; background: linear-gradient(90deg, var(--accent), var(--gold)); border-radius: 5px; }
-    .running-time { font-size: 13px; color: var(--gold); width: 48px; text-align: right; }
+    .running-info h3 { font-size: 15px; margin-bottom: 8px; font-weight: 500; }
+    .bar-wrap { height: 14px; position: relative; }
+    .bar-wrap svg { width: 100%; height: 14px; display: block; }
+    .running-time { font-size: 13px; color: var(--accent); width: 48px; text-align: right; font-weight: 500; }
+
     .detail {
       width: 228px;
-      background: #222a24;
-      border-left: 1px solid var(--border);
+      border-left: 2px solid var(--ink);
       padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      background: var(--paper-dark);
     }
     .detail-hero {
       width: 100%; aspect-ratio: 1;
-      border-radius: 12px;
-      border: 1px solid var(--border);
       overflow: hidden;
-      background: #1a201c;
       display: flex; align-items: center; justify-content: center;
+      background: var(--paper);
     }
-    .detail-hero img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
-    .detail h3 { font-size: 16px; }
-    .detail p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .detail-hero.sketch-frame-inset img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+    .detail h3 { font-size: 16px; font-weight: 600; }
+    .detail p { font-size: 13px; color: var(--muted); line-height: 1.65; }
     .req { font-size: 12px; }
-    .req li { list-style: none; padding: 4px 0; display: flex; align-items: center; gap: 6px; color: var(--muted); }
+    .req li { list-style: none; padding: 4px 0; color: var(--muted); }
     .req .ok { color: var(--teal); }
+
     .inv-bar {
       height: 76px;
-      border-top: 1px solid var(--border);
-      background: #1c221e;
+      border-top: 2px solid var(--ink);
       padding: 10px 16px;
       display: flex;
       align-items: center;
       gap: 10px;
       overflow-x: auto;
+      background: var(--paper-deep);
     }
     .inv-label { font-size: 12px; color: var(--muted); writing-mode: vertical-rl; letter-spacing: 2px; flex-shrink: 0; }
     .slot {
       width: 52px; height: 52px; flex-shrink: 0;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
       position: relative;
       display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
+      background: var(--paper);
     }
+    .slot.sketch-frame-inset { border-width: 1.5px; }
     .slot img { width: 36px; height: 36px; object-fit: contain; }
     .slot .cnt {
       position: absolute; bottom: 2px; right: 4px;
-      font-size: 11px; font-weight: 600; color: var(--cream);
-      text-shadow: 0 1px 2px #000;
+      font-size: 11px; font-weight: 600; color: var(--ink);
     }
   </style>
 </head>
 <body>
-  <p class="hint">UniverIdle 主界面概念 · 极简手绘 v3 · 蜡笔彩铅质感 · 浏览器打开本文件预览</p>
+  <p class="hint">UniverIdle 主界面 · 极简手绘 v3 · 暖灰纸 UI + 蜡笔图标 · 浏览器打开本文件</p>
 
-  <div class="app">
+  <div class="app sketch-frame">
     <header class="topbar">
       <div class="logo">
-        <div class="logo-img"><img src="assets/logo.png" alt="坠星谷" /></div>
+        <div class="logo-img sketch-frame-inset"><img src="assets/logo.png" alt="坠星谷" /></div>
         <h1>坠星谷 <span>萤溪村</span></h1>
       </div>
       <div class="currency">
-        <span class="gold">🪙 1,240</span>
+        <span class="gold">1,240 铜</span>
         <span style="color:var(--muted)">声望 ★★☆</span>
       </div>
-      <div class="top-btn">图鉴</div>
-      <div class="top-btn">背包</div>
-      <div class="top-btn">设置</div>
+      <div class="top-btn sketch-frame-inset">图鉴</div>
+      <div class="top-btn sketch-frame-inset">背包</div>
+      <div class="top-btn sketch-frame-inset">设置</div>
     </header>
 
     <div class="body">
       <nav class="sidebar">
         <div class="skill">
-          <div class="skill-icon"><img src="assets/skill_hunting.png" alt="打猎" /></div>
+          <div class="skill-icon sketch-frame-inset"><img src="assets/skill_hunting.png" alt="打猎" /></div>
           <div class="skill-info"><div class="skill-name">打猎</div><div class="skill-lv">Lv. 8</div><div class="skill-bar"><i style="width:40%"></i></div></div>
         </div>
         <div class="skill active">
-          <div class="skill-icon"><img src="assets/skill_fishing.png" alt="溪钓" /></div>
+          <div class="skill-icon sketch-frame-inset"><img src="assets/skill_fishing.png" alt="溪钓" /></div>
           <div class="skill-info"><div class="skill-name">溪钓</div><div class="skill-lv">Lv. 12</div><div class="skill-bar"><i style="width:65%"></i></div></div>
         </div>
         <div class="skill">
-          <div class="skill-icon"><img src="assets/skill_foraging.png" alt="野拾" /></div>
+          <div class="skill-icon sketch-frame-inset"><img src="assets/skill_foraging.png" alt="野拾" /></div>
           <div class="skill-info"><div class="skill-name">野拾</div><div class="skill-lv">Lv. 6</div><div class="skill-bar"><i style="width:28%"></i></div></div>
         </div>
         <div class="skill">
-          <div class="skill-icon"><img src="assets/skill_mining.png" alt="掘矿" /></div>
+          <div class="skill-icon sketch-frame-inset"><img src="assets/skill_mining.png" alt="掘矿" /></div>
           <div class="skill-info"><div class="skill-name">掘矿</div><div class="skill-lv">Lv. 10</div><div class="skill-bar"><i style="width:52%"></i></div></div>
         </div>
         <div class="skill">
-          <div class="skill-icon"><img src="assets/skill_alchemy.png" alt="炼药" /></div>
+          <div class="skill-icon sketch-frame-inset"><img src="assets/skill_alchemy.png" alt="炼药" /></div>
           <div class="skill-info"><div class="skill-name">炼药</div><div class="skill-lv">Lv. 9</div><div class="skill-bar"><i style="width:48%"></i></div></div>
         </div>
         <div class="skill">
-          <div class="skill-icon"><img src="assets/skill_smithing.png" alt="锻造" /></div>
+          <div class="skill-icon sketch-frame-inset"><img src="assets/skill_smithing.png" alt="锻造" /></div>
           <div class="skill-info"><div class="skill-name">锻造</div><div class="skill-lv">Lv. 7</div><div class="skill-bar"><i style="width:35%"></i></div></div>
         </div>
         <div class="skill">
-          <div class="skill-icon"><img src="assets/skill_combat.png" alt="讨伐" /></div>
+          <div class="skill-icon sketch-frame-inset"><img src="assets/skill_combat.png" alt="讨伐" /></div>
           <div class="skill-info"><div class="skill-name">讨伐</div><div class="skill-lv">Lv. 11</div><div class="skill-bar"><i style="width:58%"></i></div></div>
         </div>
       </nav>
 
       <main class="center">
-        <div class="banner">
+        <div class="banner sketch-frame-inset">
           <img class="banner-bg" src="assets/banner_yingxi.png" alt="萤溪" />
           <div class="banner-overlay">
             <h2>萤溪</h2>
@@ -310,22 +351,22 @@
         </div>
 
         <div class="cards">
-          <div class="card active">
-            <div class="card-thumb">
+          <div class="card sketch-frame-inset active">
+            <div class="card-thumb sketch-frame-inset">
               <img src="assets/card_catch_shrimp.png" alt="钓萤虾" />
             </div>
             <div class="card-title">钓萤虾</div>
             <div class="card-meta"><span>8.0 秒</span><span class="card-yield">+1 萤虾</span></div>
           </div>
-          <div class="card">
-            <div class="card-thumb">
+          <div class="card sketch-frame-inset">
+            <div class="card-thumb sketch-frame-inset">
               <img src="assets/card_pan_sand.png" alt="淘星沙" />
             </div>
             <div class="card-title">淘星沙</div>
             <div class="card-meta"><span>12 秒</span><span class="card-yield">+1 星沙</span></div>
           </div>
-          <div class="card locked">
-            <div class="card-thumb">
+          <div class="card sketch-frame-inset locked">
+            <div class="card-thumb sketch-frame-inset">
               <img src="assets/card_catch_trout.png" alt="钓鳟鱼" />
             </div>
             <div class="card-title">钓鳟鱼</div>
@@ -333,20 +374,26 @@
           </div>
         </div>
 
-        <div class="running">
-          <div class="running-thumb">
+        <div class="running sketch-frame-inset">
+          <div class="running-thumb sketch-frame-inset">
             <img src="assets/item_firefly_shrimp.png" alt="萤虾" />
           </div>
           <div class="running-info">
             <h3>进行中 · 钓萤虾</h3>
-            <div class="bar-wrap"><div class="bar-fill"></div></div>
+            <div class="bar-wrap">
+              <svg viewBox="0 0 400 14" preserveAspectRatio="none">
+                <rect x="1" y="1" width="398" height="12" rx="4" fill="#565450" stroke="#e4e0d8" stroke-width="1.2"/>
+                <path d="M4 8 Q100 5 200 7 T280 6" stroke="#c87048" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <circle cx="280" cy="6" r="3.5" fill="#c87048" stroke="#e4e0d8" stroke-width="0.8"/>
+              </svg>
+            </div>
           </div>
           <div class="running-time">00:06</div>
         </div>
       </main>
 
       <aside class="detail">
-        <div class="detail-hero">
+        <div class="detail-hero sketch-frame-inset">
           <img src="assets/detail_firefly_shrimp.png" alt="萤虾" />
         </div>
         <h3>萤虾</h3>
@@ -361,11 +408,11 @@
 
     <footer class="inv-bar">
       <span class="inv-label">物品</span>
-      <div class="slot"><img src="assets/item_firefly_shrimp.png" alt="萤虾" /><span class="cnt">48</span></div>
-      <div class="slot"><img src="assets/item_herb_sprout.png" alt="药草芽" /><span class="cnt">22</span></div>
-      <div class="slot"><img src="assets/item_red_potion.png" alt="红药" /><span class="cnt">3</span></div>
-      <div class="slot"><img src="assets/item_copper_ingot.png" alt="铜锭" /><span class="cnt">6</span></div>
-      <div class="slot"><img src="assets/item_star_sand.png" alt="星沙" /><span class="cnt">31</span></div>
+      <div class="slot sketch-frame-inset"><img src="assets/item_firefly_shrimp.png" alt="萤虾" /><span class="cnt">48</span></div>
+      <div class="slot sketch-frame-inset"><img src="assets/item_herb_sprout.png" alt="药草芽" /><span class="cnt">22</span></div>
+      <div class="slot sketch-frame-inset"><img src="assets/item_red_potion.png" alt="红药" /><span class="cnt">3</span></div>
+      <div class="slot sketch-frame-inset"><img src="assets/item_copper_ingot.png" alt="铜锭" /><span class="cnt">6</span></div>
+      <div class="slot sketch-frame-inset"><img src="assets/item_star_sand.png" alt="星沙" /><span class="cnt">31</span></div>
     </footer>
   </div>
 </body>

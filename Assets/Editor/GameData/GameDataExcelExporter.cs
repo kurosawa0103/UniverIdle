@@ -88,7 +88,22 @@ namespace UniverIdle.Editor
       {
         var path = GetExcelFullPath(excelKey);
         if (!File.Exists(path))
-          throw new FileNotFoundException("找不到 Excel 文件：" + path, path);
+        {
+          var entries = GameDataSheetRegistry.All
+            .Where(s => s.ExcelKey == excelKey && selectedSheetIds.Contains(s.Id))
+            .Select(s => new GameDataExportException.Entry(s.Id, "找不到 Excel 文件：" + path))
+            .ToArray();
+          if (entries.Length == 0)
+          {
+            entries = new[]
+            {
+              new GameDataExportException.Entry(
+                GameDataSheetRegistry.All.First(s => s.ExcelKey == excelKey).Id,
+                "找不到 Excel 文件：" + path),
+            };
+          }
+          throw new GameDataExportException(entries, "找不到 Excel 文件：" + path);
+        }
         cache[excelKey] = SimpleXlsx.Read(path);
       }
       return cache;

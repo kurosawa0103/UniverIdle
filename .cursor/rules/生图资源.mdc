@@ -1,0 +1,95 @@
+---
+description: 按概念图生成美术资源时的风格、清单、命名与流程约定
+globs: docs/设计/概念图/**
+alwaysApply: false
+---
+
+# 生图资源约定
+
+用户要求生成/补全美术资源时，**必须先对齐概念图**，不得自由发挥主题或风格。
+
+## 权威来源（按优先级）
+
+1. **排版与槽位**：`docs/设计/概念图/主界面-概念-手绘.html`（当前定稿）
+2. **资源清单**：`docs/设计/概念图/资源清单.md`（文件名、尺寸、对应 UI 槽位）
+3. **色调**：`docs/设计/02-界面.md` → 坠星谷夜晚微光（暖褐、深青绿、琥珀、暖灰底）
+4. **玩法名词**：`docs/设计/01-产品与玩法.md`、`Assets/StreamingAssets/Game/items.json`
+
+旧版 `主界面-概念.html`（SVG 占位）仅作布局参考，**不以它的 emoji/色块为画风依据**。
+
+## 画风（v3 极简手绘 · 定稿）
+
+**图标/插画**与 **UI 底图**同一套语言，不得图标手绘、背景扁平矢量混搭。
+
+### 色彩（暖灰纸墨）
+
+| 用途 | 色值 |
+|------|------|
+| 页外底 | `#3c3a36` |
+| 暖灰纸 | `#4a4844` |
+| 纸阴影区 | `#444240` / `#565450` |
+| 浅墨线描边 | `#e4e0d8` |
+| 陶土强调 | `#c87048` |
+| 灰青点缀 | `#72a898` |
+
+### 笔触
+
+- 蜡笔/彩铅填色，笔触不均匀，可见留白
+- 浅褐描边（暖灰底上），线宽有变化；外框可带 `3px 4px 0` 硬阴影模拟手绘压印
+- 低饱和土色，**不用**深绿科幻面板、Melvor 冷灰底
+- **禁止**：光晕、halo、闪粉、渐变、贴纸描边、萌系大眼、网游金光 UI
+
+## 生图前必做
+
+1. 读 `资源清单.md`，确认要生成的是哪一类、哪个 `id`/中文名
+2. 概念 HTML 里是否已有对应 `<img src="assets/...">`；有则**覆盖同名文件**，无则先补清单再生成
+3. 一次只补**同一类**资源（如「溪钓动作卡 3 张」），保持同批 prompt 一致
+
+## 输出路径与命名
+
+- 概念预览用图：`docs/设计/概念图/assets/{文件名}.png`
+- 命名规则见 `资源清单.md`（`ui_` / `skill_` / `banner_` / `card_` / `item_` / `detail_` / `logo`）
+- **透明底 PNG**；概念 HTML 引用相对路径 `assets/xxx.png`
+- Unity 正式接入前可仍放概念目录；迁入工程时再按知识库约定复制到 `Assets/`
+
+## Prompt 模板（每批复用，只改 Subject）
+
+```
+{Subject}, naive folk art game illustration,
+colored pencil and crayon on warm gray parchment paper, uneven hand-filled color blocks,
+visible stroke texture, rough light warm-brown outlines varying line weight,
+muted desaturated earth tones (olive, dusty teal, sandy tan, terracotta accent),
+asymmetrical simple shapes, lots of empty space,
+NO glow halos, NO sparkles, NO gradients, NO cute chibi kawaii,
+NO sticker aesthetic, NO Melvor flat vector, NO AI polished digital look,
+transparent background PNG, no text
+```
+
+按槽位追加：
+- `ui_*` → `empty UI frame/texture only, NO icons inside, warm gray parchment #4a4844, hand-drawn light brown border, colored pencil texture`
+- `banner_*` → `horizontal wide landscape, 16:9`
+- `card_*` → `small action scene thumbnail, 16:9`
+- `skill_*` / `item_*` → `centered game icon, 1:1`
+- `detail_*` → `larger item illustration for detail panel, 1:1`
+
+### UI 底图 prompt 追加句
+
+```
+game UI element only, empty frame or paper texture, NOT an illustration scene,
+warm gray parchment fill, wobbly light warm-brown hand-drawn border, colored pencil grain,
+suitable for nine-slice panel / button / slot / progress bar, no text no icons
+```
+
+概念 HTML 中 `.sketch-frame` 为 CSS 回退；有 `ui_*.png` 时改用 `border-image` 或 `background-image` 替换。
+
+## 生图后必做
+
+1. 文件写入 `docs/设计/概念图/assets/`
+2. 若新增槽位：更新 `资源清单.md` + `主界面-概念-手绘.html` 的 `<img>`
+3. 向用户说明：对应概念图哪个区域、文件名、是否覆盖旧图
+
+## 禁止
+
+- 未读概念图就批量生成「通用奇幻图标」
+- 风格回退到 v1 纯线条或 v2 发光贴纸风
+- 自造概念图里没有的物品/技能名（除非用户明确要求扩清单）
