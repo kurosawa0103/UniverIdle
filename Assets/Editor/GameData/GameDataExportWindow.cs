@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,16 +19,29 @@ namespace UniverIdle.Editor
     private string _statusMessage = string.Empty;
     private MessageType _statusType = MessageType.Info;
 
+    private GUIStyle _headerTitleStyle;
+    private GUIStyle _headerSubtitleStyle;
+    private GUIStyle _workbookTitleStyle;
+    private GUIStyle _pathKeyStyle;
+    private GUIStyle _pathValueStyle;
+    private GUIStyle _sheetIdStyle;
+    private GUIStyle _sheetTitleStyle;
+    private GUIStyle _sheetDescStyle;
+    private GUIStyle _statusStyle;
+    private GUIStyle _exportButtonStyle;
+    private bool _stylesReady;
+
     [MenuItem("UniverIdle/导表工具...", false, 0)]
     public static void ShowWindow()
     {
       var window = GetWindow<GameDataExportWindow>("配表导出");
-      window.minSize = new Vector2(460, 380);
+      window.minSize = new Vector2(540, 480);
       window.Show();
     }
 
     private void OnEnable()
     {
+      _stylesReady = false;
       foreach (var sheet in GameDataSheetRegistry.All)
         _selected[sheet.Id] = true;
       LoadSelectionPrefs();
@@ -36,73 +50,153 @@ namespace UniverIdle.Editor
 
     private void OnGUI()
     {
-      EditorGUILayout.Space(6);
-      EditorGUILayout.LabelField("Excel → JSON 导表", EditorStyles.boldLabel);
-      EditorGUILayout.LabelField("道具表", GameDataPaths.ItemsExcelAssetPath, EditorStyles.wordWrappedLabel);
-      EditorGUILayout.LabelField("拾荒表", GameDataPaths.ScavengeExcelAssetPath, EditorStyles.wordWrappedLabel);
-      EditorGUILayout.LabelField("道具 JSON", GameDataPaths.ItemsJsonAssetPath, EditorStyles.wordWrappedLabel);
-      EditorGUILayout.LabelField("拾荒 JSON", GameDataPaths.ScavengeJsonAssetPath, EditorStyles.wordWrappedLabel);
-
-      EditorGUILayout.Space(8);
+      EnsureStyles();
+      DrawHeader();
       DrawToolbar();
-      EditorGUILayout.Space(4);
+      EditorGUILayout.Space(8);
 
       _scroll = EditorGUILayout.BeginScrollView(_scroll);
-      foreach (var sheet in GameDataSheetRegistry.All)
-        DrawSheetRow(sheet);
+      foreach (var workbook in GameDataSheetRegistry.Workbooks)
+        DrawWorkbook(workbook);
       EditorGUILayout.EndScrollView();
 
-      EditorGUILayout.Space(8);
+      EditorGUILayout.Space(10);
       if (!string.IsNullOrEmpty(_statusMessage))
         EditorGUILayout.HelpBox(_statusMessage, _statusType);
 
-      EditorGUILayout.Space(4);
-      using (new EditorGUI.DisabledScope(!HasAnySelected()))
+      EditorGUILayout.Space(6);
+      DrawExportButton();
+    }
+
+    private void EnsureStyles()
+    {
+      if (_stylesReady) return;
+
+      var pro = EditorGUIUtility.isProSkin;
+      var muted = pro ? new Color(0.72f, 0.76f, 0.8f) : new Color(0.35f, 0.38f, 0.42f);
+
+      _headerTitleStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 15 };
+      _headerSubtitleStyle = new GUIStyle(EditorStyles.label) { fontSize = 12 };
+      _workbookTitleStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 14 };
+      _pathKeyStyle = new GUIStyle(EditorStyles.label)
       {
-        if (GUILayout.Button("导出选中表格", GUILayout.Height(32)))
-          ExportSelected();
-      }
+        fontSize = 12,
+        fontStyle = FontStyle.Bold,
+        normal = { textColor = muted },
+      };
+      _pathValueStyle = new GUIStyle(EditorStyles.label)
+      {
+        fontSize = 12,
+        normal = { textColor = pro ? new Color(0.82f, 0.86f, 0.9f) : new Color(0.2f, 0.24f, 0.28f) },
+      };
+      _sheetIdStyle = new GUIStyle(EditorStyles.label) { fontSize = 13, fontStyle = FontStyle.Bold };
+      _sheetTitleStyle = new GUIStyle(EditorStyles.label) { fontSize = 13 };
+      _sheetDescStyle = new GUIStyle(EditorStyles.wordWrappedLabel)
+      {
+        fontSize = 12,
+        normal = { textColor = muted },
+      };
+      _statusStyle = new GUIStyle(EditorStyles.label) { fontSize = 12, alignment = TextAnchor.MiddleRight };
+      _exportButtonStyle = new GUIStyle(GUI.skin.button) { fontSize = 13, fontStyle = FontStyle.Bold };
+      _stylesReady = true;
+    }
+
+    private void DrawHeader()
+    {
+      EditorGUILayout.LabelField("配表导出", _headerTitleStyle);
+      EditorGUILayout.LabelField("Excel  →  JSON", _headerSubtitleStyle);
+      EditorGUILayout.Space(6);
     }
 
     private void DrawToolbar()
     {
-      EditorGUILayout.BeginHorizontal();
-      if (GUILayout.Button("全选", GUILayout.Width(72)))
-        SetAllSelected(true);
-      if (GUILayout.Button("全不选", GUILayout.Width(72)))
-        SetAllSelected(false);
-      if (GUILayout.Button("刷新", GUILayout.Width(72)))
-        RefreshSheetStatus();
+      SirenixEditorGUI.BeginHorizontalToolbar();
+      if (SirenixEditorGUI.ToolbarButton(new GUIContent("全选"))) SetAllSelected(true);
+      if (SirenixEditorGUI.ToolbarButton(new GUIContent("全不选"))) SetAllSelected(false);
+      if (SirenixEditorGUI.ToolbarButton(new GUIContent("刷新"))) RefreshSheetStatus();
       GUILayout.FlexibleSpace();
-      if (GUILayout.Button("生成 Excel", GUILayout.Width(88)))
-        CreateExcelFromJson();
-      if (GUILayout.Button("items", GUILayout.Width(56)))
-        GameDataExcelExporter.OpenExcel(GameDataSheetRegistry.ItemsExcelKey);
-      if (GUILayout.Button("scavenge", GUILayout.Width(72)))
-        GameDataExcelExporter.OpenExcel(GameDataSheetRegistry.ScavengeExcelKey);
+      if (SirenixEditorGUI.ToolbarButton(new GUIContent("生成 Excel"))) CreateExcelFromJson();
+      SirenixEditorGUI.EndHorizontalToolbar();
+    }
+
+    private void DrawWorkbook(GameDataSheetRegistry.WorkbookInfo workbook)
+    {
+      var accent = GetWorkbookAccent(workbook.ExcelKey);
+
+      EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+      DrawWorkbookHeader(workbook, accent);
+      EditorGUILayout.Space(4);
+
+      foreach (var sheet in workbook.Sheets)
+        DrawSheetRow(sheet);
+
+      EditorGUILayout.EndVertical();
+      EditorGUILayout.Space(8);
+    }
+
+    private void DrawWorkbookHeader(GameDataSheetRegistry.WorkbookInfo workbook, Color accent)
+    {
+      EditorGUILayout.BeginHorizontal();
+      var prev = GUI.contentColor;
+      GUI.contentColor = accent;
+      EditorGUILayout.LabelField($"{workbook.Title}   {workbook.ExcelFileName}", _workbookTitleStyle);
+      GUI.contentColor = prev;
+      GUILayout.FlexibleSpace();
+
+      if (GUILayout.Button("打开 Excel", GUILayout.Width(100), GUILayout.Height(24)))
+        GameDataExcelExporter.OpenExcel(workbook.ExcelKey);
+      EditorGUILayout.EndHorizontal();
+
+      EditorGUILayout.Space(2);
+      DrawPathLine("Excel", workbook.ExcelAssetPath);
+      DrawPathLine("JSON", workbook.JsonAssetPath);
+    }
+
+    private void DrawPathLine(string label, string path)
+    {
+      EditorGUILayout.BeginHorizontal();
+      EditorGUILayout.LabelField(label, _pathKeyStyle, GUILayout.Width(44));
+      EditorGUILayout.LabelField(path, _pathValueStyle);
       EditorGUILayout.EndHorizontal();
     }
 
     private void DrawSheetRow(GameDataSheetRegistry.SheetInfo sheet)
     {
-      EditorGUILayout.BeginVertical("box");
       EditorGUILayout.BeginHorizontal();
+
       var selected = _selected.TryGetValue(sheet.Id, out var on) && on;
-      var next = EditorGUILayout.ToggleLeft(sheet.Title, selected, GUILayout.Width(180));
+      var next = EditorGUILayout.Toggle(selected, GUILayout.Width(18));
       if (next != selected)
       {
         _selected[sheet.Id] = next;
         SaveSelectionPrefs();
       }
+
+      EditorGUILayout.LabelField(sheet.Id, _sheetIdStyle, GUILayout.Width(80));
+      EditorGUILayout.LabelField(sheet.Title, _sheetTitleStyle);
       GUILayout.FlexibleSpace();
-      EditorGUILayout.LabelField(GameDataSheetRegistry.GetExcelFileName(sheet.ExcelKey), EditorStyles.miniLabel, GUILayout.Width(96));
+
       if (_sheetStatus.TryGetValue(sheet.Id, out var status))
-        EditorGUILayout.LabelField(status, EditorStyles.miniLabel, GUILayout.Width(72));
+        EditorGUILayout.LabelField(status, _statusStyle, GUILayout.Width(64));
+
       EditorGUILayout.EndHorizontal();
-      EditorGUILayout.LabelField(sheet.Description, EditorStyles.wordWrappedMiniLabel);
-      EditorGUILayout.EndVertical();
-      EditorGUILayout.Space(2);
+      EditorGUILayout.LabelField(sheet.Description, _sheetDescStyle);
+      EditorGUILayout.Space(4);
     }
+
+    private void DrawExportButton()
+    {
+      using (new EditorGUI.DisabledScope(!HasAnySelected()))
+      {
+        if (GUILayout.Button("导出选中 Sheet", _exportButtonStyle, GUILayout.Height(36)))
+          ExportSelected();
+      }
+    }
+
+    private static Color GetWorkbookAccent(string excelKey) =>
+      excelKey == GameDataSheetRegistry.ItemsExcelKey
+        ? EditorGUIUtility.isProSkin ? new Color(1f, 0.78f, 0.28f) : new Color(0.88f, 0.52f, 0.08f)
+        : EditorGUIUtility.isProSkin ? new Color(0.35f, 0.88f, 0.68f) : new Color(0.1f, 0.62f, 0.42f);
 
     private void SetAllSelected(bool value)
     {
@@ -136,7 +230,7 @@ namespace UniverIdle.Editor
         var ids = GetSelectedIds();
         if (ids.Length == 0)
         {
-          SetStatus("请至少勾选一个表格。", MessageType.Warning);
+          SetStatus("请至少勾选一个 Sheet。", MessageType.Warning);
           return;
         }
 
@@ -169,23 +263,38 @@ namespace UniverIdle.Editor
     private void RefreshSheetStatus()
     {
       _sheetStatus.Clear();
-      foreach (var sheet in GameDataSheetRegistry.All)
+      foreach (var workbook in GameDataSheetRegistry.Workbooks)
       {
-        var path = GameDataExcelExporter.GetExcelFullPath(sheet.ExcelKey);
+        var path = GameDataExcelExporter.GetExcelFullPath(workbook.ExcelKey);
+        Dictionary<string, List<string[]>> sheets = null;
+        var readFailed = false;
+
         if (!File.Exists(path))
         {
-          _sheetStatus[sheet.Id] = "缺失";
+          foreach (var sheet in workbook.Sheets)
+            _sheetStatus[sheet.Id] = "缺失";
           continue;
         }
 
         try
         {
-          var count = GameDataExcelExporter.CountDataRows(sheet.ExcelKey, sheet.Id);
-          _sheetStatus[sheet.Id] = count < 0 ? "无此表" : $"{count} 行";
+          sheets = SimpleXlsx.Read(path);
         }
         catch
         {
-          _sheetStatus[sheet.Id] = "读取失败";
+          readFailed = true;
+        }
+
+        foreach (var sheet in workbook.Sheets)
+        {
+          if (readFailed)
+          {
+            _sheetStatus[sheet.Id] = "读取失败";
+            continue;
+          }
+
+          var count = GameDataExcelExporter.CountDataRows(sheets, sheet.Id);
+          _sheetStatus[sheet.Id] = count < 0 ? "无此表" : $"{count} 行";
         }
       }
     }

@@ -266,8 +266,15 @@ namespace UniverIdle.Editor
     {
       var path = GetExcelFullPath(excelKey);
       if (!File.Exists(path)) return -1;
-      var sheets = SimpleXlsx.Read(path);
-      if (!sheets.TryGetValue(sheetId, out var rows) || rows == null || rows.Count == 0)
+      return CountDataRows(SimpleXlsx.Read(path), sheetId);
+    }
+
+    public static int CountDataRows(Dictionary<string, List<string[]>> workbookSheets, string sheetId)
+    {
+      if (workbookSheets == null ||
+          !workbookSheets.TryGetValue(sheetId, out var rows) ||
+          rows == null ||
+          rows.Count == 0)
         return -1;
 
       var headerIndex = sheetId switch

@@ -70,6 +70,38 @@ namespace UniverIdle.Editor
         ScavengeExcelKey => GameDataPaths.ScavengeExcelRelative,
         _ => throw new ArgumentException("未知 Excel：" + excelKey, nameof(excelKey)),
       };
+
+    public readonly struct WorkbookInfo
+    {
+      public readonly string ExcelKey;
+      public readonly string Title;
+      public readonly string ExcelAssetPath;
+      public readonly string JsonAssetPath;
+      public readonly SheetInfo[] Sheets;
+
+      public WorkbookInfo(string excelKey, string title, string excelAssetPath, string jsonAssetPath, SheetInfo[] sheets)
+      {
+        ExcelKey = excelKey;
+        Title = title;
+        ExcelAssetPath = excelAssetPath;
+        JsonAssetPath = jsonAssetPath;
+        Sheets = sheets;
+      }
+
+      public string ExcelFileName => GetExcelFileName(ExcelKey);
+    }
+
+    public static readonly WorkbookInfo[] Workbooks =
+    {
+      new WorkbookInfo(
+        ItemsExcelKey, "道具表",
+        GameDataPaths.ItemsExcelAssetPath, GameDataPaths.ItemsJsonAssetPath,
+        new[] { All[0] }),
+      new WorkbookInfo(
+        ScavengeExcelKey, "拾荒表",
+        GameDataPaths.ScavengeExcelAssetPath, GameDataPaths.ScavengeJsonAssetPath,
+        new[] { All[1], All[2], All[3] }),
+    };
   }
 }
 #endif
