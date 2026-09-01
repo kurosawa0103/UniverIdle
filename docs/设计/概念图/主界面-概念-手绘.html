@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniverIdle — 主界面概念（极简手绘）</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #121816;
+      --panel: #24302a;
+      --panel-light: #2f3c36;
+      --border: #4a5c54;
+      --gold: #f0c96e;
+      --teal: #66b8a8;
+      --cream: #f5f0e6;
+      --text: #ece9e2;
+      --muted: #90a098;
+      --accent: #e88860;
+      --card-hover: #3a4842;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      background: #121614;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      color: var(--text);
+    }
+    .hint { font-size: 12px; color: #6a756c; margin-bottom: 10px; }
+    .app {
+      width: 1200px;
+      max-width: 100%;
+      height: 680px;
+      background: var(--bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.45);
+    }
+    .topbar {
+      height: 52px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: linear-gradient(180deg, #2e3832, #252d28);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-img {
+      width: 36px; height: 36px; border-radius: 8px;
+      flex-shrink: 0; overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-img img { width: 100%; height: 100%; object-fit: contain; }
+    .logo h1 { font-size: 17px; font-weight: 600; color: var(--cream); }
+    .logo span { font-size: 12px; color: var(--muted); margin-left: 6px; }
+    .currency { margin-left: auto; display: flex; gap: 20px; font-size: 14px; }
+    .currency .gold { color: var(--gold); }
+    .top-btn {
+      padding: 6px 14px; border-radius: 8px; font-size: 13px;
+      background: var(--panel-light); border: 1px solid var(--border);
+      color: var(--cream); cursor: default;
+    }
+    .top-btn:hover { background: var(--card-hover); }
+    .body { flex: 1; display: flex; min-height: 0; }
+    .sidebar {
+      width: 172px;
+      background: #222a24;
+      border-right: 1px solid var(--border);
+      padding: 10px 8px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .skill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: default;
+      border: 1px solid transparent;
+      min-height: 52px;
+    }
+    .skill:hover { background: var(--panel); }
+    .skill.active {
+      background: var(--panel-light);
+      border-color: var(--teal);
+      box-shadow: inset 3px 0 0 var(--teal);
+    }
+    .skill-icon {
+      width: 40px; height: 40px; border-radius: 8px;
+      flex-shrink: 0; overflow: hidden;
+      border: 1px solid var(--border);
+      background: #1a201c;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .skill-icon img { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
+    .skill-info { flex: 1; min-width: 0; }
+    .skill-name { font-size: 14px; font-weight: 500; }
+    .skill-lv { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .skill-bar {
+      height: 3px; background: #1a201c; border-radius: 2px; margin-top: 4px;
+    }
+    .skill-bar i { display: block; height: 100%; background: var(--teal); border-radius: 2px; }
+    .center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 14px;
+      gap: 12px;
+    }
+    .banner {
+      height: 130px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border);
+      background: #1a2820;
+    }
+    .banner-bg {
+      width: 100%; height: 100%; object-fit: cover; object-position: center;
+      display: block;
+    }
+    .banner-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,0.65) 0%, transparent 60%);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      pointer-events: none;
+    }
+    .banner h2 { font-size: 22px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+    .tags { display: flex; gap: 8px; margin-top: 6px; }
+    .tag {
+      font-size: 11px; padding: 3px 8px; border-radius: 12px;
+      background: rgba(90,154,138,0.35); color: #b8e0d4;
+      border: 1px solid rgba(90,154,138,0.5);
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      flex: 1;
+      min-height: 0;
+      align-content: start;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      cursor: default;
+      transition: transform 0.15s, border-color 0.15s;
+      min-height: 100px;
+    }
+    .card:hover { transform: translateY(-2px); border-color: var(--teal); background: var(--card-hover); }
+    .card.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .card.locked { opacity: 0.45; filter: grayscale(0.6); }
+    .card-thumb {
+      width: 100%; height: 56px; border-radius: 8px; margin-bottom: 8px;
+      background: #1a201c;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .card-title { font-size: 14px; font-weight: 500; }
+    .card-meta { font-size: 12px; color: var(--muted); margin-top: 4px; display: flex; justify-content: space-between; }
+    .card-yield { color: var(--teal); font-size: 11px; }
+    .running {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .running-thumb {
+      width: 56px; height: 56px; border-radius: 10px; overflow: hidden; flex-shrink: 0;
+      background: #1a201c; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .running-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+    .running-info { flex: 1; }
+    .running-info h3 { font-size: 15px; margin-bottom: 8px; }
+    .bar-wrap { height: 10px; background: #1a201c; border-radius: 5px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 62%; background: linear-gradient(90deg, var(--accent), var(--gold)); border-radius: 5px; }
+    .running-time { font-size: 13px; color: var(--gold); width: 48px; text-align: right; }
+    .detail {
+      width: 228px;
+      background: #222a24;
+      border-left: 1px solid var(--border);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .detail-hero {
+      width: 100%; aspect-ratio: 1;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: #1a201c;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .detail-hero img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+    .detail h3 { font-size: 16px; }
+    .detail p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .req { font-size: 12px; }
+    .req li { list-style: none; padding: 4px 0; display: flex; align-items: center; gap: 6px; color: var(--muted); }
+    .req .ok { color: var(--teal); }
+    .inv-bar {
+      height: 76px;
+      border-top: 1px solid var(--border);
+      background: #1c221e;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow-x: auto;
+    }
+    .inv-label { font-size: 12px; color: var(--muted); writing-mode: vertical-rl; letter-spacing: 2px; flex-shrink: 0; }
+    .slot {
+      width: 52px; height: 52px; flex-shrink: 0;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .slot img { width: 36px; height: 36px; object-fit: contain; }
+    .slot .cnt {
+      position: absolute; bottom: 2px; right: 4px;
+      font-size: 11px; font-weight: 600; color: var(--cream);
+      text-shadow: 0 1px 2px #000;
+    }
+  </style>
+</head>
+<body>
+  <p class="hint">UniverIdle 主界面概念 · 极简手绘 v3 · 蜡笔彩铅质感 · 浏览器打开本文件预览</p>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="logo">
+        <div class="logo-img"><img src="assets/logo.png" alt="坠星谷" /></div>
+        <h1>坠星谷 <span>萤溪村</span></h1>
+      </div>
+      <div class="currency">
+        <span class="gold">🪙 1,240</span>
+        <span style="color:var(--muted)">声望 ★★☆</span>
+      </div>
+      <div class="top-btn">图鉴</div>
+      <div class="top-btn">背包</div>
+      <div class="top-btn">设置</div>
+    </header>
+
+    <div class="body">
+      <nav class="sidebar">
+        <div class="skill">
+          <div class="skill-icon"><img src="assets/skill_hunting.png" alt="打猎" /></div>
+          <div class="skill-info"><div class="skill-name">打猎</div><div class="skill-lv">Lv. 8</div><div class="skill-bar"><i style="width:40%"></i></div></div>
+        </div>
+        <div class="skill active">
+          <div class="skill-icon"><img src="assets/skill_fishing.png" alt="溪钓" /></div>
+          <div class="skill-info"><div class="skill-name">溪钓</div><div class="skill-lv">Lv. 12</div><div class="skill-bar"><i style="width:65%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon"><img src="assets/skill_foraging.png" alt="野拾" /></div>
+          <div class="skill-info"><div class="skill-name">野拾</div><div class="skill-lv">Lv. 6</div><div class="skill-bar"><i style="width:28%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon"><img src="assets/skill_mining.png" alt="掘矿" /></div>
+          <div class="skill-info"><div class="skill-name">掘矿</div><div class="skill-lv">Lv. 10</div><div class="skill-bar"><i style="width:52%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon"><img src="assets/skill_alchemy.png" alt="炼药" /></div>
+          <div class="skill-info"><div class="skill-name">炼药</div><div class="skill-lv">Lv. 9</div><div class="skill-bar"><i style="width:48%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon"><img src="assets/skill_smithing.png" alt="锻造" /></div>
+          <div class="skill-info"><div class="skill-name">锻造</div><div class="skill-lv">Lv. 7</div><div class="skill-bar"><i style="width:35%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon"><img src="assets/skill_combat.png" alt="讨伐" /></div>
+          <div class="skill-info"><div class="skill-name">讨伐</div><div class="skill-lv">Lv. 11</div><div class="skill-bar"><i style="width:58%"></i></div></div>
+        </div>
+      </nav>
+
+      <main class="center">
+        <div class="banner">
+          <img class="banner-bg" src="assets/banner_yingxi.png" alt="萤溪" />
+          <div class="banner-overlay">
+            <h2>萤溪</h2>
+            <div class="tags"><span class="tag">微光</span><span class="tag">安全</span><span class="tag">★☆☆</span></div>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card active">
+            <div class="card-thumb">
+              <img src="assets/card_catch_shrimp.png" alt="钓萤虾" />
+            </div>
+            <div class="card-title">钓萤虾</div>
+            <div class="card-meta"><span>8.0 秒</span><span class="card-yield">+1 萤虾</span></div>
+          </div>
+          <div class="card">
+            <div class="card-thumb">
+              <img src="assets/card_pan_sand.png" alt="淘星沙" />
+            </div>
+            <div class="card-title">淘星沙</div>
+            <div class="card-meta"><span>12 秒</span><span class="card-yield">+1 星沙</span></div>
+          </div>
+          <div class="card locked">
+            <div class="card-thumb">
+              <img src="assets/card_catch_trout.png" alt="钓鳟鱼" />
+            </div>
+            <div class="card-title">钓鳟鱼</div>
+            <div class="card-meta"><span>需 Lv.10</span></div>
+          </div>
+        </div>
+
+        <div class="running">
+          <div class="running-thumb">
+            <img src="assets/item_firefly_shrimp.png" alt="萤虾" />
+          </div>
+          <div class="running-info">
+            <h3>进行中 · 钓萤虾</h3>
+            <div class="bar-wrap"><div class="bar-fill"></div></div>
+          </div>
+          <div class="running-time">00:06</div>
+        </div>
+      </main>
+
+      <aside class="detail">
+        <div class="detail-hero">
+          <img src="assets/detail_firefly_shrimp.png" alt="萤虾" />
+        </div>
+        <h3>萤虾</h3>
+        <p>萤溪浅水的小虾，夜间会发光。炼药常用基材，也可直接出售。</p>
+        <ul class="req">
+          <li class="ok">✓ 溪钓 Lv.1</li>
+          <li class="ok">✓ 地点：萤溪</li>
+          <li>稀有：星沙 2%</li>
+        </ul>
+      </aside>
+    </div>
+
+    <footer class="inv-bar">
+      <span class="inv-label">物品</span>
+      <div class="slot"><img src="assets/item_firefly_shrimp.png" alt="萤虾" /><span class="cnt">48</span></div>
+      <div class="slot"><img src="assets/item_herb_sprout.png" alt="药草芽" /><span class="cnt">22</span></div>
+      <div class="slot"><img src="assets/item_red_potion.png" alt="红药" /><span class="cnt">3</span></div>
+      <div class="slot"><img src="assets/item_copper_ingot.png" alt="铜锭" /><span class="cnt">6</span></div>
+      <div class="slot"><img src="assets/item_star_sand.png" alt="星沙" /><span class="cnt">31</span></div>
+    </footer>
+  </div>
+</body>
+</html>
