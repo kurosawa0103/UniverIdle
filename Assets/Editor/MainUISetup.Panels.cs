@@ -72,7 +72,26 @@ namespace UniverIdle.Editor
 
         private static void AddSkillNav(RectTransform sidebar, TMP_FontAsset font, List<SkillNavItemView> list)
         {
-            var vlg = sidebar.gameObject.AddComponent<VerticalLayoutGroup>();
+            var scrollRt = CreateRect("Scroll", sidebar);
+            Stretch(scrollRt);
+            var scroll = scrollRt.gameObject.AddComponent<ScrollRect>();
+            scroll.horizontal = false;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+
+            var viewport = CreateRect("Viewport", scrollRt);
+            Stretch(viewport);
+            var viewportImg = viewport.gameObject.AddComponent<Image>();
+            viewportImg.color = Color.white;
+            viewport.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+
+            var content = CreateRect("Content", viewport);
+            content.anchorMin = new Vector2(0, 1);
+            content.anchorMax = new Vector2(1, 1);
+            content.pivot = new Vector2(0.5f, 1);
+            content.anchoredPosition = Vector2.zero;
+            content.sizeDelta = new Vector2(0, 0);
+
+            var vlg = content.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: false);
             vlg.padding = new RectOffset(
                 Mathf.RoundToInt(ConceptLayout.SidebarPadH),
@@ -81,19 +100,29 @@ namespace UniverIdle.Editor
                 Mathf.RoundToInt(ConceptLayout.SidebarPadV));
             vlg.spacing = ConceptLayout.SidebarGap;
 
-            var data = new (string workId, string name, string loc, int lv, float xp, Color icon)[]
+            var fitter = content.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            scroll.viewport = viewport;
+            scroll.content = content;
+
+            var data = new (string workId, string name, string loc, int lv, float xp, Color icon, bool available)[]
             {
-                ("scavenge", "拾荒", "萤溪村", 1, 0f, UITheme.SkillForage),
-                ("woodcutting", "砍树", "黑松林", 1, 0f, UITheme.SkillWood),
-                ("monster_explore", "魔物探索", "坠星野外", 1, 0f, UITheme.SkillCombat),
+                ("", "打猎", "", 0, 0f, UITheme.SkillHunt, false),
+                ("", "溪钓", "", 0, 0f, UITheme.SkillFish, false),
+                ("scavenge", "拾荒", "萤溪村", 1, 0f, UITheme.SkillForage, true),
+                ("woodcutting", "砍树", "黑松林", 1, 0f, UITheme.SkillWood, true),
+                ("monster_explore", "魔物探索", "坠星野外", 1, 0f, UITheme.SkillCombat, true),
+                ("", "炼药", "", 0, 0f, UITheme.SkillAlchemy, false),
+                ("", "讨伐", "", 0, 0f, UITheme.SkillSmith, false),
             };
 
             foreach (var d in data)
-                list.Add(CreateSkillItem(sidebar, font, d.workId, d.name, d.loc, d.lv, d.xp, d.icon));
+                list.Add(CreateSkillItem(content, font, d.workId, d.name, d.loc, d.lv, d.xp, d.icon, d.available));
         }
 
         private static SkillNavItemView CreateSkillItem(RectTransform parent, TMP_FontAsset font,
-            string workId, string skillName, string location, int level, float xp, Color iconColor)
+            string workId, string skillName, string location, int level, float xp, Color iconColor, bool available = true)
         {
             var rt = CreateRect($"Skill_{skillName}", parent);
             AddLayout(rt.gameObject, 0, ConceptLayout.SkillMinHeight);
@@ -109,6 +138,7 @@ namespace UniverIdle.Editor
 
             var btn = rt.gameObject.AddComponent<Button>();
             btn.targetGraphic = bg;
+            btn.interactable = available;
             ConfigureButton(btn, UITheme.Transparent, UITheme.Panel, UITheme.PanelLight);
 
             var hlg = rt.gameObject.AddComponent<HorizontalLayoutGroup>();
@@ -121,8 +151,11 @@ namespace UniverIdle.Editor
             hlg.spacing = ConceptLayout.SkillGap;
             hlg.childAlignment = TextAnchor.MiddleLeft;
 
-            var accent = CreateColorBlock("Accent", rt, UITheme.Teal, new Vector2(ConceptLayout.SkillAccentWidth, ConceptLayout.SkillIconSize));
-            AddLayout(accent.gameObject, ConceptLayout.SkillAccentWidth, ConceptLayout.SkillIconSize);
+            var accent = CreateColorBlock("Accent", rt, UITheme.Teal, new Vector2(ConceptLayout.SkillAccentWidth, 0));
+            var accentLE = accent.gameObject.AddComponent<LayoutElement>();
+            accentLE.minWidth = ConceptLayout.SkillAccentWidth;
+            accentLE.preferredWidth = ConceptLayout.SkillAccentWidth;
+            accentLE.flexibleHeight = 1;
             accent.enabled = false;
 
             var iconFrame = CreateColorBlock("IconFrame", rt, iconColor, new Vector2(ConceptLayout.SkillIconSize, ConceptLayout.SkillIconSize));
@@ -141,7 +174,7 @@ namespace UniverIdle.Editor
             var barFill = CreateFilledBar(info, ConceptLayout.SkillBarHeight, UITheme.BarTrack, UITheme.Teal, xp, "XpBg", "XpFill");
 
             var view = rt.gameObject.AddComponent<SkillNavItemView>();
-            view.Setup(bg, border, accent, iconFrame, nameT, lvT, barFill, workId, skillName, location, level, xp, iconColor);
+            view.Setup(bg, border, accent, iconFrame, nameT, lvT, barFill, workId, skillName, location, level, xp, iconColor, available);
             return view;
         }
 
@@ -226,16 +259,21 @@ namespace UniverIdle.Editor
         private static RectTransform CreateActionCards(RectTransform parent, TMP_FontAsset font, List<ActionCardView> list)
         {
             var row = CreateRect("ActionCards", parent);
-            var hlg = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(hlg, expandWidth: true, expandHeight: true);
-            hlg.spacing = ConceptLayout.CardGap;
-            hlg.childAlignment = TextAnchor.UpperLeft;
+            var grid = row.gameObject.AddComponent<GridLayoutGroup>();
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = 3;
+            grid.spacing = new Vector2(ConceptLayout.CardGap, ConceptLayout.CardGap);
+            grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
+            grid.startAxis = GridLayoutGroup.Axis.Horizontal;
+            grid.childAlignment = TextAnchor.UpperLeft;
+            grid.cellSize = new Vector2(220, ConceptLayout.CardMinHeight);
+            row.gameObject.AddComponent<ActionCardGridSizer>();
 
-            const int slotCount = 6;
+            const int slotCount = 9;
             for (var i = 0; i < slotCount; i++)
             {
                 list.Add(CreateActionCard(row, font,
-                    "占位", "—", "—", "运行后由数据填充", false, UITheme.SkillForage));
+                    "占位", "—", "", "运行后由数据填充", false, UITheme.SkillForage));
             }
 
             return row;
@@ -258,7 +296,7 @@ namespace UniverIdle.Editor
             var cg = rt.gameObject.AddComponent<CanvasGroup>();
 
             var cardLE = rt.gameObject.AddComponent<LayoutElement>();
-            cardLE.flexibleWidth = 1;
+            cardLE.ignoreLayout = false;
             cardLE.minHeight = ConceptLayout.CardMinHeight;
 
             var pad = Mathf.RoundToInt(ConceptLayout.CardPadding);

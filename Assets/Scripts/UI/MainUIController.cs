@@ -154,17 +154,24 @@ namespace UniverIdle.UI
         var action = _visibleActions[i];
         var unlocked = SceneProgressRules.IsRegionUnlocked(player, action);
         var canPerform = SceneProgressRules.CanPerform(player, action);
-        var sceneProgress = player.GetSceneProgress(action.WorkId, action.SceneId);
-        var metaRight = unlocked
-          ? SceneProgressRules.CanAffordCost(player, action)
-            ? $"熟练 Lv.{sceneProgress.Level}"
-            : SceneProgressRules.FormatCostHint(action)
-          : SceneProgressRules.FormatUnlockHint(action, work?.DisplayName);
+
+        string metaLeft;
+        string metaRight;
+        if (!unlocked)
+        {
+          metaLeft = SceneProgressRules.FormatUnlockHint(action, work?.DisplayName);
+          metaRight = "";
+        }
+        else
+        {
+          metaLeft = FormatDuration(action.DurationSeconds);
+          metaRight = FormatYieldHint(action);
+        }
 
         actionCards[i].gameObject.SetActive(true);
         actionCards[i].Bind(
           action.DisplayName,
-          FormatDuration(action.DurationSeconds),
+          metaLeft,
           metaRight,
           BuildActionDescription(action, player, work),
           !canPerform,
@@ -339,7 +346,13 @@ namespace UniverIdle.UI
     public void BindSkillButton(int index, Button button)
     {
       if (index < 0 || index >= skillItems.Count) return;
-      var workId = skillItems[index].WorkId;
+      var item = skillItems[index];
+      if (!item.IsAvailable || string.IsNullOrEmpty(item.WorkId))
+      {
+        button.interactable = false;
+        return;
+      }
+      var workId = item.WorkId;
       button.onClick.AddListener(() => SelectWork(workId));
     }
 
@@ -353,7 +366,28 @@ namespace UniverIdle.UI
       });
     }
 
-    private static string FormatDuration(float seconds) => $"{seconds:0.#} 秒";
+    private static string FormatDuration(float seconds) => $"{seconds:0.#}s";
+
+    private static string FormatYieldHint(WorkActionDefinition action)
+    {
+      if (action.LootTable == null || action.LootTable.Count == 0)
+        return action.HasCost ? SceneProgressRules.FormatCostHint(action) : "—";
+
+      var best = action.LootTable[0];
+      for (var i = 1; i < action.LootTable.Count; i++)
+      {
+        if (action.LootTable[i].Chance > best.Chance)
+          best = action.LootTable[i];
+      }
+
+      var item = GameContent.GetItem(best.ItemId);
+      var name = item != null ? item.DisplayName : best.ItemId;
+      if (Mathf.Approximately(best.Chance, 1f) && best.MinAmount == best.MaxAmount)
+        return $"+{best.MinAmount} {name}";
+      if (Mathf.Approximately(best.Chance, 1f))
+        return $"+{best.MinAmount}-{best.MaxAmount} {name}";
+      return $"{Mathf.RoundToInt(best.Chance * 100f)}% {name}";
+    }
 
     private static string FormatTime(float seconds)
     {

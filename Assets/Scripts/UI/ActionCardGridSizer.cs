@@ -15,6 +15,10 @@ namespace UniverIdle.UI
 
     private void Awake() => _grid = GetComponent<GridLayoutGroup>();
 
+    private void OnEnable() => Refresh();
+
+    private void Start() => Refresh();
+
     private void OnRectTransformDimensionsChange() => Refresh();
 
     public void Refresh()

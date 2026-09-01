@@ -16,6 +16,8 @@ namespace UniverIdle.Editor
 
     private readonly Dictionary<string, bool> _selected = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> _sheetStatus = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string> _sheetErrors = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> _failedExcelKeys = new(StringComparer.OrdinalIgnoreCase);
     private Vector2 _scroll;
     private string _searchQuery = string.Empty;
     private string _statusMessage = string.Empty;
@@ -26,6 +28,8 @@ namespace UniverIdle.Editor
     private GUIStyle _workbookTitleStyle;
     private GUIStyle _pathStyle;
     private GUIStyle _sheetLabelStyle;
+    private GUIStyle _sheetErrorLabelStyle;
+    private GUIStyle _sheetErrorHintStyle;
     private GUIStyle _statusStyle;
     private GUIStyle _exportButtonStyle;
     private bool _stylesReady;
@@ -70,6 +74,7 @@ namespace UniverIdle.Editor
       EditorGUILayout.Space(10);
       if (!string.IsNullOrEmpty(_statusMessage))
         EditorGUILayout.HelpBox(_statusMessage, _statusType);
+      DrawFailedExcelActions();
 
       EditorGUILayout.Space(6);
       DrawExportButton();
@@ -91,6 +96,19 @@ namespace UniverIdle.Editor
         normal = { textColor = muted },
       };
       _sheetLabelStyle = new GUIStyle(EditorStyles.label) { fontSize = 13 };
+      var errorColor = pro ? new Color(1f, 0.45f, 0.45f) : new Color(0.78f, 0.12f, 0.12f);
+      _sheetErrorLabelStyle = new GUIStyle(EditorStyles.label)
+      {
+        fontSize = 13,
+        fontStyle = FontStyle.Bold,
+        normal = { textColor = errorColor },
+      };
+      _sheetErrorHintStyle = new GUIStyle(EditorStyles.miniLabel)
+      {
+        fontSize = 11,
+        wordWrap = true,
+        normal = { textColor = errorColor },
+      };
       _statusStyle = new GUIStyle(EditorStyles.label) { fontSize = 12, alignment = TextAnchor.MiddleRight };
       _exportButtonStyle = new GUIStyle(GUI.skin.button) { fontSize = 13, fontStyle = FontStyle.Bold };
       _stylesReady = true;
@@ -172,6 +190,29 @@ namespace UniverIdle.Editor
 
     private void DrawSheetRow(GameDataSheetRegistry.SheetInfo sheet)
     {
+      var hasError = _sheetErrors.TryGetValue(sheet.Id, out var errorMessage);
+      if (hasError)
+      {
+        var prevBg = GUI.backgroundColor;
+        GUI.backgroundColor = EditorGUIUtility.isProSkin
+          ? new Color(0.55f, 0.18f, 0.18f, 1f)
+          : new Color(0.95f, 0.72f, 0.72f, 1f);
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        GUI.backgroundColor = prevBg;
+        DrawSheetRowContent(sheet, hasError, errorMessage);
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(34);
+        EditorGUILayout.LabelField(errorMessage, _sheetErrorHintStyle);
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
+        return;
+      }
+
+      DrawSheetRowContent(sheet, false, null);
+    }
+
+    private void DrawSheetRowContent(GameDataSheetRegistry.SheetInfo sheet, bool hasError, string _)
+    {
       EditorGUILayout.BeginHorizontal();
       GUILayout.Space(16);
 
@@ -183,12 +224,41 @@ namespace UniverIdle.Editor
         SaveSelectionPrefs();
       }
 
-      EditorGUILayout.LabelField($"Sheet · {sheet.TabName}", _sheetLabelStyle);
+      EditorGUILayout.LabelField(
+        $"Sheet · {sheet.TabName}",
+        hasError ? _sheetErrorLabelStyle : _sheetLabelStyle);
       GUILayout.FlexibleSpace();
 
-      if (_sheetStatus.TryGetValue(sheet.Id, out var status))
+      if (hasError)
+        EditorGUILayout.LabelField("失败", _sheetErrorLabelStyle, GUILayout.Width(40));
+      else if (_sheetStatus.TryGetValue(sheet.Id, out var status))
         EditorGUILayout.LabelField(status, _statusStyle, GUILayout.Width(64));
 
+      EditorGUILayout.EndHorizontal();
+    }
+
+    private void DrawFailedExcelActions()
+    {
+      if (_failedExcelKeys.Count == 0) return;
+
+      EditorGUILayout.Space(4);
+      EditorGUILayout.BeginHorizontal();
+      EditorGUILayout.LabelField("打开表格：", GUILayout.Width(64));
+      foreach (var excelKey in _failedExcelKeys.OrderBy(k => k, StringComparer.OrdinalIgnoreCase))
+      {
+        var fileName = GameDataSheetRegistry.GetExcelFileName(excelKey);
+        if (GUILayout.Button($"打开 {fileName}", GUILayout.Height(22)))
+        {
+          try
+          {
+            GameDataExcelExporter.OpenExcel(excelKey);
+          }
+          catch (Exception ex)
+          {
+            SetStatus("打开 Excel 失败：" + ex.Message, MessageType.Error);
+          }
+        }
+      }
       EditorGUILayout.EndHorizontal();
     }
 
@@ -299,12 +369,20 @@ namespace UniverIdle.Editor
           return;
         }
 
+        ClearExportErrors();
         GameDataExcelExporter.ExportExcelToJson(ids);
         RefreshSheetStatus();
         SetStatus($"导出成功：{string.Join("、", ids)}", MessageType.Info);
       }
+      catch (GameDataExportException ex)
+      {
+        ApplyExportErrors(ex);
+        SetStatus(ex.Message, MessageType.Error);
+        Debug.LogError("[UniverIdle] 导表失败：" + ex);
+      }
       catch (Exception ex)
       {
+        ApplyExportErrorsForSelection(GetSelectedIds(), ex.Message);
         SetStatus("导出失败：" + ex.Message, MessageType.Error);
         Debug.LogError("[UniverIdle] 导表失败：" + ex);
       }
@@ -362,6 +440,33 @@ namespace UniverIdle.Editor
           _sheetStatus[sheet.Id] = count < 0 ? "无此表" : $"{count} 行";
         }
       }
+    }
+
+    private void ClearExportErrors()
+    {
+      _sheetErrors.Clear();
+      _failedExcelKeys.Clear();
+    }
+
+    private void ApplyExportErrors(GameDataExportException ex)
+    {
+      ClearExportErrors();
+      foreach (var entry in ex.Entries)
+        _sheetErrors[entry.SheetId] = entry.Message;
+      foreach (var key in ex.GetExcelKeys())
+        _failedExcelKeys.Add(key);
+      Repaint();
+    }
+
+    private void ApplyExportErrorsForSelection(string[] sheetIds, string message)
+    {
+      ClearExportErrors();
+      foreach (var id in sheetIds)
+      {
+        _sheetErrors[id] = message;
+        _failedExcelKeys.Add(GameDataSheetRegistry.Get(id).ExcelKey);
+      }
+      Repaint();
     }
 
     private void SetStatus(string message, MessageType type)

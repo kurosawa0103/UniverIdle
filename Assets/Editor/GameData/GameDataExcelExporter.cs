@@ -108,16 +108,16 @@ namespace UniverIdle.Editor
       var monsterExplore = GameDataLoader.LoadMonsterExploreFileIfPresent();
 
       if (selected.Contains("items"))
-        items.items = ReadItemSheet(RequireSheet(excelCache, "items")).ToArray();
+        items.items = ReadSheet("items", () => ReadItemSheet(RequireSheet(excelCache, "items"))).ToArray();
 
       MergeWorkContent(scavenge, excelCache, selected, "scavenge_works", "scavenge_actions", "scavenge_loot", "scavenge.json");
       MergeWorkContent(woodcutting, excelCache, selected, "woodcutting_works", "woodcutting_actions", "woodcutting_loot", "woodcutting.json");
       MergeWorkContent(monsterExplore, excelCache, selected, "monster_explore_works", "monster_explore_actions", "monster_explore_loot", "monster_explore.json");
 
       items.version = Math.Max(items.version, 3);
-      ValidateItemReferences(items, scavenge);
-      ValidateItemReferences(items, woodcutting);
-      ValidateItemReferences(items, monsterExplore);
+      ValidateItemReferences(items, scavenge, "scavenge_actions", "scavenge_loot");
+      ValidateItemReferences(items, woodcutting, "woodcutting_actions", "woodcutting_loot");
+      ValidateItemReferences(items, monsterExplore, "monster_explore_actions", "monster_explore_loot");
       return new ExportBundle(items, scavenge, woodcutting, monsterExplore);
     }
 
@@ -136,16 +136,16 @@ namespace UniverIdle.Editor
       var exportLoot = selected.Contains(lootSheetId);
 
       if (selected.Contains(worksSheetId))
-        data.works = ReadWorkSheet(RequireSheet(excelCache, worksSheetId)).ToArray();
+        data.works = ReadSheet(worksSheetId, () => ReadWorkSheet(RequireSheet(excelCache, worksSheetId))).ToArray();
 
       if (!exportActions && !exportLoot) return;
 
       var actions = exportActions
-        ? ReadActionSheet(RequireSheet(excelCache, actionsSheetId))
+        ? ReadSheet(actionsSheetId, () => ReadActionSheet(RequireSheet(excelCache, actionsSheetId)))
         : (data.actions ?? Array.Empty<ActionRow>()).ToList();
 
       var lootByAction = exportLoot
-        ? ReadLootSheet(RequireSheet(excelCache, lootSheetId))
+        ? ReadSheet(lootSheetId, () => ReadLootSheet(RequireSheet(excelCache, lootSheetId)))
         : null;
 
       var oldLoot = BuildLootLookup(data.actions);
@@ -155,7 +155,7 @@ namespace UniverIdle.Editor
         if (lootByAction != null)
           action.loot = lootByAction.TryGetValue(action.id, out var loot) ? loot.ToArray() : Array.Empty<LootRow>();
         else if (!exportActions && exportLoot)
-          throw new InvalidOperationException($"仅导出 loot 时，{jsonFileName} 中需已有 actions 数据。");
+          throw new GameDataExportException(lootSheetId, $"仅导出 loot 时，{jsonFileName} 中需已有 actions 数据。");
         else if (oldLoot.TryGetValue(action.id, out var preserved))
           action.loot = preserved;
         else
@@ -192,7 +192,10 @@ namespace UniverIdle.Editor
     {
       EnsureExcelFiles();
       AssetDatabase.Refresh();
-      EditorUtility.RevealInFinder(GetExcelFullPath(excelKey));
+      var path = GetExcelFullPath(excelKey);
+      if (!File.Exists(path))
+        throw new FileNotFoundException("找不到 Excel 文件：" + path, path);
+      EditorUtility.OpenWithDefaultApp(path);
     }
 
     public static void WriteExcelTemplates(ItemsDataFile items, ScavengeDataFile scavenge, WoodcuttingDataFile woodcutting, MonsterExploreDataFile monsterExplore)
@@ -252,7 +255,10 @@ namespace UniverIdle.Editor
       }
       catch (Exception ex)
       {
-        throw new InvalidDataException("导出 JSON 后校验失败：" + ex.Message, ex);
+        var entries = selected
+          .Select(id => new GameDataExportException.Entry(id, ex.Message))
+          .ToArray();
+        throw new GameDataExportException(entries, "导出 JSON 后校验失败：" + ex.Message, ex);
       }
     }
 
@@ -367,7 +373,11 @@ namespace UniverIdle.Editor
       return false;
     }
 
-    private static void ValidateItemReferences(ItemsDataFile items, WorkContentDataFile workContent)
+    private static void ValidateItemReferences(
+      ItemsDataFile items,
+      WorkContentDataFile workContent,
+      string actionsSheetId,
+      string lootSheetId)
     {
       var itemIds = new HashSet<string>(StringComparer.Ordinal);
       if (items?.items != null)
@@ -383,14 +393,32 @@ namespace UniverIdle.Editor
       foreach (var action in workContent.actions)
       {
         if (!string.IsNullOrWhiteSpace(action?.costItemId) && !itemIds.Contains(action.costItemId))
-          throw new InvalidDataException($"actions 引用了未知道具 costItemId：{action.costItemId}（action {action.id}）");
+        {
+          var msg = $"引用了未知道具 costItemId：{action.costItemId}（action {action.id}）";
+          throw new GameDataExportException(
+            new[]
+            {
+              new GameDataExportException.Entry("items", "道具表中缺少该 id"),
+              new GameDataExportException.Entry(actionsSheetId, msg),
+            },
+            msg);
+        }
 
         if (action?.loot == null) continue;
         foreach (var loot in action.loot)
         {
           if (string.IsNullOrWhiteSpace(loot?.itemId)) continue;
           if (!itemIds.Contains(loot.itemId))
-            throw new InvalidDataException($"loot 引用了未知道具 itemId：{loot.itemId}（action {action.id}）");
+          {
+            var msg = $"引用了未知道具 itemId：{loot.itemId}（action {action.id}）";
+            throw new GameDataExportException(
+              new[]
+              {
+                new GameDataExportException.Entry("items", "道具表中缺少该 id"),
+                new GameDataExportException.Entry(lootSheetId, msg),
+              },
+              msg);
+          }
         }
       }
     }
@@ -413,10 +441,27 @@ namespace UniverIdle.Editor
     {
       var info = GameDataSheetRegistry.Get(sheetId);
       if (!excelCache.TryGetValue(info.ExcelKey, out var fileSheets) || fileSheets == null)
-        throw new InvalidDataException($"未加载 Excel：{GameDataSheetRegistry.GetExcelFileName(info.ExcelKey)}");
+        throw new GameDataExportException(sheetId, $"未加载 Excel：{GameDataSheetRegistry.GetExcelFileName(info.ExcelKey)}");
 
       if (fileSheets.TryGetValue(info.TabName, out var rows)) return rows;
-      throw new InvalidDataException($"{GameDataSheetRegistry.GetExcelFileName(info.ExcelKey)} 缺少工作表：{info.TabName}");
+      throw new GameDataExportException(sheetId,
+        $"{GameDataSheetRegistry.GetExcelFileName(info.ExcelKey)} 缺少工作表：{info.TabName}");
+    }
+
+    private static T ReadSheet<T>(string sheetId, Func<T> read)
+    {
+      try
+      {
+        return read();
+      }
+      catch (GameDataExportException)
+      {
+        throw;
+      }
+      catch (Exception ex)
+      {
+        throw new GameDataExportException(sheetId, ex.Message, ex);
+      }
     }
 
     private static List<ItemRow> ReadItemSheet(List<string[]> rows) =>
