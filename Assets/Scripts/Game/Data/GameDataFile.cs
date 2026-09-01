@@ -19,15 +19,6 @@ namespace UniverIdle.Game
   }
 
   [Serializable]
-  public class ScavengeDataFile : WorkContentDataFile { }
-
-  [Serializable]
-  public class WoodcuttingDataFile : WorkContentDataFile { }
-
-  [Serializable]
-  public class MonsterExploreDataFile : WorkContentDataFile { }
-
-  [Serializable]
   public class ItemRow
   {
     public string id;

@@ -29,27 +29,27 @@ namespace UniverIdle.Game
     public static ItemsDataFile LoadItemsFile() =>
       LoadJsonFile<ItemsDataFile>(GameDataPaths.ItemsRelativePath);
 
-    public static ScavengeDataFile LoadScavengeFile() =>
-      LoadJsonFile<ScavengeDataFile>(GameDataPaths.ScavengeRelativePath);
+    public static WorkContentDataFile LoadScavengeFile() =>
+      LoadJsonFile<WorkContentDataFile>(GameDataPaths.ScavengeRelativePath);
 
-    public static WoodcuttingDataFile LoadWoodcuttingFile() =>
-      LoadJsonFile<WoodcuttingDataFile>(GameDataPaths.WoodcuttingRelativePath);
+    public static WorkContentDataFile LoadWoodcuttingFile() =>
+      LoadJsonFile<WorkContentDataFile>(GameDataPaths.WoodcuttingRelativePath);
 
-    public static MonsterExploreDataFile LoadMonsterExploreFile() =>
-      LoadJsonFile<MonsterExploreDataFile>(GameDataPaths.MonsterExploreRelativePath);
+    public static WorkContentDataFile LoadMonsterExploreFile() =>
+      LoadJsonFile<WorkContentDataFile>(GameDataPaths.MonsterExploreRelativePath);
 
     /// <summary>编辑器合并导出用：JSON 缺失时返回空表，不抛错。</summary>
     public static ItemsDataFile LoadItemsFileIfPresent() =>
       LoadJsonFileIfPresent<ItemsDataFile>(GameDataPaths.ItemsRelativePath) ?? new ItemsDataFile { version = 3 };
 
-    public static ScavengeDataFile LoadScavengeFileIfPresent() =>
-      LoadJsonFileIfPresent<ScavengeDataFile>(GameDataPaths.ScavengeRelativePath) ?? new ScavengeDataFile { version = 3 };
+    public static WorkContentDataFile LoadScavengeFileIfPresent() =>
+      LoadJsonFileIfPresent<WorkContentDataFile>(GameDataPaths.ScavengeRelativePath) ?? new WorkContentDataFile { version = 3 };
 
-    public static WoodcuttingDataFile LoadWoodcuttingFileIfPresent() =>
-      LoadJsonFileIfPresent<WoodcuttingDataFile>(GameDataPaths.WoodcuttingRelativePath) ?? new WoodcuttingDataFile { version = 3 };
+    public static WorkContentDataFile LoadWoodcuttingFileIfPresent() =>
+      LoadJsonFileIfPresent<WorkContentDataFile>(GameDataPaths.WoodcuttingRelativePath) ?? new WorkContentDataFile { version = 3 };
 
-    public static MonsterExploreDataFile LoadMonsterExploreFileIfPresent() =>
-      LoadJsonFileIfPresent<MonsterExploreDataFile>(GameDataPaths.MonsterExploreRelativePath) ?? new MonsterExploreDataFile { version = 3 };
+    public static WorkContentDataFile LoadMonsterExploreFileIfPresent() =>
+      LoadJsonFileIfPresent<WorkContentDataFile>(GameDataPaths.MonsterExploreRelativePath) ?? new WorkContentDataFile { version = 3 };
 
     public static void Validate()
     {

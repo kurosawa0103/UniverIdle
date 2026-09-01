@@ -491,20 +491,11 @@ namespace UniverIdle.Editor
         _selected[sheet.Id] = false;
       foreach (var id in raw.Split(','))
       {
-        var key = MapLegacySheetId(id.Trim());
+        var key = id.Trim();
         if (key.Length > 0 && _selected.ContainsKey(key))
           _selected[key] = true;
       }
     }
-
-    private static string MapLegacySheetId(string id) =>
-      id switch
-      {
-        "works" => "scavenge_works",
-        "actions" => "scavenge_actions",
-        "loot" => "scavenge_loot",
-        _ => id,
-      };
   }
 }
 #endif

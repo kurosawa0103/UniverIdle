@@ -46,11 +46,11 @@ namespace UniverIdle.Editor
     public readonly struct ExportBundle
     {
       public readonly ItemsDataFile Items;
-      public readonly ScavengeDataFile Scavenge;
-      public readonly WoodcuttingDataFile Woodcutting;
-      public readonly MonsterExploreDataFile MonsterExplore;
+      public readonly WorkContentDataFile Scavenge;
+      public readonly WorkContentDataFile Woodcutting;
+      public readonly WorkContentDataFile MonsterExplore;
 
-      public ExportBundle(ItemsDataFile items, ScavengeDataFile scavenge, WoodcuttingDataFile woodcutting, MonsterExploreDataFile monsterExplore)
+      public ExportBundle(ItemsDataFile items, WorkContentDataFile scavenge, WorkContentDataFile woodcutting, WorkContentDataFile monsterExplore)
       {
         Items = items;
         Scavenge = scavenge;
@@ -58,6 +58,13 @@ namespace UniverIdle.Editor
         MonsterExplore = monsterExplore;
       }
     }
+
+    private static ExportBundle LoadCurrentJsonBundle() =>
+      new ExportBundle(
+        GameDataLoader.LoadItemsFileIfPresent(),
+        GameDataLoader.LoadScavengeFileIfPresent(),
+        GameDataLoader.LoadWoodcuttingFileIfPresent(),
+        GameDataLoader.LoadMonsterExploreFileIfPresent());
 
     public static void ExportExcelToJson(IEnumerable<string> sheetIds)
     {
@@ -117,10 +124,11 @@ namespace UniverIdle.Editor
       if (selected == null || selected.Count == 0)
         throw new InvalidOperationException("未选择任何表格。");
 
-      var items = GameDataLoader.LoadItemsFileIfPresent();
-      var scavenge = GameDataLoader.LoadScavengeFileIfPresent();
-      var woodcutting = GameDataLoader.LoadWoodcuttingFileIfPresent();
-      var monsterExplore = GameDataLoader.LoadMonsterExploreFileIfPresent();
+      var bundle = LoadCurrentJsonBundle();
+      var items = bundle.Items;
+      var scavenge = bundle.Scavenge;
+      var woodcutting = bundle.Woodcutting;
+      var monsterExplore = bundle.MonsterExplore;
 
       if (selected.Contains("items"))
         items.items = ReadSheet("items", () => ReadItemSheet(RequireSheet(excelCache, "items"))).ToArray();
@@ -196,11 +204,8 @@ namespace UniverIdle.Editor
 
     public static void CreateExcelFromJson()
     {
-      var items = GameDataLoader.LoadItemsFileIfPresent();
-      var scavenge = GameDataLoader.LoadScavengeFileIfPresent();
-      var woodcutting = GameDataLoader.LoadWoodcuttingFileIfPresent();
-      var monsterExplore = GameDataLoader.LoadMonsterExploreFileIfPresent();
-      WriteExcelTemplates(items, scavenge, woodcutting, monsterExplore);
+      var bundle = LoadCurrentJsonBundle();
+      WriteExcelTemplates(bundle.Items, bundle.Scavenge, bundle.Woodcutting, bundle.MonsterExplore);
     }
 
     public static void OpenExcel(string excelKey)
@@ -213,7 +218,7 @@ namespace UniverIdle.Editor
       EditorUtility.OpenWithDefaultApp(path);
     }
 
-    public static void WriteExcelTemplates(ItemsDataFile items, ScavengeDataFile scavenge, WoodcuttingDataFile woodcutting, MonsterExploreDataFile monsterExplore)
+    public static void WriteExcelTemplates(ItemsDataFile items, WorkContentDataFile scavenge, WorkContentDataFile woodcutting, WorkContentDataFile monsterExplore)
     {
       WriteExcelFile(
         GetExcelFullPath(GameDataSheetRegistry.ItemsExcelKey),

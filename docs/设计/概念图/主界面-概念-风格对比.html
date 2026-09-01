@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniverIdle — 主界面风格对比</title>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── 风格切换栏 ── */
+    .picker {
+      position: sticky; top: 0; z-index: 99;
+      width: 100%; max-width: 1200px;
+      background: #2a2a2a;
+      border: 1px solid #555;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      font-family: "Noto Sans SC", sans-serif;
+    }
+    .picker-label { font-size: 12px; color: #aaa; margin-right: 4px; }
+    .picker button {
+      padding: 6px 12px; font-size: 12px; border-radius: 6px; cursor: pointer;
+      border: 1px solid #666; background: #3a3a3a; color: #ddd;
+      transition: background .15s, border-color .15s;
+    }
+    .picker button:hover { background: #484848; }
+    .picker button.active { background: #5a5048; border-color: #c87048; color: #fff; }
+    .picker .desc { flex: 1 1 100%; font-size: 11px; color: #888; margin-top: 2px; line-height: 1.5; }
+
+    /* ── 共用布局 ── */
+    body {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 16px;
+      transition: background .3s, color .3s;
+    }
+    .hint { font-size: 12px; margin-bottom: 10px; transition: color .3s; }
+
+    .frame, .frame-inset { transition: background .3s, border .3s, box-shadow .3s, border-radius .3s; }
+    .app {
+      width: 1200px; max-width: 100%; height: 680px;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .app.frame { padding: 0; }
+
+    .topbar {
+      height: 52px; padding: 0 20px;
+      display: flex; align-items: center; gap: 16px;
+      transition: background .3s, border .3s;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-img {
+      width: 36px; height: 36px; flex-shrink: 0; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-img img { width: 100%; height: 100%; object-fit: contain; transition: filter .3s; }
+    .logo h1 { font-size: 22px; font-weight: 400; transition: font-family .3s; }
+    .logo span { font-size: 13px; margin-left: 6px; }
+    .currency { margin-left: auto; display: flex; gap: 20px; font-size: 14px; }
+    .currency .gold { font-weight: 500; }
+    .top-btn {
+      padding: 5px 14px; font-size: 13px; cursor: default;
+      transition: background .3s, box-shadow .3s;
+    }
+
+    .body { flex: 1; display: flex; min-height: 0; transition: background .3s; }
+    .sidebar {
+      width: 172px; padding: 10px 8px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 6px;
+      transition: background .3s, border .3s;
+    }
+    .skill {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; cursor: default; min-height: 52px;
+      border: 1.5px solid transparent;
+      transition: background .2s, border .2s, box-shadow .2s;
+    }
+    .skill-icon {
+      width: 40px; height: 40px; flex-shrink: 0; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .3s, filter .3s;
+    }
+    .skill-icon img { width: 100%; height: 100%; object-fit: contain; padding: 2px; transition: filter .3s; }
+    .skill-name { font-size: 14px; font-weight: 500; }
+    .skill-lv { font-size: 11px; margin-top: 2px; }
+    .skill-bar {
+      height: 4px; border-radius: 2px; margin-top: 4px; overflow: hidden;
+      transition: background .3s, border .3s;
+    }
+    .skill-bar i { display: block; height: 100%; transition: background .3s; }
+
+    .center { flex: 1; display: flex; flex-direction: column; min-width: 0; padding: 14px; gap: 12px; }
+    .banner { height: 130px; overflow: hidden; position: relative; }
+    .banner-bg { width: 100%; height: 100%; object-fit: cover; display: block; transition: filter .3s; }
+    .banner-overlay {
+      position: absolute; inset: 0; padding: 16px 20px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      pointer-events: none; transition: background .3s;
+    }
+    .banner h2 { font-size: 26px; transition: font-family .3s, text-shadow .3s; }
+    .tags { display: flex; gap: 8px; margin-top: 6px; }
+    .tag {
+      font-size: 11px; padding: 2px 8px;
+      transition: background .3s, border .3s, border-radius .3s;
+    }
+
+    .cards {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 10px; flex: 1; min-height: 0; align-content: start;
+    }
+    .card {
+      padding: 10px; cursor: default; min-height: 100px;
+      transition: transform .12s, border .3s, box-shadow .3s, background .3s;
+    }
+    .card:hover { transform: translateY(-2px); }
+    .card.locked { opacity: 0.45; filter: grayscale(0.5); }
+    .card-thumb {
+      width: 100%; height: 56px; margin-bottom: 8px; overflow: hidden;
+      transition: background .3s, filter .3s;
+    }
+    .card-thumb img { width: 100%; height: 100%; object-fit: cover; transition: filter .3s; }
+    .card-title { font-size: 14px; font-weight: 500; }
+    .card-meta { font-size: 12px; margin-top: 4px; display: flex; justify-content: space-between; }
+    .card-yield { font-size: 11px; }
+
+    .running {
+      padding: 14px 16px; display: flex; align-items: center; gap: 14px;
+      transition: background .3s, border .3s, box-shadow .3s;
+    }
+    .running-thumb {
+      width: 56px; height: 56px; overflow: hidden; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .3s;
+    }
+    .running-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; transition: filter .3s; }
+    .running-info { flex: 1; }
+    .running-info h3 { font-size: 15px; margin-bottom: 8px; font-weight: 500; }
+    .bar-wrap { height: 14px; }
+    .bar-track {
+      height: 100%; border-radius: 4px; position: relative; overflow: hidden;
+      transition: background .3s, border .3s, box-shadow .3s;
+    }
+    .bar-fill {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 70%;
+      border-radius: 3px; transition: background .3s, box-shadow .3s;
+    }
+    .running-time { font-size: 13px; width: 48px; text-align: right; font-weight: 500; }
+
+    .detail {
+      width: 228px; padding: 14px;
+      display: flex; flex-direction: column; gap: 12px;
+      transition: background .3s, border .3s;
+    }
+    .detail-hero {
+      width: 100%; aspect-ratio: 1; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .3s;
+    }
+    .detail-hero img { width: 100%; height: 100%; object-fit: contain; padding: 8px; transition: filter .3s; }
+    .detail h3 { font-size: 16px; font-weight: 600; }
+    .detail p { font-size: 13px; line-height: 1.65; }
+    .req { font-size: 12px; }
+    .req li { list-style: none; padding: 4px 0; }
+    .req .ok { }
+
+    .inv-bar {
+      height: 76px; padding: 10px 16px;
+      display: flex; align-items: center; gap: 10px; overflow-x: auto;
+      transition: background .3s, border .3s;
+    }
+    .inv-label { font-size: 12px; writing-mode: vertical-rl; letter-spacing: 2px; flex-shrink: 0; }
+    .slot {
+      width: 52px; height: 52px; flex-shrink: 0; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .3s, border .3s;
+    }
+    .slot img { width: 36px; height: 36px; object-fit: contain; transition: filter .3s; }
+    .slot .cnt {
+      position: absolute; bottom: 2px; right: 4px;
+      font-size: 11px; font-weight: 600;
+    }
+
+    /* ══════════════════════════════════════
+       ① 暖灰手绘（当前定稿）
+    ══════════════════════════════════════ */
+    [data-style="sketch"] {
+      --page: #3c3a36; --paper: #4a4844; --paper-dark: #444240; --paper-deep: #565450;
+      --ink: #e4e0d8; --muted: #9a948c; --teal: #72a898; --accent: #c87048; --gold: #d4a858;
+      --banner-grad: linear-gradient(90deg, rgba(60,58,54,.88) 0%, rgba(60,58,54,.3) 55%, transparent 100%);
+      --skill-hover: rgba(200,112,72,.1); --skill-active: rgba(200,112,72,.16);
+      --img-filter: none;
+      --title-font: "Ma Shan Zheng", cursive;
+      --body-font: "Noto Serif SC", serif;
+    }
+    [data-style="sketch"] body {
+      font-family: var(--body-font); background: var(--page); color: var(--ink);
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(212,204,192,.04) 0 1px, transparent 1px),
+        radial-gradient(circle at 70% 60%, rgba(212,204,192,.03) 0 1px, transparent 1px);
+      background-size: 24px 24px, 31px 31px;
+    }
+    [data-style="sketch"] .frame {
+      background: var(--paper); border: 2px solid var(--ink);
+      border-radius: 4px 7px 5px 6px; box-shadow: 3px 4px 0 var(--ink);
+    }
+    [data-style="sketch"] .frame-inset {
+      background: var(--paper); border: 1.5px solid var(--ink);
+      border-radius: 3px 5px 4px 4px;
+    }
+    [data-style="sketch"] .topbar { background: var(--paper-dark); border-bottom: 2px solid var(--ink); }
+    [data-style="sketch"] .sidebar { background: var(--paper-dark); border-right: 2px solid var(--ink); }
+    [data-style="sketch"] .skill:hover { background: var(--skill-hover); }
+    [data-style="sketch"] .skill.active {
+      background: var(--skill-active); border-color: var(--ink);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+    [data-style="sketch"] .skill-bar { background: var(--paper-deep); border: 1px solid var(--ink); }
+    [data-style="sketch"] .skill-bar i { background: var(--teal); }
+    [data-style="sketch"] .banner-overlay { background: var(--banner-grad); }
+    [data-style="sketch"] .banner h2 { font-family: var(--title-font); text-shadow: 1px 1px 0 rgba(0,0,0,.6); }
+    [data-style="sketch"] .tag { background: var(--paper); color: var(--teal); border: 1.5px solid var(--ink); border-radius: 10px 12px 11px 13px; }
+    [data-style="sketch"] .card.active { border-color: var(--accent); box-shadow: 3px 3px 0 var(--accent), inset 0 0 0 1px var(--accent); }
+    [data-style="sketch"] .card-yield { color: var(--teal); }
+    [data-style="sketch"] .running { background: var(--paper-dark); }
+    [data-style="sketch"] .detail { background: var(--paper-dark); border-left: 2px solid var(--ink); }
+    [data-style="sketch"] .inv-bar { background: var(--paper-deep); border-top: 2px solid var(--ink); }
+    [data-style="sketch"] .top-btn.frame-inset { box-shadow: 2px 2px 0 var(--ink); }
+    [data-style="sketch"] .bar-track { background: var(--paper-deep); border: 1px solid var(--ink); }
+    [data-style="sketch"] .bar-fill { background: var(--accent); }
+    [data-style="sketch"] .req .ok { color: var(--teal); }
+
+    /* ══════════════════════════════════════
+       ② 木刻蚀刻
+    ══════════════════════════════════════ */
+    [data-style="woodcut"] {
+      --page: #2a2620; --paper: #342e28; --paper-dark: #2e2822; --paper-deep: #3e3830;
+      --ink: #c8b8a0; --muted: #8a7e70; --teal: #6a9080; --accent: #b86038; --gold: #c8a048;
+      --banner-grad: linear-gradient(90deg, rgba(42,38,32,.95) 0%, rgba(42,38,32,.4) 60%, transparent 100%);
+      --skill-hover: rgba(184,96,56,.12); --skill-active: rgba(184,96,56,.2);
+      --img-filter: contrast(1.15) saturate(0.65) sepia(0.25);
+      --title-font: "Ma Shan Zheng", cursive;
+      --body-font: "Noto Serif SC", serif;
+    }
+    [data-style="woodcut"] body {
+      font-family: var(--body-font); background: var(--page); color: var(--ink);
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(200,184,160,.03) 3px, rgba(200,184,160,.03) 4px);
+    }
+    [data-style="woodcut"] .frame {
+      background: var(--paper); border: 3px solid var(--ink); border-radius: 0;
+      box-shadow: none; outline: 1px solid rgba(0,0,0,.4); outline-offset: -4px;
+    }
+    [data-style="woodcut"] .frame-inset {
+      background: var(--paper); border: 2px solid var(--ink); border-radius: 0;
+    }
+    [data-style="woodcut"] .topbar { background: var(--paper-dark); border-bottom: 3px solid var(--ink); }
+    [data-style="woodcut"] .sidebar { background: var(--paper-dark); border-right: 3px solid var(--ink); }
+    [data-style="woodcut"] .skill { border-radius: 0; }
+    [data-style="woodcut"] .skill:hover { background: var(--skill-hover); }
+    [data-style="woodcut"] .skill.active {
+      background: var(--skill-active); border-color: var(--accent);
+      box-shadow: inset 4px 0 0 var(--accent);
+    }
+    [data-style="woodcut"] .skill-bar { background: var(--paper-deep); border: 1px solid var(--ink); border-radius: 0; }
+    [data-style="woodcut"] .skill-bar i { background: var(--accent); }
+    [data-style="woodcut"] .banner-overlay { background: var(--banner-grad); }
+    [data-style="woodcut"] .banner h2 { font-family: var(--title-font); letter-spacing: 4px; }
+    [data-style="woodcut"] .tag { background: transparent; color: var(--ink); border: 1px solid var(--ink); border-radius: 0; }
+    [data-style="woodcut"] .card.active { border-color: var(--accent); box-shadow: inset 0 0 0 2px var(--accent); }
+    [data-style="woodcut"] .card-yield { color: var(--gold); }
+    [data-style="woodcut"] .running { background: var(--paper-dark); }
+    [data-style="woodcut"] .detail { background: var(--paper-dark); border-left: 3px solid var(--ink); }
+    [data-style="woodcut"] .inv-bar { background: var(--paper-deep); border-top: 3px solid var(--ink); }
+    [data-style="woodcut"] .bar-track { background: var(--paper-deep); border: 2px solid var(--ink); border-radius: 0; }
+    [data-style="woodcut"] .bar-fill { background: repeating-linear-gradient(90deg, var(--accent) 0, var(--accent) 8px, var(--gold) 8px, var(--gold) 16px); border-radius: 0; }
+    [data-style="woodcut"] .req .ok { color: var(--gold); }
+    [data-style="woodcut"] img { filter: var(--img-filter); }
+
+    /* ══════════════════════════════════════
+       ③ 淡彩水墨
+    ══════════════════════════════════════ */
+    [data-style="watercolor"] {
+      --page: #3a3e42; --paper: #4a5054; --paper-dark: #444a4e; --paper-deep: #565c60;
+      --ink: #e8ece8; --muted: #9aa4a0; --teal: #78b0a0; --accent: #c87858; --gold: #d0b060;
+      --banner-grad: linear-gradient(90deg, rgba(58,62,66,.85) 0%, rgba(58,62,66,.2) 50%, transparent 100%);
+      --skill-hover: rgba(120,176,160,.12); --skill-active: rgba(120,176,160,.2);
+      --img-filter: saturate(0.8) brightness(1.08) contrast(0.95);
+      --title-font: "Ma Shan Zheng", cursive;
+      --body-font: "Noto Serif SC", serif;
+    }
+    [data-style="watercolor"] body {
+      font-family: var(--body-font); background: var(--page); color: var(--ink);
+      background-image:
+        radial-gradient(ellipse at 30% 20%, rgba(120,176,160,.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(200,120,88,.06) 0%, transparent 45%);
+    }
+    [data-style="watercolor"] .frame {
+      background: linear-gradient(160deg, var(--paper) 0%, var(--paper-dark) 100%);
+      border: 1px solid rgba(232,236,232,.25); border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.25);
+    }
+    [data-style="watercolor"] .frame-inset {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(232,236,232,.18); border-radius: 8px;
+    }
+    [data-style="watercolor"] .topbar {
+      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+      border-bottom: 1px solid rgba(232,236,232,.15);
+    }
+    [data-style="watercolor"] .sidebar { background: rgba(0,0,0,.12); border-right: 1px solid rgba(232,236,232,.12); }
+    [data-style="watercolor"] .skill { border-radius: 8px; }
+    [data-style="watercolor"] .skill:hover { background: var(--skill-hover); }
+    [data-style="watercolor"] .skill.active {
+      background: var(--skill-active); border-color: rgba(120,176,160,.5);
+      box-shadow: inset 3px 0 0 var(--teal);
+    }
+    [data-style="watercolor"] .skill-bar { background: rgba(0,0,0,.2); border: none; border-radius: 4px; }
+    [data-style="watercolor"] .skill-bar i { background: linear-gradient(90deg, var(--teal), #90c8b8); border-radius: 4px; }
+    [data-style="watercolor"] .banner-overlay { background: var(--banner-grad); }
+    [data-style="watercolor"] .banner h2 { font-family: var(--title-font); text-shadow: 0 2px 12px rgba(0,0,0,.5); }
+    [data-style="watercolor"] .tag { background: rgba(120,176,160,.15); color: var(--teal); border: 1px solid rgba(120,176,160,.3); border-radius: 12px; }
+    [data-style="watercolor"] .card.active { border-color: var(--teal); box-shadow: 0 0 0 1px var(--teal), 0 4px 16px rgba(120,176,160,.2); }
+    [data-style="watercolor"] .card-yield { color: var(--teal); }
+    [data-style="watercolor"] .running { background: rgba(0,0,0,.1); }
+    [data-style="watercolor"] .detail { background: rgba(0,0,0,.1); border-left: 1px solid rgba(232,236,232,.12); }
+    [data-style="watercolor"] .inv-bar { background: rgba(0,0,0,.15); border-top: 1px solid rgba(232,236,232,.12); }
+    [data-style="watercolor"] .bar-track { background: rgba(0,0,0,.25); border: none; border-radius: 6px; }
+    [data-style="watercolor"] .bar-fill { background: linear-gradient(90deg, var(--teal), var(--accent)); border-radius: 6px; opacity: .85; }
+    [data-style="watercolor"] .req .ok { color: var(--teal); }
+    [data-style="watercolor"] img { filter: var(--img-filter); }
+
+    /* ══════════════════════════════════════
+       ④ 克制扁平
+    ══════════════════════════════════════ */
+    [data-style="flat"] {
+      --page: #36383a; --paper: #424548; --paper-dark: #3c3e40; --paper-deep: #4e5054;
+      --ink: #ececea; --muted: #9a9c9e; --teal: #68a89a; --accent: #d07850; --gold: #d8a858;
+      --banner-grad: linear-gradient(90deg, rgba(54,56,58,.9) 0%, rgba(54,56,58,.25) 55%, transparent 100%);
+      --skill-hover: rgba(104,168,154,.1); --skill-active: rgba(104,168,154,.18);
+      --img-filter: saturate(0.88) brightness(1.02);
+      --title-font: "Noto Sans SC", sans-serif;
+      --body-font: "Noto Sans SC", sans-serif;
+    }
+    [data-style="flat"] body { font-family: var(--body-font); background: var(--page); color: var(--ink); }
+    [data-style="flat"] .frame {
+      background: var(--paper); border: 1px solid #5a5c5e; border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.3);
+    }
+    [data-style="flat"] .frame-inset {
+      background: var(--paper-deep); border: 1px solid #5a5c5e; border-radius: 8px;
+    }
+    [data-style="flat"] .topbar { background: var(--paper-dark); border-bottom: 1px solid #5a5c5e; }
+    [data-style="flat"] .logo h1 { font-family: var(--title-font); font-weight: 600; font-size: 17px; }
+    [data-style="flat"] .sidebar { background: var(--paper-dark); border-right: 1px solid #5a5c5e; }
+    [data-style="flat"] .skill { border-radius: 8px; }
+    [data-style="flat"] .skill:hover { background: var(--skill-hover); }
+    [data-style="flat"] .skill.active {
+      background: var(--skill-active); border-color: var(--teal);
+      box-shadow: none;
+    }
+    [data-style="flat"] .skill-bar { background: #36383a; border: none; }
+    [data-style="flat"] .skill-bar i { background: var(--teal); border-radius: 2px; }
+    [data-style="flat"] .banner-overlay { background: var(--banner-grad); }
+    [data-style="flat"] .banner h2 { font-family: var(--title-font); font-weight: 600; font-size: 20px; }
+    [data-style="flat"] .tag { background: rgba(104,168,154,.15); color: var(--teal); border: none; border-radius: 4px; }
+    [data-style="flat"] .card.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+    [data-style="flat"] .card-yield { color: var(--teal); }
+    [data-style="flat"] .running { background: var(--paper-dark); }
+    [data-style="flat"] .detail { background: var(--paper-dark); border-left: 1px solid #5a5c5e; }
+    [data-style="flat"] .inv-bar { background: var(--paper-deep); border-top: 1px solid #5a5c5e; }
+    [data-style="flat"] .bar-track { background: #36383a; border: none; border-radius: 4px; }
+    [data-style="flat"] .bar-fill { background: var(--accent); border-radius: 4px; }
+    [data-style="flat"] .req .ok { color: var(--teal); }
+    [data-style="flat"] img { filter: var(--img-filter); }
+
+    /* ══════════════════════════════════════
+       ⑤ 像素复古
+    ══════════════════════════════════════ */
+    [data-style="pixel"] {
+      --page: #383838; --paper: #484848; --paper-dark: #404040; --paper-deep: #545454;
+      --ink: #d8d8d8; --muted: #989898; --teal: #68b0a0; --accent: #d07048; --gold: #d8b050;
+      --banner-grad: linear-gradient(90deg, rgba(56,56,56,.92) 0%, rgba(56,56,56,.35) 55%, transparent 100%);
+      --skill-hover: rgba(104,176,160,.15); --skill-active: rgba(104,176,160,.25);
+      --img-filter: contrast(1.2) saturate(0.9);
+      --title-font: "Courier New", monospace;
+      --body-font: "Courier New", monospace;
+    }
+    [data-style="pixel"] body {
+      font-family: var(--body-font); background: var(--page); color: var(--ink);
+      image-rendering: pixelated;
+    }
+    [data-style="pixel"] .frame {
+      background: var(--paper); border: 3px solid var(--ink); border-radius: 0;
+      box-shadow: 4px 4px 0 #222;
+    }
+    [data-style="pixel"] .frame-inset {
+      background: var(--paper-deep); border: 2px solid #888; border-radius: 0;
+      box-shadow: inset 2px 2px 0 #333;
+    }
+    [data-style="pixel"] .topbar { background: var(--paper-dark); border-bottom: 3px solid var(--ink); }
+    [data-style="pixel"] .logo h1 { font-family: var(--title-font); font-size: 16px; font-weight: 700; letter-spacing: 1px; }
+    [data-style="pixel"] .sidebar { background: var(--paper-dark); border-right: 3px solid var(--ink); }
+    [data-style="pixel"] .skill { border-radius: 0; }
+    [data-style="pixel"] .skill:hover { background: var(--skill-hover); }
+    [data-style="pixel"] .skill.active {
+      background: var(--skill-active); border-color: var(--teal);
+      box-shadow: inset 3px 0 0 var(--teal);
+    }
+    [data-style="pixel"] .skill-bar { background: #303030; border: 2px solid #888; border-radius: 0; height: 6px; }
+    [data-style="pixel"] .skill-bar i { background: var(--teal); }
+    [data-style="pixel"] .banner-overlay { background: var(--banner-grad); }
+    [data-style="pixel"] .banner h2 { font-family: var(--title-font); font-size: 20px; }
+    [data-style="pixel"] .tag { background: #303030; color: var(--teal); border: 2px solid #888; border-radius: 0; }
+    [data-style="pixel"] .card.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+    [data-style="pixel"] .card-yield { color: var(--teal); }
+    [data-style="pixel"] .running { background: var(--paper-dark); }
+    [data-style="pixel"] .detail { background: var(--paper-dark); border-left: 3px solid var(--ink); }
+    [data-style="pixel"] .inv-bar { background: var(--paper-deep); border-top: 3px solid var(--ink); }
+    [data-style="pixel"] .bar-track { background: #303030; border: 2px solid #888; border-radius: 0; height: 16px; }
+    [data-style="pixel"] .bar-fill { background: var(--accent); border-radius: 0; }
+    [data-style="pixel"] .req .ok { color: var(--teal); }
+    [data-style="pixel"] img { filter: var(--img-filter); image-rendering: pixelated; }
+    [data-style="pixel"] .skill-name, [data-style="pixel"] .card-title { font-weight: 700; }
+
+    /* ══════════════════════════════════════
+       ⑥ 典籍羊皮
+    ══════════════════════════════════════ */
+    [data-style="codex"] {
+      --page: #322c24; --paper: #423a30; --paper-dark: #3a3228; --paper-deep: #4e4438;
+      --ink: #d8c8a8; --muted: #9a8e78; --teal: #78a090; --accent: #c07840; --gold: #d0a848;
+      --banner-grad: linear-gradient(90deg, rgba(50,44,36,.92) 0%, rgba(50,44,36,.35) 55%, transparent 100%);
+      --skill-hover: rgba(192,120,64,.1); --skill-active: rgba(192,120,64,.18);
+      --img-filter: sepia(0.3) saturate(0.85) brightness(1.02);
+      --title-font: "Ma Shan Zheng", cursive;
+      --body-font: "Noto Serif SC", serif;
+    }
+    [data-style="codex"] body {
+      font-family: var(--body-font); background: var(--page); color: var(--ink);
+      background-image:
+        radial-gradient(ellipse at 50% 0%, rgba(208,168,72,.06) 0%, transparent 60%);
+    }
+    [data-style="codex"] .frame {
+      background: linear-gradient(180deg, var(--paper) 0%, var(--paper-dark) 100%);
+      border: 2px solid var(--gold); border-radius: 2px;
+      box-shadow: 0 0 0 1px var(--ink), 0 6px 24px rgba(0,0,0,.35);
+    }
+    [data-style="codex"] .frame-inset {
+      background: var(--paper); border: 1px solid rgba(208,168,72,.4);
+      border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+    }
+    [data-style="codex"] .topbar {
+      background: var(--paper-dark);
+      border-bottom: 2px solid var(--gold);
+    }
+    [data-style="codex"] .logo h1 { font-family: var(--title-font); color: var(--gold); }
+    [data-style="codex"] .currency .gold { color: var(--gold); }
+    [data-style="codex"] .sidebar { background: var(--paper-dark); border-right: 2px solid rgba(208,168,72,.3); }
+    [data-style="codex"] .skill { border-radius: 2px; }
+    [data-style="codex"] .skill:hover { background: var(--skill-hover); }
+    [data-style="codex"] .skill.active {
+      background: var(--skill-active); border-color: var(--gold);
+      box-shadow: inset 3px 0 0 var(--gold);
+    }
+    [data-style="codex"] .skill-bar { background: rgba(0,0,0,.25); border: 1px solid rgba(208,168,72,.25); }
+    [data-style="codex"] .skill-bar i { background: linear-gradient(90deg, var(--gold), var(--accent)); }
+    [data-style="codex"] .banner-overlay { background: var(--banner-grad); }
+    [data-style="codex"] .banner h2 { font-family: var(--title-font); color: var(--gold); }
+    [data-style="codex"] .tag { background: rgba(208,168,72,.1); color: var(--gold); border: 1px solid rgba(208,168,72,.35); border-radius: 2px; }
+    [data-style="codex"] .card.active { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+    [data-style="codex"] .card-yield { color: var(--gold); }
+    [data-style="codex"] .running { background: var(--paper-dark); }
+    [data-style="codex"] .detail { background: var(--paper-dark); border-left: 2px solid rgba(208,168,72,.3); }
+    [data-style="codex"] .inv-bar { background: var(--paper-deep); border-top: 2px solid rgba(208,168,72,.3); }
+    [data-style="codex"] .bar-track { background: rgba(0,0,0,.3); border: 1px solid rgba(208,168,72,.3); }
+    [data-style="codex"] .bar-fill { background: linear-gradient(90deg, var(--gold), var(--accent)); }
+    [data-style="codex"] .req .ok { color: var(--gold); }
+    [data-style="codex"] .running-time { color: var(--gold); }
+    [data-style="codex"] img { filter: var(--img-filter); }
+
+    /* ══════════════════════════════════════
+       ⑦ 坠星微光（夜景发光）
+    ══════════════════════════════════════ */
+    [data-style="glow"] {
+      --page: #2a2e34; --paper: #343a42; --paper-dark: #2e343c; --paper-deep: #3e444c;
+      --ink: #e0e4e8; --muted: #889098; --teal: #68c8b8; --accent: #e08858; --gold: #e8c060;
+      --banner-grad: linear-gradient(90deg, rgba(42,46,52,.9) 0%, rgba(42,46,52,.15) 50%, transparent 100%);
+      --skill-hover: rgba(104,200,184,.08); --skill-active: rgba(104,200,184,.15);
+      --img-filter: brightness(1.05) saturate(1.1);
+      --title-font: "Noto Sans SC", sans-serif;
+      --body-font: "Noto Sans SC", sans-serif;
+    }
+    [data-style="glow"] body {
+      font-family: var(--body-font); background: var(--page); color: var(--ink);
+      background-image:
+        radial-gradient(ellipse at 20% 80%, rgba(104,200,184,.06) 0%, transparent 40%),
+        radial-gradient(ellipse at 80% 20%, rgba(232,192,96,.04) 0%, transparent 35%);
+    }
+    [data-style="glow"] .frame {
+      background: var(--paper); border: 1px solid rgba(104,200,184,.2); border-radius: 10px;
+      box-shadow: 0 0 24px rgba(104,200,184,.08), 0 8px 32px rgba(0,0,0,.35);
+    }
+    [data-style="glow"] .frame-inset {
+      background: rgba(255,255,255,.03); border: 1px solid rgba(104,200,184,.15); border-radius: 8px;
+    }
+    [data-style="glow"] .topbar {
+      background: linear-gradient(180deg, rgba(104,200,184,.06), transparent);
+      border-bottom: 1px solid rgba(104,200,184,.15);
+    }
+    [data-style="glow"] .logo h1 { font-family: var(--title-font); font-weight: 600; color: var(--teal); text-shadow: 0 0 12px rgba(104,200,184,.4); }
+    [data-style="glow"] .currency .gold { color: var(--gold); text-shadow: 0 0 8px rgba(232,192,96,.3); }
+    [data-style="glow"] .sidebar { background: rgba(0,0,0,.15); border-right: 1px solid rgba(104,200,184,.12); }
+    [data-style="glow"] .skill { border-radius: 8px; }
+    [data-style="glow"] .skill:hover { background: var(--skill-hover); }
+    [data-style="glow"] .skill.active {
+      background: var(--skill-active); border-color: rgba(104,200,184,.4);
+      box-shadow: inset 3px 0 0 var(--teal), 0 0 12px rgba(104,200,184,.1);
+    }
+    [data-style="glow"] .skill-bar { background: rgba(0,0,0,.3); border: none; }
+    [data-style="glow"] .skill-bar i { background: var(--teal); box-shadow: 0 0 6px rgba(104,200,184,.5); border-radius: 2px; }
+    [data-style="glow"] .banner-overlay { background: var(--banner-grad); }
+    [data-style="glow"] .banner h2 { font-family: var(--title-font); font-weight: 600; text-shadow: 0 0 16px rgba(104,200,184,.3); }
+    [data-style="glow"] .tag { background: rgba(104,200,184,.1); color: var(--teal); border: 1px solid rgba(104,200,184,.25); border-radius: 12px; }
+    [data-style="glow"] .card.active {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 1px var(--teal), 0 0 16px rgba(104,200,184,.15);
+    }
+    [data-style="glow"] .card-yield { color: var(--teal); }
+    [data-style="glow"] .running { background: rgba(0,0,0,.12); }
+    [data-style="glow"] .detail { background: rgba(0,0,0,.12); border-left: 1px solid rgba(104,200,184,.12); }
+    [data-style="glow"] .inv-bar { background: rgba(0,0,0,.18); border-top: 1px solid rgba(104,200,184,.12); }
+    [data-style="glow"] .bar-track { background: rgba(0,0,0,.35); border: 1px solid rgba(104,200,184,.15); border-radius: 6px; }
+    [data-style="glow"] .bar-fill {
+      background: linear-gradient(90deg, var(--teal), #88e0d0);
+      box-shadow: 0 0 10px rgba(104,200,184,.5); border-radius: 5px;
+    }
+    [data-style="glow"] .running-time { color: var(--teal); text-shadow: 0 0 8px rgba(104,200,184,.4); }
+    [data-style="glow"] .req .ok { color: var(--teal); }
+    [data-style="glow"] img { filter: var(--img-filter); }
+
+    /* ── 共用色引用 ── */
+    [data-style] .hint { color: var(--muted); }
+    [data-style] .logo span { color: var(--muted); }
+    [data-style] .skill-lv { color: var(--muted); }
+    [data-style] .card-meta { color: var(--muted); }
+    [data-style] .detail p { color: var(--muted); }
+    [data-style] .req li { color: var(--muted); }
+    [data-style] .inv-label { color: var(--muted); }
+    [data-style] .slot .cnt { color: var(--ink); }
+    [data-style] .currency .gold { color: var(--accent); }
+    [data-style] .running-time { color: var(--accent); }
+    [data-style] .skill-icon, [data-style] .running-thumb, [data-style] .detail-hero, [data-style] .slot { background: var(--paper); }
+    [data-style] .card-thumb { background: var(--paper-deep); }
+    [data-style] .top-btn { color: var(--ink); background: var(--paper); }
+    [data-style] .body { background: var(--paper); }
+  </style>
+</head>
+<body data-style="sketch">
+
+  <div class="picker">
+    <span class="picker-label">切换风格：</span>
+    <button class="active" data-pick="sketch">① 暖灰手绘</button>
+    <button data-pick="woodcut">② 木刻蚀刻</button>
+    <button data-pick="watercolor">③ 淡彩水墨</button>
+    <button data-pick="flat">④ 克制扁平</button>
+    <button data-pick="pixel">⑤ 像素复古</button>
+    <button data-pick="codex">⑥ 典籍羊皮</button>
+    <button data-pick="glow">⑦ 坠星微光</button>
+    <p class="desc" id="style-desc">暖灰手绘 v3（当前定稿）：蜡笔图标 + 不规则墨线框 + 硬阴影。有特色，量产图标略费工。</p>
+  </div>
+
+  <p class="hint" id="hint">UniverIdle 主界面 · 风格对比预览 · 点击上方按钮切换 · 图标仍为同一批手绘素材</p>
+
+  <div class="app frame">
+    <header class="topbar">
+      <div class="logo">
+        <div class="logo-img frame-inset"><img src="assets/logo.png" alt="坠星谷" /></div>
+        <h1>坠星谷 <span>萤溪村</span></h1>
+      </div>
+      <div class="currency">
+        <span class="gold">1,240 铜</span>
+        <span style="color:var(--muted)">声望 ★★☆</span>
+      </div>
+      <div class="top-btn frame-inset">图鉴</div>
+      <div class="top-btn frame-inset">背包</div>
+      <div class="top-btn frame-inset">设置</div>
+    </header>
+
+    <div class="body">
+      <nav class="sidebar">
+        <div class="skill">
+          <div class="skill-icon frame-inset"><img src="assets/skill_hunting.png" alt="打猎" /></div>
+          <div class="skill-info"><div class="skill-name">打猎</div><div class="skill-lv">Lv. 8</div><div class="skill-bar"><i style="width:40%"></i></div></div>
+        </div>
+        <div class="skill active">
+          <div class="skill-icon frame-inset"><img src="assets/skill_fishing.png" alt="溪钓" /></div>
+          <div class="skill-info"><div class="skill-name">溪钓</div><div class="skill-lv">Lv. 12</div><div class="skill-bar"><i style="width:65%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon frame-inset"><img src="assets/skill_foraging.png" alt="野拾" /></div>
+          <div class="skill-info"><div class="skill-name">野拾</div><div class="skill-lv">Lv. 6</div><div class="skill-bar"><i style="width:28%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon frame-inset"><img src="assets/skill_mining.png" alt="掘矿" /></div>
+          <div class="skill-info"><div class="skill-name">掘矿</div><div class="skill-lv">Lv. 10</div><div class="skill-bar"><i style="width:52%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon frame-inset"><img src="assets/skill_alchemy.png" alt="炼药" /></div>
+          <div class="skill-info"><div class="skill-name">炼药</div><div class="skill-lv">Lv. 9</div><div class="skill-bar"><i style="width:48%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon frame-inset"><img src="assets/skill_smithing.png" alt="锻造" /></div>
+          <div class="skill-info"><div class="skill-name">锻造</div><div class="skill-lv">Lv. 7</div><div class="skill-bar"><i style="width:35%"></i></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-icon frame-inset"><img src="assets/skill_combat.png" alt="讨伐" /></div>
+          <div class="skill-info"><div class="skill-name">讨伐</div><div class="skill-lv">Lv. 11</div><div class="skill-bar"><i style="width:58%"></i></div></div>
+        </div>
+      </nav>
+
+      <main class="center">
+        <div class="banner frame-inset">
+          <img class="banner-bg" src="assets/banner_yingxi.png" alt="萤溪" />
+          <div class="banner-overlay">
+            <h2>萤溪</h2>
+            <div class="tags"><span class="tag">微光</span><span class="tag">安全</span><span class="tag">★☆☆</span></div>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card frame-inset active">
+            <div class="card-thumb frame-inset"><img src="assets/card_catch_shrimp.png" alt="钓萤虾" /></div>
+            <div class="card-title">钓萤虾</div>
+            <div class="card-meta"><span>8.0 秒</span><span class="card-yield">+1 萤虾</span></div>
+          </div>
+          <div class="card frame-inset">
+            <div class="card-thumb frame-inset"><img src="assets/card_pan_sand.png" alt="淘星沙" /></div>
+            <div class="card-title">淘星沙</div>
+            <div class="card-meta"><span>12 秒</span><span class="card-yield">+1 星沙</span></div>
+          </div>
+          <div class="card frame-inset locked">
+            <div class="card-thumb frame-inset"><img src="assets/card_catch_trout.png" alt="钓鳟鱼" /></div>
+            <div class="card-title">钓鳟鱼</div>
+            <div class="card-meta"><span>需 Lv.10</span></div>
+          </div>
+        </div>
+
+        <div class="running frame-inset">
+          <div class="running-thumb frame-inset">
+            <img src="assets/item_firefly_shrimp.png" alt="萤虾" />
+          </div>
+          <div class="running-info">
+            <h3>进行中 · 钓萤虾</h3>
+            <div class="bar-wrap">
+              <div class="bar-track"><div class="bar-fill"></div></div>
+            </div>
+          </div>
+          <div class="running-time">00:06</div>
+        </div>
+      </main>
+
+      <aside class="detail">
+        <div class="detail-hero frame-inset">
+          <img src="assets/detail_firefly_shrimp.png" alt="萤虾" />
+        </div>
+        <h3>萤虾</h3>
+        <p>萤溪浅水的小虾，夜间会发光。炼药常用基材，也可直接出售。</p>
+        <ul class="req">
+          <li class="ok">✓ 溪钓 Lv.1</li>
+          <li class="ok">✓ 地点：萤溪</li>
+          <li>稀有：星沙 2%</li>
+        </ul>
+      </aside>
+    </div>
+
+    <footer class="inv-bar">
+      <span class="inv-label">物品</span>
+      <div class="slot frame-inset"><img src="assets/item_firefly_shrimp.png" alt="萤虾" /><span class="cnt">48</span></div>
+      <div class="slot frame-inset"><img src="assets/item_herb_sprout.png" alt="药草芽" /><span class="cnt">22</span></div>
+      <div class="slot frame-inset"><img src="assets/item_red_potion.png" alt="红药" /><span class="cnt">3</span></div>
+      <div class="slot frame-inset"><img src="assets/item_copper_ingot.png" alt="铜锭" /><span class="cnt">6</span></div>
+      <div class="slot frame-inset"><img src="assets/item_star_sand.png" alt="星沙" /><span class="cnt">31</span></div>
+    </footer>
+  </div>
+
+  <script>
+    const STYLES = {
+      sketch:    '暖灰手绘 v3（当前定稿）：蜡笔图标 + 不规则墨线框 + 硬阴影。有特色，量产图标略费工。',
+      woodcut:   '木刻蚀刻：粗线块面、直角框、典籍插图感。和坠星谷题材很贴，图标比手绘好控。',
+      watercolor:'淡彩水墨：灰蓝洗色 + 圆角柔边。横幅/卡片氛围好，小图标需单独简化。',
+      flat:      '克制扁平：干净圆角、无硬阴影、信息密度高。最省工，靠横幅插画和 Melvor 拉开差距。',
+      pixel:     '像素复古：方块边框 + 等宽字。物品栏识别度高，需整套像素规范才统一。',
+      codex:     '典籍羊皮：暖褐 + 金线框、羊皮纸质感。偏 RPG 典籍风，适合有叙事感的挂机。',
+      glow:      '坠星微光：灰蓝底 + 青绿/琥珀微光。最贴「夜晚萤溪」题材，注意别做成网游发光 UI。',
+    };
+    document.querySelectorAll('.picker button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const s = btn.dataset.pick;
+        document.body.dataset.style = s;
+        document.querySelectorAll('.picker button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('style-desc').textContent = STYLES[s];
+      });
+    });
+  </script>
+</body>
+</html>
