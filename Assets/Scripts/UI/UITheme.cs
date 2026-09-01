@@ -20,7 +20,8 @@ namespace UniverIdle.UI
         public static readonly Color TopBarBottom = Hex("#252D28");
         public static readonly Color InventoryBg = Hex("#1C221E");
         public static readonly Color BarTrack = Hex("#1A201C");
-        public static readonly Color BannerOverlay = new Color(0f, 0f, 0f, 0.45f);
+        public static readonly Color BannerBg = Hex("#1A3040");
+        public static readonly Color BannerAccent = Hex("#2A5048");
 
         public static Color Hex(string hex)
         {
