@@ -12,6 +12,7 @@ namespace UniverIdle.Editor
   public sealed class GameDataExportWindow : EditorWindow
   {
     private const string PrefsKey = "UniverIdle.GameDataExport.SelectedSheets";
+    private const string SearchControlName = "GameDataExportSearch";
 
     private readonly Dictionary<string, bool> _selected = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> _sheetStatus = new(StringComparer.OrdinalIgnoreCase);
@@ -23,11 +24,8 @@ namespace UniverIdle.Editor
     private GUIStyle _headerTitleStyle;
     private GUIStyle _headerSubtitleStyle;
     private GUIStyle _workbookTitleStyle;
-    private GUIStyle _pathKeyStyle;
-    private GUIStyle _pathValueStyle;
-    private GUIStyle _sheetIdStyle;
-    private GUIStyle _sheetTitleStyle;
-    private GUIStyle _sheetDescStyle;
+    private GUIStyle _pathStyle;
+    private GUIStyle _sheetLabelStyle;
     private GUIStyle _statusStyle;
     private GUIStyle _exportButtonStyle;
     private bool _stylesReady;
@@ -53,10 +51,10 @@ namespace UniverIdle.Editor
     {
       HandleSearchShortcut();
       EnsureStyles();
+
       DrawHeader();
       DrawToolbar();
-      DrawSearchBar();
-      EditorGUILayout.Space(6);
+      EditorGUILayout.Space(8);
 
       var anyVisible = false;
       _scroll = EditorGUILayout.BeginScrollView(_scroll);
@@ -87,24 +85,12 @@ namespace UniverIdle.Editor
       _headerTitleStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 15 };
       _headerSubtitleStyle = new GUIStyle(EditorStyles.label) { fontSize = 12 };
       _workbookTitleStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 14 };
-      _pathKeyStyle = new GUIStyle(EditorStyles.label)
-      {
-        fontSize = 12,
-        fontStyle = FontStyle.Bold,
-        normal = { textColor = muted },
-      };
-      _pathValueStyle = new GUIStyle(EditorStyles.label)
-      {
-        fontSize = 12,
-        normal = { textColor = pro ? new Color(0.82f, 0.86f, 0.9f) : new Color(0.2f, 0.24f, 0.28f) },
-      };
-      _sheetIdStyle = new GUIStyle(EditorStyles.label) { fontSize = 13, fontStyle = FontStyle.Bold };
-      _sheetTitleStyle = new GUIStyle(EditorStyles.label) { fontSize = 13 };
-      _sheetDescStyle = new GUIStyle(EditorStyles.wordWrappedLabel)
+      _pathStyle = new GUIStyle(EditorStyles.label)
       {
         fontSize = 12,
         normal = { textColor = muted },
       };
+      _sheetLabelStyle = new GUIStyle(EditorStyles.label) { fontSize = 13 };
       _statusStyle = new GUIStyle(EditorStyles.label) { fontSize = 12, alignment = TextAnchor.MiddleRight };
       _exportButtonStyle = new GUIStyle(GUI.skin.button) { fontSize = 13, fontStyle = FontStyle.Bold };
       _stylesReady = true;
@@ -123,40 +109,19 @@ namespace UniverIdle.Editor
       if (SirenixEditorGUI.ToolbarButton(new GUIContent("全选"))) SetAllSelected(true);
       if (SirenixEditorGUI.ToolbarButton(new GUIContent("全不选"))) SetAllSelected(false);
       if (SirenixEditorGUI.ToolbarButton(new GUIContent("刷新"))) RefreshSheetStatus();
-      GUILayout.FlexibleSpace();
-      if (SirenixEditorGUI.ToolbarButton(new GUIContent("生成 Excel"))) CreateExcelFromJson();
-      SirenixEditorGUI.EndHorizontalToolbar();
-    }
 
-    private void DrawSearchBar()
-    {
-      EditorGUILayout.BeginHorizontal();
-      EditorGUILayout.LabelField("搜索", GUILayout.Width(36));
-      GUI.SetNextControlName("GameDataExportSearch");
-      var next = EditorGUILayout.TextField(_searchQuery, GUILayout.MinWidth(120));
+      GUILayout.FlexibleSpace();
+
+      GUI.SetNextControlName(SearchControlName);
+      var next = GUILayout.TextField(_searchQuery, EditorStyles.toolbarSearchField, GUILayout.MinWidth(140), GUILayout.MaxWidth(260));
       if (!string.Equals(next, _searchQuery, StringComparison.Ordinal))
       {
         _searchQuery = next;
         Repaint();
       }
 
-      using (new EditorGUI.DisabledScope(string.IsNullOrWhiteSpace(_searchQuery)))
-      {
-        if (GUILayout.Button("清除", GUILayout.Width(48)))
-        {
-          _searchQuery = string.Empty;
-          GUI.FocusControl(null);
-          Repaint();
-        }
-      }
-
-      if (HasSearchFilter)
-      {
-        var count = CountVisibleSheets();
-        EditorGUILayout.LabelField($"{count} 项", EditorStyles.miniLabel, GUILayout.Width(40));
-      }
-
-      EditorGUILayout.EndHorizontal();
+      if (SirenixEditorGUI.ToolbarButton(new GUIContent("生成 Excel"))) CreateExcelFromJson();
+      SirenixEditorGUI.EndHorizontalToolbar();
     }
 
     private static void HandleSearchShortcut()
@@ -164,7 +129,7 @@ namespace UniverIdle.Editor
       var e = Event.current;
       if (e.type != EventType.KeyDown || e.keyCode != KeyCode.F || (!e.control && !e.command))
         return;
-      EditorGUI.FocusTextInControl("GameDataExportSearch");
+      EditorGUI.FocusTextInControl(SearchControlName);
       e.Use();
     }
 
@@ -179,7 +144,6 @@ namespace UniverIdle.Editor
 
       EditorGUILayout.BeginVertical(EditorStyles.helpBox);
       DrawWorkbookHeader(workbook, accent);
-      EditorGUILayout.Space(4);
 
       foreach (var sheet in visibleSheets)
         DrawSheetRow(sheet);
@@ -194,30 +158,22 @@ namespace UniverIdle.Editor
       EditorGUILayout.BeginHorizontal();
       var prev = GUI.contentColor;
       GUI.contentColor = accent;
-      EditorGUILayout.LabelField($"{workbook.Title}   {workbook.ExcelFileName}", _workbookTitleStyle);
+      EditorGUILayout.LabelField($"{workbook.Title} · {workbook.ExcelFileName}", _workbookTitleStyle);
       GUI.contentColor = prev;
       GUILayout.FlexibleSpace();
 
-      if (GUILayout.Button("打开 Excel", GUILayout.Width(100), GUILayout.Height(24)))
+      if (GUILayout.Button("打开 Excel", GUILayout.Width(100), GUILayout.Height(22)))
         GameDataExcelExporter.OpenExcel(workbook.ExcelKey);
       EditorGUILayout.EndHorizontal();
 
-      EditorGUILayout.Space(2);
-      DrawPathLine("Excel", workbook.ExcelAssetPath);
-      DrawPathLine("JSON", workbook.JsonAssetPath);
-    }
-
-    private void DrawPathLine(string label, string path)
-    {
-      EditorGUILayout.BeginHorizontal();
-      EditorGUILayout.LabelField(label, _pathKeyStyle, GUILayout.Width(44));
-      EditorGUILayout.LabelField(path, _pathValueStyle);
-      EditorGUILayout.EndHorizontal();
+      EditorGUILayout.LabelField($"Excel → {workbook.ExcelAssetPath}", _pathStyle);
+      EditorGUILayout.LabelField($"JSON → {workbook.JsonAssetPath}", _pathStyle);
     }
 
     private void DrawSheetRow(GameDataSheetRegistry.SheetInfo sheet)
     {
       EditorGUILayout.BeginHorizontal();
+      GUILayout.Space(16);
 
       var selected = _selected.TryGetValue(sheet.Id, out var on) && on;
       var next = EditorGUILayout.Toggle(selected, GUILayout.Width(18));
@@ -227,16 +183,13 @@ namespace UniverIdle.Editor
         SaveSelectionPrefs();
       }
 
-      EditorGUILayout.LabelField(sheet.TabName, _sheetIdStyle, GUILayout.Width(80));
-      EditorGUILayout.LabelField(sheet.Title, _sheetTitleStyle);
+      EditorGUILayout.LabelField($"Sheet · {sheet.TabName}", _sheetLabelStyle);
       GUILayout.FlexibleSpace();
 
       if (_sheetStatus.TryGetValue(sheet.Id, out var status))
         EditorGUILayout.LabelField(status, _statusStyle, GUILayout.Width(64));
 
       EditorGUILayout.EndHorizontal();
-      EditorGUILayout.LabelField(sheet.Description, _sheetDescStyle);
-      EditorGUILayout.Space(4);
     }
 
     private void DrawExportButton()
@@ -280,14 +233,6 @@ namespace UniverIdle.Editor
         foreach (var sheet in GetVisibleSheets(workbook))
           yield return sheet;
       }
-    }
-
-    private int CountVisibleSheets()
-    {
-      var count = 0;
-      foreach (var _ in EnumerateTargetSheets())
-        count++;
-      return count;
     }
 
     private List<GameDataSheetRegistry.SheetInfo> GetVisibleSheets(GameDataSheetRegistry.WorkbookInfo workbook)

@@ -49,9 +49,9 @@
       "costAmount": 1,
       "loot": [
         { "itemId": "slime_gel", "chance": 0.65 },
-        { "itemId": "tattered_pelt", "chance": 0.35 },
+        { "itemId": "monster_pa", "chance": 0.35 },
         { "itemId": "beast_fang", "chance": 0.14 },
-        { "itemId": "monster_ichor", "chance": 0.05 }
+        { "itemId": "monster_pa", "chance": 0.05 }
       ]
     },
     {
@@ -70,7 +70,7 @@
       "loot": [
         { "itemId": "beast_fang", "chance": 0.55 },
         { "itemId": "tattered_pelt", "chance": 0.48 },
-        { "itemId": "monster_ichor", "chance": 0.22 },
+        { "itemId": "monster_pa", "chance": 0.22 },
         { "itemId": "cracked_core", "chance": 0.04 }
       ]
     },
@@ -88,7 +88,7 @@
       "costItemId": "large_trap",
       "costAmount": 2,
       "loot": [
-        { "itemId": "monster_ichor", "chance": 0.42 },
+        { "itemId": "slime_gel", "chance": 0.42 },
         { "itemId": "beast_fang", "chance": 0.38 },
         { "itemId": "cracked_core", "chance": 0.12 },
         { "itemId": "stardust_shard", "chance": 0.03 }

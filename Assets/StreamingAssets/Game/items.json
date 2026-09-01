@@ -110,10 +110,10 @@
       "description": "带着爪痕的皮毛，缝补防具勉强能用。"
     },
     {
-      "id": "monster_ichor",
-      "name": "魔物浆液",
+      "id": "monster_pa",
+      "name": "奇怪的内裤",
       "color": "#7A4A68",
-      "description": "魔物体内渗出的紫色汁液，气味刺鼻，炼金价值不低。"
+      "description": "一条奇怪的内裤。"
     },
     {
       "id": "cracked_core",
