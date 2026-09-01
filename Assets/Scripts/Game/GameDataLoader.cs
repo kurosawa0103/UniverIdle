@@ -23,6 +23,7 @@ namespace UniverIdle.Game
       RegisterItems(itemsData, items);
       RegisterWorkContent(LoadScavengeFile(), works, actions, actionsByWork, items);
       RegisterWorkContent(LoadWoodcuttingFile(), works, actions, actionsByWork, items);
+      RegisterWorkContent(LoadMiningFile(), works, actions, actionsByWork, items);
       RegisterWorkContent(LoadMonsterExploreFile(), works, actions, actionsByWork, items);
     }
 
@@ -34,6 +35,9 @@ namespace UniverIdle.Game
 
     public static WorkContentDataFile LoadWoodcuttingFile() =>
       LoadJsonFile<WorkContentDataFile>(GameDataPaths.WoodcuttingRelativePath);
+
+    public static WorkContentDataFile LoadMiningFile() =>
+      LoadJsonFile<WorkContentDataFile>(GameDataPaths.MiningRelativePath);
 
     public static WorkContentDataFile LoadMonsterExploreFile() =>
       LoadJsonFile<WorkContentDataFile>(GameDataPaths.MonsterExploreRelativePath);
@@ -47,6 +51,9 @@ namespace UniverIdle.Game
 
     public static WorkContentDataFile LoadWoodcuttingFileIfPresent() =>
       LoadJsonFileIfPresent<WorkContentDataFile>(GameDataPaths.WoodcuttingRelativePath) ?? new WorkContentDataFile { version = 3 };
+
+    public static WorkContentDataFile LoadMiningFileIfPresent() =>
+      LoadJsonFileIfPresent<WorkContentDataFile>(GameDataPaths.MiningRelativePath) ?? new WorkContentDataFile { version = 3 };
 
     public static WorkContentDataFile LoadMonsterExploreFileIfPresent() =>
       LoadJsonFileIfPresent<WorkContentDataFile>(GameDataPaths.MonsterExploreRelativePath) ?? new WorkContentDataFile { version = 3 };

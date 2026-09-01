@@ -8,6 +8,7 @@ namespace UniverIdle.Editor
     public const string ItemsExcelKey = "items";
     public const string ScavengeExcelKey = "scavenge";
     public const string WoodcuttingExcelKey = "woodcutting";
+    public const string MiningExcelKey = "mining";
     public const string MonsterExploreExcelKey = "monster_explore";
 
     public enum WorkSheetKind
@@ -62,6 +63,15 @@ namespace UniverIdle.Editor
         "woodcutting_loot", WoodcuttingExcelKey, "loot", WorkSheetKind.Loot,
         "砍树 · loot", "掉落：actionId + itemId；#itemName 列仅方便阅读，不导出"),
       new SheetInfo(
+        "mining_works", MiningExcelKey, "works", WorkSheetKind.Works,
+        "挖矿 · works", "挖矿工作参数、经验公式"),
+      new SheetInfo(
+        "mining_actions", MiningExcelKey, "actions", WorkSheetKind.Actions,
+        "挖矿 · actions", "各矿脉动作；cost 列可留空"),
+      new SheetInfo(
+        "mining_loot", MiningExcelKey, "loot", WorkSheetKind.Loot,
+        "挖矿 · loot", "掉落：actionId + itemId；#itemName 列仅方便阅读，不导出"),
+      new SheetInfo(
         "monster_explore_works", MonsterExploreExcelKey, "works", WorkSheetKind.Works,
         "魔物探索 · works", "魔物探索工作参数、经验公式"),
       new SheetInfo(
@@ -90,6 +100,7 @@ namespace UniverIdle.Editor
         ItemsExcelKey => GameDataPaths.ItemsExcelRelative,
         ScavengeExcelKey => GameDataPaths.ScavengeExcelRelative,
         WoodcuttingExcelKey => GameDataPaths.WoodcuttingExcelRelative,
+        MiningExcelKey => GameDataPaths.MiningExcelRelative,
         MonsterExploreExcelKey => GameDataPaths.MonsterExploreExcelRelative,
         _ => throw new ArgumentException("未知 Excel：" + excelKey, nameof(excelKey)),
       };
@@ -129,9 +140,13 @@ namespace UniverIdle.Editor
         GameDataPaths.WoodcuttingExcelAssetPath, GameDataPaths.WoodcuttingJsonAssetPath,
         new[] { All[4], All[5], All[6] }),
       new WorkbookInfo(
+        MiningExcelKey, "挖矿表",
+        GameDataPaths.MiningExcelAssetPath, GameDataPaths.MiningJsonAssetPath,
+        new[] { All[7], All[8], All[9] }),
+      new WorkbookInfo(
         MonsterExploreExcelKey, "魔物探索表",
         GameDataPaths.MonsterExploreExcelAssetPath, GameDataPaths.MonsterExploreJsonAssetPath,
-        new[] { All[7], All[8], All[9] }),
+        new[] { All[10], All[11], All[12] }),
     };
   }
 }

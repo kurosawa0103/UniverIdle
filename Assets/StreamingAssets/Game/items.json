@@ -120,6 +120,30 @@
       "name": "裂纹魔核",
       "color": "#B888D8",
       "description": "魔物核心碎裂后的结晶，仍残留微弱魔力。"
+    },
+    {
+      "id": "copper_ore",
+      "name": "铜矿石",
+      "color": "#B89468",
+      "description": "洞口红土剥出的铜矿，熔炼后可铸钉铸器。"
+    },
+    {
+      "id": "tin_ore",
+      "name": "锡矿石",
+      "color": "#A8A098",
+      "description": "侧巷锡矿脉的矿石，灰白脆亮，常与铜矿混炼。"
+    },
+    {
+      "id": "iron_ore",
+      "name": "铁矿石",
+      "color": "#585048",
+      "description": "深层铁矿层的粗矿，沉实耐锻，铁匠常备料。"
+    },
+    {
+      "id": "meteor_ore",
+      "name": "陨铁矿石",
+      "color": "#7060A0",
+      "description": "坠星矿洞尽头的陨铁原矿，脉动微光，稀有而坚硬。"
     }
   ]
 }

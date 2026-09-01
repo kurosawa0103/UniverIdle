@@ -8,6 +8,7 @@ namespace UniverIdle.Game
   {
     public const string WorkScavengeId = "scavenge";
     public const string WorkWoodcuttingId = "woodcutting";
+    public const string WorkMiningId = "mining";
     public const string WorkMonsterExploreId = "monster_explore";
 
     private static readonly Dictionary<string, ItemDefinition> Items = new();

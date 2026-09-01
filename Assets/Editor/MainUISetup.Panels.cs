@@ -112,6 +112,7 @@ namespace UniverIdle.Editor
                 ("", "溪钓", "", 0, 0f, UITheme.SkillFish, false),
                 ("scavenge", "拾荒", "萤溪村", 1, 0f, UITheme.SkillForage, true),
                 ("woodcutting", "砍树", "黑松林", 1, 0f, UITheme.SkillWood, true),
+                ("mining", "挖矿", "坠星矿洞", 1, 0f, UITheme.SkillMine, true),
                 ("monster_explore", "魔物探索", "坠星野外", 1, 0f, UITheme.SkillCombat, true),
                 ("", "炼药", "", 0, 0f, UITheme.SkillAlchemy, false),
                 ("", "讨伐", "", 0, 0f, UITheme.SkillSmith, false),

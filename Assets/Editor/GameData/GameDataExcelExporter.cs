@@ -48,13 +48,15 @@ namespace UniverIdle.Editor
       public readonly ItemsDataFile Items;
       public readonly WorkContentDataFile Scavenge;
       public readonly WorkContentDataFile Woodcutting;
+      public readonly WorkContentDataFile Mining;
       public readonly WorkContentDataFile MonsterExplore;
 
-      public ExportBundle(ItemsDataFile items, WorkContentDataFile scavenge, WorkContentDataFile woodcutting, WorkContentDataFile monsterExplore)
+      public ExportBundle(ItemsDataFile items, WorkContentDataFile scavenge, WorkContentDataFile woodcutting, WorkContentDataFile mining, WorkContentDataFile monsterExplore)
       {
         Items = items;
         Scavenge = scavenge;
         Woodcutting = woodcutting;
+        Mining = mining;
         MonsterExplore = monsterExplore;
       }
     }
@@ -64,6 +66,7 @@ namespace UniverIdle.Editor
         GameDataLoader.LoadItemsFileIfPresent(),
         GameDataLoader.LoadScavengeFileIfPresent(),
         GameDataLoader.LoadWoodcuttingFileIfPresent(),
+        GameDataLoader.LoadMiningFileIfPresent(),
         GameDataLoader.LoadMonsterExploreFileIfPresent());
 
     public static void ExportExcelToJson(IEnumerable<string> sheetIds)
@@ -81,7 +84,7 @@ namespace UniverIdle.Editor
       if (Application.isPlaying)
         GameContent.ReloadForEditor();
 
-      Debug.Log($"[UniverIdle] 导表完成（{string.Join(", ", selected)}）→ items / scavenge / woodcutting / monster_explore JSON");
+      Debug.Log($"[UniverIdle] 导表完成（{string.Join(", ", selected)}）→ items / scavenge / woodcutting / mining / monster_explore JSON");
     }
 
     public static Dictionary<string, Dictionary<string, List<string[]>>> ReadExcelCache(ISet<string> selectedSheetIds)
@@ -128,6 +131,7 @@ namespace UniverIdle.Editor
       var items = bundle.Items;
       var scavenge = bundle.Scavenge;
       var woodcutting = bundle.Woodcutting;
+      var mining = bundle.Mining;
       var monsterExplore = bundle.MonsterExplore;
 
       if (selected.Contains("items"))
@@ -135,13 +139,15 @@ namespace UniverIdle.Editor
 
       MergeWorkContent(scavenge, excelCache, selected, "scavenge_works", "scavenge_actions", "scavenge_loot", "scavenge.json");
       MergeWorkContent(woodcutting, excelCache, selected, "woodcutting_works", "woodcutting_actions", "woodcutting_loot", "woodcutting.json");
+      MergeWorkContent(mining, excelCache, selected, "mining_works", "mining_actions", "mining_loot", "mining.json");
       MergeWorkContent(monsterExplore, excelCache, selected, "monster_explore_works", "monster_explore_actions", "monster_explore_loot", "monster_explore.json");
 
       items.version = Math.Max(items.version, 3);
       ValidateItemReferences(items, scavenge, "scavenge_actions", "scavenge_loot");
       ValidateItemReferences(items, woodcutting, "woodcutting_actions", "woodcutting_loot");
+      ValidateItemReferences(items, mining, "mining_actions", "mining_loot");
       ValidateItemReferences(items, monsterExplore, "monster_explore_actions", "monster_explore_loot");
-      return new ExportBundle(items, scavenge, woodcutting, monsterExplore);
+      return new ExportBundle(items, scavenge, woodcutting, mining, monsterExplore);
     }
 
     private static void MergeWorkContent(
@@ -194,8 +200,9 @@ namespace UniverIdle.Editor
       var itemsPath = GetExcelFullPath(GameDataSheetRegistry.ItemsExcelKey);
       var scavengePath = GetExcelFullPath(GameDataSheetRegistry.ScavengeExcelKey);
       var woodcuttingPath = GetExcelFullPath(GameDataSheetRegistry.WoodcuttingExcelKey);
+      var miningPath = GetExcelFullPath(GameDataSheetRegistry.MiningExcelKey);
       var monsterExplorePath = GetExcelFullPath(GameDataSheetRegistry.MonsterExploreExcelKey);
-      if (File.Exists(itemsPath) && File.Exists(scavengePath) && File.Exists(woodcuttingPath) && File.Exists(monsterExplorePath))
+      if (File.Exists(itemsPath) && File.Exists(scavengePath) && File.Exists(woodcuttingPath) && File.Exists(miningPath) && File.Exists(monsterExplorePath))
         return;
 
       Debug.LogWarning("[UniverIdle] Excel 缺失，正在从 JSON 生成模板…");
@@ -205,7 +212,14 @@ namespace UniverIdle.Editor
     public static void CreateExcelFromJson()
     {
       var bundle = LoadCurrentJsonBundle();
-      WriteExcelTemplates(bundle.Items, bundle.Scavenge, bundle.Woodcutting, bundle.MonsterExplore);
+      WriteExcelTemplates(bundle.Items, bundle.Scavenge, bundle.Woodcutting, bundle.Mining, bundle.MonsterExplore);
+    }
+
+    /// <summary>供 Unity batchmode：-executeMethod UniverIdle.Editor.GameDataExcelExporter.CreateExcelFromJsonBatch</summary>
+    public static void CreateExcelFromJsonBatch()
+    {
+      CreateExcelFromJson();
+      AssetDatabase.Refresh();
     }
 
     public static void OpenExcel(string excelKey)
@@ -218,7 +232,7 @@ namespace UniverIdle.Editor
       EditorUtility.OpenWithDefaultApp(path);
     }
 
-    public static void WriteExcelTemplates(ItemsDataFile items, WorkContentDataFile scavenge, WorkContentDataFile woodcutting, WorkContentDataFile monsterExplore)
+    public static void WriteExcelTemplates(ItemsDataFile items, WorkContentDataFile scavenge, WorkContentDataFile woodcutting, WorkContentDataFile mining, WorkContentDataFile monsterExplore)
     {
       WriteExcelFile(
         GetExcelFullPath(GameDataSheetRegistry.ItemsExcelKey),
@@ -232,6 +246,9 @@ namespace UniverIdle.Editor
       WriteExcelFile(
         GetExcelFullPath(GameDataSheetRegistry.WoodcuttingExcelKey),
         BuildWorkbookSheetRows(woodcutting, items?.items));
+      WriteExcelFile(
+        GetExcelFullPath(GameDataSheetRegistry.MiningExcelKey),
+        BuildWorkbookSheetRows(mining, items?.items));
       WriteExcelFile(
         GetExcelFullPath(GameDataSheetRegistry.MonsterExploreExcelKey),
         BuildWorkbookSheetRows(monsterExplore, items?.items));
@@ -258,6 +275,12 @@ namespace UniverIdle.Editor
       {
         File.WriteAllText(GameDataPaths.GetJsonFullPath(UniverIdle.Game.GameDataPaths.WoodcuttingRelativePath), ToWorkContentJson(bundle.Woodcutting), new UTF8Encoding(false));
         written.Add("woodcutting.json");
+      }
+
+      if (SelectedTouchesWorkbook(selected, GameDataSheetRegistry.MiningExcelKey))
+      {
+        File.WriteAllText(GameDataPaths.GetJsonFullPath(UniverIdle.Game.GameDataPaths.MiningRelativePath), ToWorkContentJson(bundle.Mining), new UTF8Encoding(false));
+        written.Add("mining.json");
       }
 
       if (SelectedTouchesWorkbook(selected, GameDataSheetRegistry.MonsterExploreExcelKey))

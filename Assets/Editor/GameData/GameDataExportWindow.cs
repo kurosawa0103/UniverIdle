@@ -277,6 +277,8 @@ namespace UniverIdle.Editor
         return EditorGUIUtility.isProSkin ? new Color(1f, 0.78f, 0.28f) : new Color(0.88f, 0.52f, 0.08f);
       if (excelKey == GameDataSheetRegistry.WoodcuttingExcelKey)
         return EditorGUIUtility.isProSkin ? new Color(0.72f, 0.58f, 0.38f) : new Color(0.52f, 0.38f, 0.2f);
+      if (excelKey == GameDataSheetRegistry.MiningExcelKey)
+        return EditorGUIUtility.isProSkin ? new Color(0.75f, 0.68f, 0.45f) : new Color(0.55f, 0.48f, 0.28f);
       if (excelKey == GameDataSheetRegistry.MonsterExploreExcelKey)
         return EditorGUIUtility.isProSkin ? new Color(0.95f, 0.45f, 0.45f) : new Color(0.72f, 0.28f, 0.28f);
       return EditorGUIUtility.isProSkin ? new Color(0.35f, 0.88f, 0.68f) : new Color(0.1f, 0.62f, 0.42f);
@@ -395,7 +397,7 @@ namespace UniverIdle.Editor
         GameDataExcelExporter.CreateExcelFromJson();
         AssetDatabase.Refresh();
         RefreshSheetStatus();
-        SetStatus("已从 JSON 生成 items、scavenge、woodcutting、monster_explore 四套 Excel。", MessageType.Info);
+        SetStatus("已从 JSON 生成 items、scavenge、woodcutting、mining、monster_explore 五套 Excel。", MessageType.Info);
       }
       catch (Exception ex)
       {
