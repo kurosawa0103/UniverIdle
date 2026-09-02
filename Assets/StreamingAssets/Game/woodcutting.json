@@ -3,7 +3,7 @@
   "works": [
     {
       "id": "woodcutting",
-      "name": "砍树",
+      "name": "砍伐",
       "locationName": "黑松林",
       "iconColor": "#324030",
       "xpBase": 40,

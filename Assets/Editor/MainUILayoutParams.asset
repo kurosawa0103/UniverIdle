@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 87241bda0808d6f4c96406949235071a, type: 3}
-  m_Name: 
+  m_Name: (Clone)(Clone)(Clone)(Clone)
   m_EditorClassIdentifier: 
   referenceResolution: {x: 1920, y: 1080}
   matchWidthOrHeight: 0.5
@@ -49,6 +49,7 @@ MonoBehaviour:
   bannerTitleFont: 22
   tagGap: 8
   tagFont: 11
+  tagHeight: 22
   cardGap: 10
   cardPadding: 10
   cardMinHeight: 100

@@ -120,6 +120,8 @@ namespace UniverIdle.Editor
 
             public static float TagFont => L.tagFont;
 
+            public static float TagHeight => L.tagHeight;
+
             public static bool UseCenterFlexSpacer => L.useCenterFlexSpacer;
 
 

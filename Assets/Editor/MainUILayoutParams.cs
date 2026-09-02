@@ -50,6 +50,7 @@ namespace UniverIdle.Editor
         public float bannerTitleFont = 22f;
         public float tagGap = 8f;
         public float tagFont = 11f;
+        public float tagHeight = 22f;
 
         public float cardGap = 10f;
         public float cardPadding = 10f;

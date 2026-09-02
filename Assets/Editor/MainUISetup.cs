@@ -6,7 +6,6 @@ using UniverIdle.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace UniverIdle.Editor
@@ -30,7 +29,6 @@ namespace UniverIdle.Editor
 
         private static void Build()
         {
-            EnsureEventSystem();
             SetActiveLayout(ResolveLayoutForBuild());
             RemoveExistingRoot();
 
@@ -39,22 +37,7 @@ namespace UniverIdle.Editor
 
             Selection.activeGameObject = root;
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-            Debug.Log("[UniverIdle] 主界面已重建（参数来自场景或 MainUILayoutParams.asset）。");
-        }
-
-        private static void EnsureEventSystem()
-        {
-            if (EventSystem.current != null)
-            {
-                if (EventSystem.current.GetComponent<StandaloneInputModule>() == null)
-                    Undo.AddComponent<StandaloneInputModule>(EventSystem.current.gameObject);
-                return;
-            }
-
-            var es = new GameObject("EventSystem");
-            Undo.RegisterCreatedObjectUndo(es, "Create EventSystem");
-            es.AddComponent<EventSystem>();
-            es.AddComponent<StandaloneInputModule>();
+            Debug.Log("[UniverIdle] 主界面已重建（布局以场景捕获为准，未捕获项保留 MainUILayoutParams.asset）。");
         }
 
         private static void RemoveExistingRoot()
@@ -188,6 +171,7 @@ namespace UniverIdle.Editor
             var inventoryPanel = CreateInventoryPanel(canvasGo.transform, font);
 
             controller.SetReferences(skills, centerHost, detailTitle, detailBody, inventoryPanel, inventoryButton);
+            ApplyInitialWorkSelection(skills, centerHost);
 
             EditorUtility.SetDirty(controller);
             EditorUtility.SetDirty(centerHost);
@@ -195,6 +179,31 @@ namespace UniverIdle.Editor
             EditorUtility.SetDirty(canvasGo);
 
             return canvasGo;
+        }
+
+        private static void ApplyInitialWorkSelection(List<SkillNavItemView> skills, WorkCenterHost centerHost)
+        {
+            var workId = FindFirstAvailableWorkId(skills);
+            if (string.IsNullOrEmpty(workId)) return;
+
+            foreach (var skill in skills)
+            {
+                if (skill == null) continue;
+                skill.SetSelected(skill.WorkId == workId);
+            }
+
+            centerHost.SetActiveWorkPreview(workId);
+        }
+
+        private static string FindFirstAvailableWorkId(List<SkillNavItemView> skills)
+        {
+            foreach (var skill in skills)
+            {
+                if (skill != null && skill.IsAvailable && !string.IsNullOrEmpty(skill.WorkId))
+                    return skill.WorkId;
+            }
+
+            return GameContent.WorkScavengeId;
         }
     }
 }

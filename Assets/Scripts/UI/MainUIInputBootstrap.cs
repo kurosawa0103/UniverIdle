@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace UniverIdle.UI
 {
-  /// <summary>保证场景里有可工作的 EventSystem（挂 Canvas 根上）。</summary>
+  /// <summary>运行时保证场景里有 EventSystem；不重复创建。</summary>
   [DisallowMultipleComponent]
   public sealed class MainUIInputBootstrap : MonoBehaviour
   {
@@ -12,10 +12,14 @@ namespace UniverIdle.UI
 
     public static void EnsureEventSystem()
     {
-      if (EventSystem.current != null)
+      var existing = EventSystem.current;
+      if (existing == null)
+        existing = Object.FindFirstObjectByType<EventSystem>();
+
+      if (existing != null)
       {
-        if (EventSystem.current.GetComponent<StandaloneInputModule>() == null)
-          EventSystem.current.gameObject.AddComponent<StandaloneInputModule>();
+        if (existing.GetComponent<StandaloneInputModule>() == null)
+          existing.gameObject.AddComponent<StandaloneInputModule>();
         return;
       }
 

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 namespace UniverIdle.UI
 {
   /// <summary>主界面：工作切换、各工作独立 Center、右侧详情与背包。</summary>
+  [DefaultExecutionOrder(0)]
   public class MainUIController : MonoBehaviour
   {
     [Header("技能导航")]
@@ -24,14 +25,13 @@ namespace UniverIdle.UI
     [SerializeField] private Button inventoryButton;
 
     private GameSession _session;
-    private string _activeWorkId = GameContent.WorkScavengeId;
+    private string _activeWorkId;
     private bool _buttonsWired;
 
     public GameSession Session => _session;
 
     private void Awake()
     {
-      MainUIInputBootstrap.EnsureEventSystem();
       _session = GetComponent<GameSession>();
       if (_session == null)
         _session = gameObject.AddComponent<GameSession>();
@@ -55,9 +55,21 @@ namespace UniverIdle.UI
         _session.Runner.OnActionStopped += OnActionStopped;
       }
 
-      SelectWork(_activeWorkId);
+      SelectWork(GetDefaultWorkId());
       RefreshInventory();
       RefreshWorkNav();
+    }
+
+    private string GetDefaultWorkId()
+    {
+      for (var i = 0; i < skillItems.Count; i++)
+      {
+        var item = skillItems[i];
+        if (item != null && item.IsAvailable && !string.IsNullOrEmpty(item.WorkId))
+          return item.WorkId;
+      }
+
+      return GameContent.WorkScavengeId;
     }
 
     private void WireButtons()
@@ -159,7 +171,7 @@ namespace UniverIdle.UI
       if (work == null || workCenterHost == null) return;
 
       var workChanged = _activeWorkId != workId;
-      if (workChanged && _session.Runner.IsRunning)
+      if (workChanged && _session?.Runner != null && _session.Runner.IsRunning)
       {
         var running = _session.Runner.CurrentAction;
         if (running != null && running.WorkId != workId)
@@ -168,7 +180,11 @@ namespace UniverIdle.UI
 
       _activeWorkId = workId;
       for (var i = 0; i < skillItems.Count; i++)
-        skillItems[i].SetSelected(skillItems[i].WorkId == workId);
+      {
+        var item = skillItems[i];
+        if (item != null)
+          item.SetSelected(item.WorkId == workId);
+      }
 
       workCenterHost.TryShow(workId, this);
       RefreshWorkNav();

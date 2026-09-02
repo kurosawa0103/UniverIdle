@@ -118,12 +118,12 @@ namespace UniverIdle.Editor
 
             var data = new (string workId, string name, string loc, int lv, float xp, Color icon, bool available)[]
             {
-                ("", "打猎", "", 0, 0f, UITheme.SkillHunt, false),
-                ("", "溪钓", "", 0, 0f, UITheme.SkillFish, false),
                 ("scavenge", "拾荒", "萤溪村", 1, 0f, UITheme.SkillForage, true),
-                ("woodcutting", "砍树", "黑松林", 1, 0f, UITheme.SkillWood, true),
+                ("woodcutting", "砍伐", "黑松林", 1, 0f, UITheme.SkillWood, true),
                 ("mining", "挖矿", "坠星矿洞", 1, 0f, UITheme.SkillMine, true),
                 ("monster_explore", "魔物探索", "坠星野外", 1, 0f, UITheme.SkillCombat, true),
+                ("", "打猎", "", 0, 0f, UITheme.SkillHunt, false),
+                ("", "溪钓", "", 0, 0f, UITheme.SkillFish, false),
                 ("", "炼药", "", 0, 0f, UITheme.SkillAlchemy, false),
                 ("", "讨伐", "", 0, 0f, UITheme.SkillSmith, false),
             };
@@ -241,9 +241,9 @@ namespace UniverIdle.Editor
             title.fontStyle = FontStyles.Bold;
 
             var tags = CreateRect("Tags", textArea);
-            AddLayout(tags.gameObject, 0, 22);
+            LockLayoutHeight(tags, ConceptLayout.TagHeight);
             var tagHLG = tags.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(tagHLG, expandWidth: false, expandHeight: true);
+            ConfigureLayoutGroup(tagHLG, expandWidth: false, expandHeight: false);
             tagHLG.spacing = ConceptLayout.TagGap;
             CreateTag(tags, font, "微光");
             CreateTag(tags, font, "安全");
@@ -264,9 +264,9 @@ namespace UniverIdle.Editor
         private static void CreateTag(RectTransform parent, TMP_FontAsset font, string text)
         {
             var rt = CreateRect($"Tag_{text}", parent);
-            var le = rt.gameObject.AddComponent<LayoutElement>();
-            le.preferredHeight = 22;
-            le.minWidth = 48;
+            LockLayoutHeight(rt, ConceptLayout.TagHeight);
+            var le = rt.gameObject.GetComponent<LayoutElement>();
+            if (le != null) le.minWidth = 48;
             var img = rt.gameObject.AddComponent<Image>();
             img.color = UITheme.TagBg;
             StyleOutline(img, new Color(UITheme.Teal.r, UITheme.Teal.g, UITheme.Teal.b, 0.5f), new Vector2(1, -1));

@@ -86,7 +86,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u62FE\u8352"
+  m_text: "\u6253\u730E"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e44310e041181fe43ac196d3acb9d58f, type: 2}
   m_sharedMaterial: {fileID: 4288998541547153595, guid: e44310e041181fe43ac196d3acb9d58f, type: 2}
@@ -167,7 +167,6 @@ GameObject:
   - component: {fileID: 3463735069640494858}
   - component: {fileID: 4129426233545508588}
   - component: {fileID: 6719843880857009813}
-  - component: {fileID: 4956484429094701440}
   - component: {fileID: 3644266797999107401}
   - component: {fileID: 4212484499233354578}
   m_Layer: 0
@@ -258,21 +257,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4956484429094701440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2605404701468084592}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0.4, g: 0.72156864, b: 0.65882355, a: 1}
-  m_EffectDistance: {x: 1, y: -1}
-  m_UseGraphicAlpha: 1
 --- !u!114 &3644266797999107401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,10 +278,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 0.004}
-    m_HighlightedColor: {r: 0.14117648, g: 0.1882353, b: 0.16470589, a: 1}
-    m_PressedColor: {r: 0.18431373, g: 0.23529412, b: 0.21176471, a: 1}
-    m_SelectedColor: {r: 0.14117648, g: 0.1882353, b: 0.16470589, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.2441705, g: 0.2924528, b: 0.26831165, a: 1}
+    m_PressedColor: {r: 0.24705882, g: 0.29411766, b: 0.27058825, a: 1}
+    m_SelectedColor: {r: 0.24705882, g: 0.29411766, b: 0.27058825, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.08
@@ -330,12 +314,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   background: {fileID: 6719843880857009813}
-  border: {fileID: 4956484429094701440}
+  border: {fileID: 0}
   accentBar: {fileID: 0}
   iconBackground: {fileID: 782371911968152556}
   nameText: {fileID: 5361505650657989410}
   levelText: {fileID: 4505583434945180884}
   xpFill: {fileID: 4691971384405840493}
+  workId: 
+  available: 1
 --- !u!1 &6183115199312985883
 GameObject:
   m_ObjectHideFlags: 0

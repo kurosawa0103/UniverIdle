@@ -1,4 +1,5 @@
 using TMPro;
+using UniverIdle.Game;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,11 +15,16 @@ namespace UniverIdle.UI
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private Image xpFill;
 
-    public string WorkId { get; private set; }
+    [SerializeField] private string workId;
+    [SerializeField] private bool available = true;
+
+    public string WorkId => workId;
     public string LocationName { get; private set; }
-    public bool IsAvailable { get; private set; } = true;
+    public bool IsAvailable => available && !string.IsNullOrEmpty(workId);
 
     private Color _iconTint;
+
+    private void Awake() => RestoreWorkIdFromObjectNameIfNeeded();
 
     public void Setup(Image bg, Outline outline, Image accent, Image iconBg, TextMeshProUGUI name, TextMeshProUGUI lv, Image xp,
       string workId, string skillName, string locationName, int level, float xpRatio, Color iconTint, bool available = true)
@@ -40,13 +46,13 @@ namespace UniverIdle.UI
       ApplyConfig(workId, skillName, locationName, level, xpRatio, iconTint, available);
     }
 
-    private void ApplyConfig(string workId, string skillName, string locationName, int level, float xpRatio,
-      Color iconTint, bool available)
+    private void ApplyConfig(string id, string skillName, string locationName, int level, float xpRatio,
+      Color iconTint, bool isAvailable)
     {
-      WorkId = workId;
+      workId = id;
       LocationName = locationName;
       _iconTint = iconTint;
-      IsAvailable = available && !string.IsNullOrEmpty(workId);
+      available = isAvailable && !string.IsNullOrEmpty(id);
       if (nameText != null) nameText.text = skillName;
       ApplyLockedVisual(!available);
       if (available)
@@ -54,6 +60,45 @@ namespace UniverIdle.UI
       else if (levelText != null)
         levelText.text = "敬请期待";
       SetSelected(false);
+    }
+
+    private void RestoreWorkIdFromObjectNameIfNeeded()
+    {
+      if (!string.IsNullOrEmpty(workId)) return;
+      if (!TryParseWorkIdFromObjectName(gameObject.name, out var id, out var isAvailable)) return;
+      workId = id;
+      available = isAvailable;
+    }
+
+    private static bool TryParseWorkIdFromObjectName(string objectName, out string id, out bool isAvailable)
+    {
+      id = null;
+      isAvailable = false;
+      const string prefix = "Skill_";
+      if (!objectName.StartsWith(prefix)) return false;
+
+      switch (objectName.Substring(prefix.Length))
+      {
+        case "拾荒":
+          id = GameContent.WorkScavengeId;
+          isAvailable = true;
+          return true;
+        case "砍树":
+        case "砍伐":
+          id = GameContent.WorkWoodcuttingId;
+          isAvailable = true;
+          return true;
+        case "挖矿":
+          id = GameContent.WorkMiningId;
+          isAvailable = true;
+          return true;
+        case "魔物探索":
+          id = GameContent.WorkMonsterExploreId;
+          isAvailable = true;
+          return true;
+        default:
+          return true;
+      }
     }
 
     private void ApplyLockedVisual(bool locked)

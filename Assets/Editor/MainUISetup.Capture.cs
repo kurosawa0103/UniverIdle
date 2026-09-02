@@ -66,7 +66,7 @@ namespace UniverIdle.Editor
 
         private static MainUILayoutParams CaptureLayoutFromRoot(Transform root)
         {
-            var p = ScriptableObject.CreateInstance<MainUILayoutParams>();
+            var p = LoadOrCreateLayoutParamsWorkingCopy();
 
             var scaler = root.GetComponent<CanvasScaler>();
             if (scaler != null)
@@ -89,6 +89,7 @@ namespace UniverIdle.Editor
 
             p.useBodyFlexSpacer = body.Find("BodyFlexSpacer") != null;
             CaptureLayoutElement(body.Find("Sidebar"), ref p.sidebarWidth);
+            CaptureSidebar(body.Find("Sidebar"), p);
             CaptureLayoutElement(body.Find("Center"),
                 ref p.centerPreferredWidth,
                 ref p.centerFlexibleWidth);
@@ -109,6 +110,27 @@ namespace UniverIdle.Editor
             CaptureInventoryPanel(root.Find("InventoryOverlay/Panel"), p);
 
             return p;
+        }
+
+        /// <summary>以已有 asset 为底，只覆盖能从场景读到的字段；避免重建把未捕获参数打回代码默认值。</summary>
+        private static MainUILayoutParams LoadOrCreateLayoutParamsWorkingCopy()
+        {
+            var existing = AssetDatabase.LoadAssetAtPath<MainUILayoutParams>(MainUILayoutParams.DefaultAssetPath);
+            return existing != null
+                ? Object.Instantiate(existing)
+                : ScriptableObject.CreateInstance<MainUILayoutParams>();
+        }
+
+        private static void CaptureSidebar(Transform sidebar, MainUILayoutParams p)
+        {
+            if (sidebar == null) return;
+
+            var vlg = sidebar.GetComponent<VerticalLayoutGroup>();
+            if (vlg == null) return;
+
+            p.sidebarPadH = vlg.padding.left;
+            p.sidebarPadV = vlg.padding.top;
+            p.sidebarGap = vlg.spacing;
         }
 
         private static void CaptureTopBar(Transform topBar, MainUILayoutParams p)
@@ -155,6 +177,8 @@ namespace UniverIdle.Editor
             CaptureLayoutElementHeight(workView.Find("LocationBanner"), ref p.bannerHeight);
             CaptureLayoutElementHeight(workView.Find("ActionCards"), ref p.actionCardsRowHeight);
             CaptureLayoutElementHeight(workView.Find("RunningBar"), ref p.runningBarTotalHeight);
+
+            CaptureLayoutElementHeight(workView.Find("LocationBanner/BannerText/Tags"), ref p.tagHeight);
 
             var bannerText = workView.Find("LocationBanner/BannerText");
             var bannerVlg = bannerText != null ? bannerText.GetComponent<VerticalLayoutGroup>() : null;
