@@ -174,9 +174,7 @@ namespace UniverIdle.Editor
             var banner = CreateBanner(root, font, out var locationTitle);
             var actions = new List<ActionCardView>();
             var cardsRow = CreateActionCards(root, font, actions);
-            var cardsLE = cardsRow.gameObject.AddComponent<LayoutElement>();
-            cardsLE.preferredHeight = ConceptLayout.ActionCardsRowHeight;
-            cardsLE.flexibleHeight = 0;
+            LockLayoutHeight(cardsRow, ConceptLayout.ActionCardHeight);
 
             if (ConceptLayout.UseCenterFlexSpacer)
             {
@@ -226,7 +224,7 @@ namespace UniverIdle.Editor
             overlay.color = new Color(0, 0, 0, 0.65f);
 
             var textArea = CreateRect("BannerText", banner);
-            Stretch(textArea);
+            AnchorStretchWidthBottom(textArea);
             var pad = textArea.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(pad, expandWidth: true, expandHeight: false);
             pad.padding = new RectOffset(
@@ -237,17 +235,26 @@ namespace UniverIdle.Editor
             pad.childAlignment = TextAnchor.LowerLeft;
             pad.spacing = 6;
 
-            title = CreateLayoutTMP("萤溪", textArea, font, ConceptLayout.BannerTitleFont, Color.white, TextAlignmentOptions.Left, 28);
+            var titleHeight = Mathf.RoundToInt(ConceptLayout.BannerTitleFont * 1.28f);
+            title = CreateLayoutTMP("村口", textArea, font, ConceptLayout.BannerTitleFont, Color.white, TextAlignmentOptions.Left, titleHeight);
             title.fontStyle = FontStyles.Bold;
+            LockLayoutHeight(title.rectTransform, titleHeight);
 
             var tags = CreateRect("Tags", textArea);
             LockLayoutHeight(tags, ConceptLayout.TagHeight);
+            var tagsFitter = tags.gameObject.AddComponent<ContentSizeFitter>();
+            tagsFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            tagsFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             var tagHLG = tags.gameObject.AddComponent<HorizontalLayoutGroup>();
             ConfigureLayoutGroup(tagHLG, expandWidth: false, expandHeight: false);
             tagHLG.spacing = ConceptLayout.TagGap;
             CreateTag(tags, font, "微光");
             CreateTag(tags, font, "安全");
             CreateTag(tags, font, "★☆☆");
+
+            var textFitter = textArea.gameObject.AddComponent<ContentSizeFitter>();
+            textFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            textFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             return banner;
         }
@@ -286,10 +293,11 @@ namespace UniverIdle.Editor
             hlg.childControlHeight = true;
 
             const int slotCount = 3;
+            var previewSpots = new[] { "老王家", "老李家", "张铁匠铺" };
             for (var i = 0; i < slotCount; i++)
             {
                 list.Add(CreateActionCard(row, font,
-                    "占位", "—", "", "运行后由数据填充", false, UITheme.SkillForage));
+                    previewSpots[i], "—", "", "同一场景下的子地点，运行后由配表填充", false, UITheme.SkillForage));
             }
 
             return row;
@@ -311,10 +319,9 @@ namespace UniverIdle.Editor
             ConfigureButton(btn, UITheme.Panel, UITheme.CardHover, UITheme.PanelLight);
             var cg = rt.gameObject.AddComponent<CanvasGroup>();
 
-            var cardLE = rt.gameObject.AddComponent<LayoutElement>();
-            cardLE.ignoreLayout = false;
-            cardLE.preferredHeight = ConceptLayout.CardMinHeight;
-            cardLE.flexibleHeight = 0;
+            var cardHeight = ConceptLayout.ActionCardHeight;
+            LockLayoutHeight(rt, cardHeight);
+            var cardLE = rt.GetComponent<LayoutElement>();
             cardLE.flexibleWidth = 1;
             cardLE.minWidth = 140f;
 
@@ -322,21 +329,27 @@ namespace UniverIdle.Editor
             var vlg = rt.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: false);
             vlg.padding = new RectOffset(pad, pad, pad, pad);
-            vlg.spacing = 8;
+            vlg.spacing = ConceptLayout.CardVlgSpacing;
 
-            var thumbFrame = CreateColorBlock("Thumb", rt, UITheme.PanelLight, new Vector2(0, ConceptLayout.CardThumbHeight));
-            AddLayout(thumbFrame.gameObject, 0, ConceptLayout.CardThumbHeight);
-            var thumb = CreateColorBlock("ThumbInner", thumbFrame.rectTransform, thumbColor, new Vector2(36, 36));
-            Center(thumb.rectTransform, 36, 36);
+            var thumbFrame = CreateColorBlock("Thumb", rt, UITheme.PanelLight,
+                new Vector2(ConceptLayout.CardThumbWidth > 0f ? ConceptLayout.CardThumbWidth : 0f, ConceptLayout.CardThumbHeight));
+            ApplyCardThumbLayout(thumbFrame.rectTransform);
+            var innerW = ConceptLayout.CardThumbInnerWidth;
+            var innerH = ConceptLayout.CardThumbInnerHeight;
+            var thumb = CreateColorBlock("ThumbInner", thumbFrame.rectTransform, thumbColor, new Vector2(innerW, innerH));
+            Center(thumb.rectTransform, innerW, innerH);
 
-            var titleT = CreateLayoutTMP(title, rt, font, ConceptLayout.CardTitleFont, UITheme.Text, TextAlignmentOptions.Left, 18);
+            var titleT = CreateLayoutTMP(title, rt, font, ConceptLayout.CardTitleFont, UITheme.Text, TextAlignmentOptions.Left, ConceptLayout.CardTitleHeight);
+            LockLayoutHeight(titleT.rectTransform, ConceptLayout.CardTitleHeight);
             var metaRow = CreateRect("Meta", rt);
-            AddLayout(metaRow.gameObject, 0, 16);
+            LockLayoutHeight(metaRow, ConceptLayout.CardMetaHeight);
             var metaHLG = metaRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(metaHLG, expandWidth: true, expandHeight: true);
-            var metaL_T = CreateLayoutTMP(metaL, metaRow, font, ConceptLayout.CardMetaFont, UITheme.Muted, TextAlignmentOptions.Left, 16);
+            ConfigureLayoutGroup(metaHLG, expandWidth: true, expandHeight: false);
+            var metaL_T = CreateLayoutTMP(metaL, metaRow, font, ConceptLayout.CardMetaFont, UITheme.Muted, TextAlignmentOptions.Left, ConceptLayout.CardMetaHeight);
             metaL_T.gameObject.GetComponent<LayoutElement>().flexibleWidth = 1;
-            var metaR_T = CreateLayoutTMP(metaR, metaRow, font, ConceptLayout.CardYieldFont, UITheme.Teal, TextAlignmentOptions.Right, 16);
+            var metaR_T = CreateLayoutTMP(metaR, metaRow, font, ConceptLayout.CardYieldFont, UITheme.Teal, TextAlignmentOptions.Right, ConceptLayout.CardMetaHeight);
+            LockLayoutHeight(metaL_T.rectTransform, ConceptLayout.CardMetaHeight);
+            LockLayoutHeight(metaR_T.rectTransform, ConceptLayout.CardMetaHeight);
 
             var view = rt.gameObject.AddComponent<ActionCardView>();
             view.Setup(bg, border, thumb, titleT, metaL_T, metaR_T, cg, title, metaL, metaR, desc, locked, thumbColor);

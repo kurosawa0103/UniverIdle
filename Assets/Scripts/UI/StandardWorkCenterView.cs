@@ -7,7 +7,11 @@ using UnityEngine.UI;
 
 namespace UniverIdle.UI
 {
-  /// <summary>横幅 + 动作卡 + 进度条的标准工作 Center（砍树/挖矿/魔物探索等）。</summary>
+  /// <summary>
+  /// 横幅 + 动作卡 + 进度条的标准工作 Center。
+  /// LocationBanner 与 ActionCards 共同表示<strong>一个场景</strong>：
+  /// 横幅 = 场景名（如村口），动作卡 = 该场景下的子地点（如老王家、老李家）。
+  /// </summary>
   public sealed class StandardWorkCenterView : WorkCenterView
   {
     [SerializeField] private TextMeshProUGUI locationTitleText;
@@ -18,7 +22,11 @@ namespace UniverIdle.UI
 
     private MainUIController _host;
     private string _activeActionId;
+    private string _activeSceneId;
     private readonly List<WorkActionDefinition> _visibleActions = new();
+    private readonly List<WorkSceneGroup> _sceneGroups = new();
+    private Transform _sceneTagsRoot;
+    private readonly List<GameObject> _sceneTagObjects = new();
     private bool _wired;
 
     public void Configure(
@@ -35,6 +43,16 @@ namespace UniverIdle.UI
       progressFill = progress;
       progressLabelText = progressLabel;
       progressTimeText = progressTime;
+      _sceneTagsRoot = locationTitleText != null
+        ? locationTitleText.transform.parent?.Find("Tags")
+        : null;
+    }
+
+    public override void OnActivated(MainUIController host)
+    {
+      _host = host;
+      _activeSceneId = null;
+      _activeActionId = null;
     }
 
     public override void Wire(MainUIController host)
@@ -58,9 +76,10 @@ namespace UniverIdle.UI
     public override void Refresh(MainUIController host)
     {
       _host = host;
-      var work = GameContent.GetWork(WorkId);
-      if (locationTitleText != null && work != null)
-        locationTitleText.text = work.LocationName;
+      RebuildSceneGroups();
+      EnsureActiveScene();
+      UpdateLocationBannerForScene();
+      RefreshSceneTags();
 
       RefreshActionCardBindings();
       if (string.IsNullOrEmpty(_activeActionId) ||
@@ -106,6 +125,7 @@ namespace UniverIdle.UI
     {
       _host = host;
       RefreshActionCardBindings();
+      RefreshSceneTags();
       UpdateActionSelectionUi();
       if (!string.IsNullOrEmpty(_activeActionId))
       {
@@ -137,14 +157,99 @@ namespace UniverIdle.UI
       var action = GameContent.GetAction(actionId);
       if (action == null || action.WorkId != WorkId || _host == null) return;
 
+      if (!string.IsNullOrEmpty(action.SceneId) && action.SceneId != _activeSceneId)
+        SetActiveScene(action.SceneId, refreshCards: false);
+
       _activeActionId = actionId;
       UpdateActionSelectionUi();
       _host.ShowActionDetail(action);
-      UpdateLocationBanner(action);
+      UpdateLocationBannerForScene();
 
       if (autoStart && SceneProgressRules.CanPerform(_host.Session.Player, action) &&
           _host.Session.Runner.TryStart(action) && progressLabelText != null)
-        progressLabelText.text = "进行中 · " + action.DisplayName;
+        progressLabelText.text = "进行中 · " + FormatSpotTitle(action);
+    }
+
+    private void RebuildSceneGroups()
+    {
+      _sceneGroups.Clear();
+      foreach (var group in GameContent.GetSceneGroupsForWork(WorkId))
+        _sceneGroups.Add(group);
+    }
+
+    private void EnsureActiveScene()
+    {
+      if (_sceneGroups.Count == 0)
+      {
+        _activeSceneId = null;
+        return;
+      }
+
+      if (!string.IsNullOrEmpty(_activeActionId))
+      {
+        var action = GameContent.GetAction(_activeActionId);
+        if (action != null && !string.IsNullOrEmpty(action.SceneId))
+        {
+          _activeSceneId = action.SceneId;
+          return;
+        }
+      }
+
+      if (!string.IsNullOrEmpty(_activeSceneId) && FindSceneGroup(_activeSceneId) != null)
+        return;
+
+      var runnerAction = _host?.Session?.Runner?.CurrentAction;
+      if (runnerAction != null && runnerAction.WorkId == WorkId && !string.IsNullOrEmpty(runnerAction.SceneId))
+      {
+        _activeSceneId = runnerAction.SceneId;
+        return;
+      }
+
+      _activeSceneId = FindFirstAccessibleSceneId() ?? _sceneGroups[0].SceneId;
+    }
+
+    private void SetActiveScene(string sceneId, bool refreshCards)
+    {
+      if (string.IsNullOrEmpty(sceneId) || sceneId == _activeSceneId) return;
+      if (FindSceneGroup(sceneId) == null) return;
+
+      _activeSceneId = sceneId;
+      if (!string.IsNullOrEmpty(_activeActionId))
+      {
+        var current = GameContent.GetAction(_activeActionId);
+        if (current == null || current.SceneId != sceneId)
+          _activeActionId = null;
+      }
+
+      UpdateLocationBannerForScene();
+      RefreshSceneTags();
+      if (!refreshCards) return;
+
+      RefreshActionCardBindings();
+      UpdateActionSelectionUi();
+      if (_visibleActions.Count > 0)
+        _host?.ShowActionDetail(_visibleActions[0]);
+    }
+
+    private WorkSceneGroup FindSceneGroup(string sceneId)
+    {
+      foreach (var group in _sceneGroups)
+      {
+        if (group.SceneId == sceneId) return group;
+      }
+      return null;
+    }
+
+    private string FindFirstAccessibleSceneId()
+    {
+      if (_host == null) return null;
+      var player = _host.Session.Player;
+      foreach (var group in _sceneGroups)
+      {
+        if (player.GetWork(WorkId).Level >= group.MinRequiredWorkLevel)
+          return group.SceneId;
+      }
+      return _sceneGroups.Count > 0 ? _sceneGroups[0].SceneId : null;
     }
 
     private void RefreshActionCardBindings()
@@ -152,8 +257,12 @@ namespace UniverIdle.UI
       if (_host == null) return;
 
       _visibleActions.Clear();
-      foreach (var action in GameContent.GetActionsForWork(WorkId))
-        _visibleActions.Add(action);
+      var group = FindSceneGroup(_activeSceneId);
+      if (group?.Actions != null)
+      {
+        foreach (var action in group.Actions)
+          _visibleActions.Add(action);
+      }
 
       var work = GameContent.GetWork(WorkId);
       var player = _host.Session.Player;
@@ -184,13 +293,96 @@ namespace UniverIdle.UI
 
         actionCards[i].gameObject.SetActive(true);
         actionCards[i].Bind(
-          action.DisplayName,
+          FormatSpotTitle(action),
           metaLeft,
           metaRight,
           WorkActionUiFormatter.BuildDescription(action, player, work),
           !canPerform,
           action.ThumbColor);
       }
+    }
+
+    private void RefreshSceneTags()
+    {
+      if (_sceneTagsRoot == null) return;
+
+      ClearSceneTags();
+      if (_sceneGroups.Count <= 1) return;
+
+      var player = _host?.Session?.Player;
+      foreach (var group in _sceneGroups)
+      {
+        var sceneId = group.SceneId;
+        var unlocked = player != null && player.GetWork(WorkId).Level >= group.MinRequiredWorkLevel;
+        var selected = sceneId == _activeSceneId;
+        var label = group.SceneName;
+        if (!unlocked && player != null)
+          label = $"🔒{label}";
+
+        var tag = CreateSceneTag(label, selected, unlocked, sceneId);
+        _sceneTagObjects.Add(tag);
+      }
+    }
+
+    private void ClearSceneTags()
+    {
+      for (var i = 0; i < _sceneTagObjects.Count; i++)
+      {
+        if (_sceneTagObjects[i] != null)
+          Destroy(_sceneTagObjects[i]);
+      }
+      _sceneTagObjects.Clear();
+
+      if (_sceneTagsRoot == null) return;
+      for (var i = _sceneTagsRoot.childCount - 1; i >= 0; i--)
+        Destroy(_sceneTagsRoot.GetChild(i).gameObject);
+    }
+
+    private GameObject CreateSceneTag(string label, bool selected, bool unlocked, string sceneId)
+    {
+      var rt = new GameObject($"SceneTag_{sceneId}", typeof(RectTransform)).GetComponent<RectTransform>();
+      rt.SetParent(_sceneTagsRoot, false);
+      rt.sizeDelta = new Vector2(0f, 22f);
+
+      var le = rt.gameObject.AddComponent<LayoutElement>();
+      le.minHeight = 22f;
+      le.preferredHeight = 22f;
+      le.minWidth = 48f;
+
+      var img = rt.gameObject.AddComponent<Image>();
+      img.color = selected
+        ? new Color(UITheme.Teal.r, UITheme.Teal.g, UITheme.Teal.b, 0.45f)
+        : UITheme.TagBg;
+      if (!unlocked)
+        img.color = new Color(img.color.r, img.color.g, img.color.b, 0.55f);
+
+      var btn = rt.gameObject.AddComponent<Button>();
+      btn.targetGraphic = img;
+      btn.interactable = unlocked;
+      btn.onClick.AddListener(() => SetActiveScene(sceneId, refreshCards: true));
+
+      var textGo = new GameObject("Label", typeof(RectTransform));
+      var textRt = textGo.GetComponent<RectTransform>();
+      textRt.SetParent(rt, false);
+      textRt.anchorMin = Vector2.zero;
+      textRt.anchorMax = Vector2.one;
+      textRt.offsetMin = Vector2.zero;
+      textRt.offsetMax = Vector2.zero;
+
+      var tmp = textGo.AddComponent<TextMeshProUGUI>();
+      if (locationTitleText != null)
+      {
+        tmp.font = locationTitleText.font;
+        tmp.fontSharedMaterial = locationTitleText.fontSharedMaterial;
+      }
+      tmp.fontSize = 11f;
+      tmp.alignment = TextAlignmentOptions.Center;
+      tmp.color = selected ? UITheme.TealBright : UITheme.TagText;
+      tmp.margin = new Vector4(8f, 3f, 8f, 3f);
+      tmp.raycastTarget = false;
+      tmp.text = label;
+
+      return rt.gameObject;
     }
 
     private string FindFirstUnlockedActionId()
@@ -210,10 +402,34 @@ namespace UniverIdle.UI
         actionCards[i].SetSelected(i < _visibleActions.Count && _visibleActions[i].Id == _activeActionId);
     }
 
-    private void UpdateLocationBanner(WorkActionDefinition action)
+    private static string FormatSpotTitle(WorkActionDefinition action)
     {
-      if (locationTitleText == null || action == null) return;
-      locationTitleText.text = string.IsNullOrEmpty(action.SceneName) ? action.DisplayName : action.SceneName;
+      if (action == null) return "";
+      if (!string.IsNullOrEmpty(action.SpotName)) return action.SpotName;
+
+      var name = action.DisplayName;
+      if (!string.IsNullOrEmpty(name))
+      {
+        var sep = name.IndexOf('·');
+        if (sep >= 0 && sep < name.Length - 1)
+          return name.Substring(sep + 1).Trim();
+      }
+      return name ?? action.Id;
+    }
+
+    private void UpdateLocationBannerForScene()
+    {
+      if (locationTitleText == null) return;
+      var group = FindSceneGroup(_activeSceneId);
+      if (group != null && !string.IsNullOrEmpty(group.SceneName))
+      {
+        locationTitleText.text = group.SceneName;
+        return;
+      }
+
+      var work = GameContent.GetWork(WorkId);
+      if (work != null && !string.IsNullOrEmpty(work.LocationName))
+        locationTitleText.text = work.LocationName;
     }
 
     private static string FormatDuration(float seconds) => $"{seconds:0.#}s";

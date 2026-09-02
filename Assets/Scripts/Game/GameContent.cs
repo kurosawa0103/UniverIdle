@@ -51,6 +51,59 @@ namespace UniverIdle.Game
       return ActionsByWork.TryGetValue(workId, out var list) ? list : System.Array.Empty<WorkActionDefinition>();
     }
 
+    /// <summary>按配表顺序将动作按 sceneId 分组；单动作地区仍为一组。</summary>
+    public static IReadOnlyList<WorkSceneGroup> GetSceneGroupsForWork(string workId)
+    {
+      EnsureLoaded();
+      var actions = GetActionsForWork(workId);
+      if (actions.Count == 0) return System.Array.Empty<WorkSceneGroup>();
+
+      var groups = new List<WorkSceneGroup>();
+      var indexByScene = new Dictionary<string, int>();
+      var actionsByScene = new Dictionary<string, List<WorkActionDefinition>>();
+
+      foreach (var action in actions)
+      {
+        if (action == null || string.IsNullOrEmpty(action.SceneId)) continue;
+        if (!actionsByScene.TryGetValue(action.SceneId, out var list))
+        {
+          indexByScene[action.SceneId] = groups.Count;
+          list = new List<WorkActionDefinition>();
+          actionsByScene[action.SceneId] = list;
+          groups.Add(new WorkSceneGroup
+          {
+            SceneId = action.SceneId,
+            SceneName = action.SceneName,
+            Actions = list,
+          });
+        }
+        else if (string.IsNullOrEmpty(groups[indexByScene[action.SceneId]].SceneName) &&
+                 !string.IsNullOrEmpty(action.SceneName))
+        {
+          groups[indexByScene[action.SceneId]] = new WorkSceneGroup
+          {
+            SceneId = action.SceneId,
+            SceneName = action.SceneName,
+            Actions = list,
+          };
+        }
+
+        list.Add(action);
+      }
+
+      return groups;
+    }
+
+    public static WorkSceneGroup GetSceneGroup(string workId, string sceneId)
+    {
+      if (string.IsNullOrEmpty(workId) || string.IsNullOrEmpty(sceneId)) return null;
+      foreach (var group in GetSceneGroupsForWork(workId))
+      {
+        if (group.SceneId == sceneId) return group;
+      }
+      return null;
+    }
+
 #if UNITY_EDITOR
     /// <summary>编辑器改 JSON 后可在菜单强制重载（Play 模式有效）。</summary>
     public static void ReloadForEditor()

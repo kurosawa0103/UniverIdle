@@ -173,6 +173,7 @@ namespace UniverIdle.Game
           WorkId = row.workId,
           SceneId = row.sceneId,
           SceneName = row.sceneName,
+          SpotName = row.spotName,
           DisplayName = row.displayName,
           DurationSeconds = row.durationSeconds,
           XpReward = row.xpReward,

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 87241bda0808d6f4c96406949235071a, type: 3}
-  m_Name: (Clone)(Clone)(Clone)(Clone)
+  m_Name: MainUILayoutParams(Clone)(Clone)(Clone)
   m_EditorClassIdentifier: 
   referenceResolution: {x: 1920, y: 1080}
   matchWidthOrHeight: 0.5
@@ -43,6 +43,7 @@ MonoBehaviour:
   sidebarGap: 6
   centerPadding: 14
   centerGap: 12
+  useCenterFlexSpacer: 1
   bannerHeight: 130
   bannerOverlayPadH: 20
   bannerOverlayPadV: 16
@@ -50,15 +51,19 @@ MonoBehaviour:
   tagGap: 8
   tagFont: 11
   tagHeight: 22
-  cardGap: 10
+  cardMinHeight: 220
+  actionCardsRowHeight: 250
+  cardThumbHeight: 130
+  cardThumbWidth: 250
   cardPadding: 10
-  cardMinHeight: 100
-  actionCardsRowHeight: 100
-  cardThumbHeight: 56
+  cardVlgSpacing: 8
+  cardGap: 10
+  cardTitleHeight: 18
+  cardMetaHeight: 16
   cardTitleFont: 14
   cardMetaFont: 12
   cardYieldFont: 11
-  useCenterFlexSpacer: 1
+  runningBarTotalHeight: 84
   runningPadH: 16
   runningPadV: 14
   runningGap: 14
@@ -66,7 +71,6 @@ MonoBehaviour:
   runningLabelFont: 15
   runningLabelToBar: 8
   runningBarHeight: 10
-  runningBarTotalHeight: 84
   runningTimeWidth: 48
   runningTimeFont: 13
   detailPadding: 14
@@ -81,6 +85,7 @@ MonoBehaviour:
   detailBodyFont: 13
   detailReqFont: 12
   detailChildForceExpandWidth: 1
+  invPanelSize: {x: 520, y: 560}
   invPanelPadding: 16
   invPanelGap: 12
   invPanelHeaderHeight: 36
@@ -89,4 +94,3 @@ MonoBehaviour:
   invPanelSlotWidth: 88
   invPanelSlotHeight: 96
   invPanelSlotGap: 8
-  invPanelSize: {x: 520, y: 560}

@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using UnityEngine;
 
 namespace UniverIdle.Editor
 
@@ -130,11 +131,39 @@ namespace UniverIdle.Editor
 
             public static float CardPadding => L.cardPadding;
 
+            public static float CardVlgSpacing => L.cardVlgSpacing;
+
             public static float CardMinHeight => L.cardMinHeight;
 
             public static float ActionCardsRowHeight => L.actionCardsRowHeight;
 
             public static float CardThumbHeight => L.cardThumbHeight;
+
+            public static float CardThumbWidth => L.cardThumbWidth;
+
+            public static float CardTitleHeight => L.cardTitleHeight;
+
+            public static float CardMetaHeight => L.cardMetaHeight;
+
+            /// <summary>卡片内容最小高度：padding + thumb + 标题 + 元信息 + 间距；与参考图 56px 缩略图一致。</summary>
+            public static float ResolvedCardMinHeight
+            {
+                get
+                {
+                    var content = L.cardPadding * 2f + L.cardThumbHeight + L.cardVlgSpacing * 2f
+                        + L.cardTitleHeight + L.cardMetaHeight;
+                    return Mathf.Max(L.cardMinHeight, L.actionCardsRowHeight, content);
+                }
+            }
+
+            /// <summary>ActionCards 行与单卡统一高度（取 cardMin / row 较大值）。</summary>
+            public static float ActionCardHeight => Mathf.Max(L.cardMinHeight, L.actionCardsRowHeight);
+
+            public static float CardThumbInnerWidth => L.cardThumbWidth > 0f
+                ? Mathf.Max(40f, L.cardThumbWidth - 12f)
+                : Mathf.Max(40f, L.cardThumbHeight - 12f);
+
+            public static float CardThumbInnerHeight => Mathf.Max(40f, L.cardThumbHeight - 12f);
 
             public static float CardTitleFont => L.cardTitleFont;
 

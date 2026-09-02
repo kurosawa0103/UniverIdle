@@ -21,6 +21,13 @@ namespace UniverIdle.Editor
     };
     private static readonly string[] ActionHeaders =
     {
+      "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
+      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
+      "costItemId", "costAmount",
+    };
+    /// <summary>旧版 actions 表（无 spotName 列）；读表时自动兼容。</summary>
+    private static readonly string[] ActionHeadersLegacy =
+    {
       "id", "workId", "sceneId", "sceneName", "displayName",
       "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
       "costItemId", "costAmount",
@@ -36,7 +43,7 @@ namespace UniverIdle.Editor
     };
     private static readonly string[] ActionHeaderComments =
     {
-      "动作ID", "所属工作", "地区ID", "地区名称", "卡片标题",
+      "动作ID", "所属工作", "地区ID", "地区名称", "子地点名", "卡片标题",
       "时长(秒)", "完成经验", "解锁所需工作等级", "描述", "缩略图颜色",
       "消耗道具ID", "消耗数量",
     };
@@ -363,7 +370,7 @@ namespace UniverIdle.Editor
       {
         GameDataSheetRegistry.WorkSheetKind.Items => FindHeaderRowIndex(rows, ItemHeaders),
         GameDataSheetRegistry.WorkSheetKind.Works => FindHeaderRowIndex(rows, WorkHeaders),
-        GameDataSheetRegistry.WorkSheetKind.Actions => FindHeaderRowIndex(rows, ActionHeaders),
+        GameDataSheetRegistry.WorkSheetKind.Actions => ResolveActionHeader(rows).headerIndex,
         GameDataSheetRegistry.WorkSheetKind.Loot => FindLootHeaderRowIndex(rows),
         _ => 0,
       };
@@ -516,14 +523,61 @@ namespace UniverIdle.Editor
         grantSceneXp = ParseInt(r[9], 1),
       });
 
-    private static List<ActionRow> ReadActionSheet(List<string[]> rows) =>
-      MapRows(rows, ActionHeaders, r => new ActionRow
+    private static List<ActionRow> ReadActionSheet(List<string[]> rows)
+    {
+      if (rows == null || rows.Count == 0)
+        throw new InvalidDataException("工作表为空。");
+
+      var (headerIndex, hasSpotName) = ResolveActionHeader(rows);
+      var expectedHeaders = hasSpotName ? ActionHeaders : ActionHeadersLegacy;
+      ValidateHeaders(NormalizeRow(rows[headerIndex]), expectedHeaders);
+
+      var list = new List<ActionRow>();
+      for (var i = headerIndex + 1; i < rows.Count; i++)
+      {
+        var raw = rows[i] ?? Array.Empty<string>();
+        if (IsCommentOrEmpty(raw)) continue;
+        if (IsHeaderEchoRow(raw, expectedHeaders)) continue;
+
+        var data = new string[expectedHeaders.Length];
+        for (var c = 0; c < expectedHeaders.Length; c++)
+          data[c] = c < raw.Length ? (raw[c] ?? string.Empty).Trim() : string.Empty;
+        list.Add(ParseActionRow(data, hasSpotName));
+      }
+      return list;
+    }
+
+    private static ActionRow ParseActionRow(string[] r, bool hasSpotName)
+    {
+      if (hasSpotName)
+      {
+        return new ActionRow
+        {
+          id = r[0],
+          workId = r[1],
+          sceneId = r[2],
+          sceneName = r[3],
+          spotName = r[4],
+          displayName = r[5],
+          durationSeconds = ParseFloat(r[6]),
+          xpReward = ParseInt(r[7]),
+          requiredWorkLevel = ParseInt(r[8], 1),
+          description = r[9],
+          thumbColor = r[10],
+          costItemId = r.Length > 11 ? r[11] : string.Empty,
+          costAmount = r.Length > 12 ? ParseInt(r[12]) : 0,
+        };
+      }
+
+      var displayName = r[4];
+      return new ActionRow
       {
         id = r[0],
         workId = r[1],
         sceneId = r[2],
         sceneName = r[3],
-        displayName = r[4],
+        spotName = DeriveSpotName(displayName),
+        displayName = displayName,
         durationSeconds = ParseFloat(r[5]),
         xpReward = ParseInt(r[6]),
         requiredWorkLevel = ParseInt(r[7], 1),
@@ -531,7 +585,30 @@ namespace UniverIdle.Editor
         thumbColor = r[9],
         costItemId = r.Length > 10 ? r[10] : string.Empty,
         costAmount = r.Length > 11 ? ParseInt(r[11]) : 0,
-      });
+      };
+    }
+
+    private static string DeriveSpotName(string displayName)
+    {
+      if (string.IsNullOrEmpty(displayName)) return string.Empty;
+      var sep = displayName.IndexOf('·');
+      if (sep >= 0 && sep < displayName.Length - 1)
+        return displayName.Substring(sep + 1).Trim();
+      return displayName;
+    }
+
+    private static (int headerIndex, bool hasSpotName) ResolveActionHeader(List<string[]> rows)
+    {
+      for (var i = 0; i < rows.Count && i < 5; i++)
+      {
+        var header = NormalizeRow(rows[i]);
+        if (HeadersMatch(header, ActionHeaders))
+          return (i, true);
+        if (HeadersMatch(header, ActionHeadersLegacy))
+          return (i, false);
+      }
+      throw new InvalidDataException($"找不到有效 actions 表头行（应含 {ActionHeaders[0]} 等英文字段名）。");
+    }
 
     private static Dictionary<string, List<LootRow>> ReadLootSheet(List<string[]> rows)
     {
@@ -745,7 +822,7 @@ namespace UniverIdle.Editor
       {
         rows.Add(new[]
         {
-          action.id, action.workId, action.sceneId, action.sceneName, action.displayName,
+          action.id, action.workId, action.sceneId, action.sceneName, action.spotName, action.displayName,
           action.durationSeconds.ToString(CultureInfo.InvariantCulture),
           action.xpReward.ToString(CultureInfo.InvariantCulture),
           action.requiredWorkLevel.ToString(CultureInfo.InvariantCulture),
@@ -850,6 +927,7 @@ namespace UniverIdle.Editor
         sb.Append("      \"workId\": ").Append(Q(action.workId)).Append(",\n");
         sb.Append("      \"sceneId\": ").Append(Q(action.sceneId)).Append(",\n");
         sb.Append("      \"sceneName\": ").Append(Q(action.sceneName)).Append(",\n");
+        sb.Append("      \"spotName\": ").Append(Q(action.spotName)).Append(",\n");
         sb.Append("      \"displayName\": ").Append(Q(action.displayName)).Append(",\n");
         sb.Append("      \"durationSeconds\": ").Append(action.durationSeconds.ToString(CultureInfo.InvariantCulture)).Append(",\n");
         sb.Append("      \"xpReward\": ").Append(action.xpReward).Append(",\n");

@@ -18,7 +18,10 @@ namespace UniverIdle.Editor
                 return;
             }
 
-            var asset = SaveCapturedLayout(CaptureLayoutFromRoot(root.transform));
+            var asset = LoadOrCreateLayoutAsset();
+            CaptureLayoutFromRoot(root.transform, asset);
+            EditorUtility.SetDirty(asset);
+            AssetDatabase.SaveAssets();
             Selection.activeObject = asset;
             EditorUtility.DisplayDialog("UniverIdle",
                 $"已同步到 {MainUILayoutParams.DefaultAssetPath}\n" +
@@ -26,48 +29,30 @@ namespace UniverIdle.Editor
                 "确定");
         }
 
-        private static MainUILayoutParams ResolveLayoutForBuild()
+        private static MainUILayoutParams ResolveLayoutForBuild() => LoadOrCreateLayoutAsset();
+
+        /// <summary>仅首次创建 asset；已有文件绝不整份覆盖。</summary>
+        private static MainUILayoutParams LoadOrCreateLayoutAsset()
         {
-            var root = GameObject.Find(RootName);
-            if (root != null)
+            var asset = AssetDatabase.LoadAssetAtPath<MainUILayoutParams>(MainUILayoutParams.DefaultAssetPath);
+            if (asset != null)
             {
-                var captured = CaptureLayoutFromRoot(root.transform);
-                var asset = SaveCapturedLayout(captured);
                 Debug.Log(
-                    $"[UniverIdle] 已从场景捕获布局：{asset.referenceResolution.x:0}×{asset.referenceResolution.y:0}，" +
-                    $"侧栏 {asset.sidebarWidth:0}，中间 {asset.centerPreferredWidth:0}，右侧 {asset.detailPreferredWidth:0}，顶栏 {asset.topBarHeight:0}");
+                    $"[UniverIdle] 按 MainUILayoutParams.asset 重建 · " +
+                    $"Thumb {asset.cardThumbHeight:0}×{(asset.cardThumbWidth > 0f ? asset.cardThumbWidth.ToString("0") : "满宽")} · 卡 {asset.cardMinHeight:0}");
                 return asset;
             }
 
-            var existing = AssetDatabase.LoadAssetAtPath<MainUILayoutParams>(MainUILayoutParams.DefaultAssetPath);
-            if (existing != null) return existing;
-
-            var defaults = ScriptableObject.CreateInstance<MainUILayoutParams>();
-            SaveCapturedLayout(defaults);
-            Debug.Log($"[UniverIdle] 场景无 UI，使用默认布局参数：{MainUILayoutParams.DefaultAssetPath}");
-            return defaults;
-        }
-
-        private static MainUILayoutParams SaveCapturedLayout(MainUILayoutParams source)
-        {
-            var asset = AssetDatabase.LoadAssetAtPath<MainUILayoutParams>(MainUILayoutParams.DefaultAssetPath);
-            if (asset == null)
-            {
-                asset = ScriptableObject.CreateInstance<MainUILayoutParams>();
-                AssetDatabase.CreateAsset(asset, MainUILayoutParams.DefaultAssetPath);
-            }
-
-            EditorUtility.CopySerialized(source, asset);
-            EditorUtility.SetDirty(asset);
+            asset = ScriptableObject.CreateInstance<MainUILayoutParams>();
+            AssetDatabase.CreateAsset(asset, MainUILayoutParams.DefaultAssetPath);
             AssetDatabase.SaveAssets();
-            Object.DestroyImmediate(source);
+            Debug.Log($"[UniverIdle] 首次创建 {MainUILayoutParams.DefaultAssetPath}（使用代码默认值，之后只由你改 Inspector）。");
             return asset;
         }
 
-        private static MainUILayoutParams CaptureLayoutFromRoot(Transform root)
+        /// <summary>把场景里读到的字段写入已有 asset 对象（就地修改，不用 CopySerialized）。</summary>
+        private static void CaptureLayoutFromRoot(Transform root, MainUILayoutParams p)
         {
-            var p = LoadOrCreateLayoutParamsWorkingCopy();
-
             var scaler = root.GetComponent<CanvasScaler>();
             if (scaler != null)
             {
@@ -76,12 +61,12 @@ namespace UniverIdle.Editor
             }
 
             var app = root.Find("App");
-            if (app == null) return p;
+            if (app == null) return;
 
             CaptureTopBar(app.Find("TopBar"), p);
 
             var body = app.Find("Body");
-            if (body == null) return p;
+            if (body == null) return;
 
             var bodyHlg = body.GetComponent<HorizontalLayoutGroup>();
             if (bodyHlg != null)
@@ -108,17 +93,6 @@ namespace UniverIdle.Editor
             CaptureWorkCenter(body.Find("Center/WorkView_scavenge"), p);
             CaptureDetailPanel(body.Find("Detail"), p);
             CaptureInventoryPanel(root.Find("InventoryOverlay/Panel"), p);
-
-            return p;
-        }
-
-        /// <summary>以已有 asset 为底，只覆盖能从场景读到的字段；避免重建把未捕获参数打回代码默认值。</summary>
-        private static MainUILayoutParams LoadOrCreateLayoutParamsWorkingCopy()
-        {
-            var existing = AssetDatabase.LoadAssetAtPath<MainUILayoutParams>(MainUILayoutParams.DefaultAssetPath);
-            return existing != null
-                ? Object.Instantiate(existing)
-                : ScriptableObject.CreateInstance<MainUILayoutParams>();
         }
 
         private static void CaptureSidebar(Transform sidebar, MainUILayoutParams p)
@@ -131,6 +105,69 @@ namespace UniverIdle.Editor
             p.sidebarPadH = vlg.padding.left;
             p.sidebarPadV = vlg.padding.top;
             p.sidebarGap = vlg.spacing;
+        }
+
+        private static void CaptureActionCards(Transform workView, MainUILayoutParams p)
+        {
+            var cards = workView.Find("ActionCards");
+            if (cards == null) return;
+
+            CaptureLayoutElementHeight(cards, ref p.actionCardsRowHeight);
+
+            if (cards.childCount == 0) return;
+
+            var card = cards.GetChild(0);
+            CaptureLayoutElementHeight(card, ref p.cardMinHeight);
+
+            var cardVlg = card.GetComponent<VerticalLayoutGroup>();
+            if (cardVlg != null)
+            {
+                p.cardPadding = cardVlg.padding.left;
+                p.cardVlgSpacing = cardVlg.spacing;
+            }
+
+            var thumb = card.Find("Thumb");
+            if (thumb != null)
+            {
+                CaptureLayoutElementHeight(thumb, ref p.cardThumbHeight);
+                CaptureLayoutElementWidth(thumb, ref p.cardThumbWidth);
+            }
+
+            var textIndex = 0;
+            for (var i = 0; i < card.childCount; i++)
+            {
+                var child = card.GetChild(i);
+                if (child.name == "Thumb" || child.name == "Meta") continue;
+                if (child.name != "Text") continue;
+
+                var childLe = child.GetComponent<LayoutElement>();
+                if (childLe == null || childLe.preferredHeight <= 0f) continue;
+
+                if (textIndex == 0)
+                    p.cardTitleHeight = childLe.preferredHeight;
+                textIndex++;
+            }
+
+            var meta = card.Find("Meta");
+            if (meta != null)
+                CaptureLayoutElementHeight(meta, ref p.cardMetaHeight);
+
+            p.actionCardsRowHeight = Mathf.Max(p.actionCardsRowHeight, p.cardMinHeight);
+        }
+
+        private static void CaptureBannerTagHeight(Transform workView, MainUILayoutParams p)
+        {
+            var tags = workView.Find("LocationBanner/BannerText/Tags");
+            if (tags == null || tags.childCount == 0) return;
+
+            for (var i = 0; i < tags.childCount; i++)
+            {
+                var tagLe = tags.GetChild(i).GetComponent<LayoutElement>();
+                if (tagLe == null || tagLe.preferredHeight <= 0f) continue;
+                if (tagLe.preferredHeight > 48f) continue;
+                p.tagHeight = tagLe.preferredHeight;
+                return;
+            }
         }
 
         private static void CaptureTopBar(Transform topBar, MainUILayoutParams p)
@@ -175,10 +212,11 @@ namespace UniverIdle.Editor
             }
 
             CaptureLayoutElementHeight(workView.Find("LocationBanner"), ref p.bannerHeight);
-            CaptureLayoutElementHeight(workView.Find("ActionCards"), ref p.actionCardsRowHeight);
+            CaptureActionCards(workView, p);
             CaptureLayoutElementHeight(workView.Find("RunningBar"), ref p.runningBarTotalHeight);
 
             CaptureLayoutElementHeight(workView.Find("LocationBanner/BannerText/Tags"), ref p.tagHeight);
+            CaptureBannerTagHeight(workView, p);
 
             var bannerText = workView.Find("LocationBanner/BannerText");
             var bannerVlg = bannerText != null ? bannerText.GetComponent<VerticalLayoutGroup>() : null;
@@ -310,6 +348,14 @@ namespace UniverIdle.Editor
             var le = t.GetComponent<LayoutElement>();
             if (le != null && le.preferredHeight > 0f)
                 height = le.preferredHeight;
+        }
+
+        private static void CaptureLayoutElementWidth(Transform t, ref float width)
+        {
+            if (t == null) return;
+            var le = t.GetComponent<LayoutElement>();
+            if (le != null && le.preferredWidth > 0f)
+                width = le.preferredWidth;
         }
     }
 }

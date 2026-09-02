@@ -175,12 +175,38 @@ namespace UniverIdle.Editor
             rt.offsetMax = Vector2.zero;
         }
 
+        /// <summary>横幅文案区：贴底、横向铺满，高度由内容决定（避免 Tags 吃掉 Banner 剩余高度）。</summary>
+        private static void AnchorStretchWidthBottom(RectTransform rt)
+        {
+            rt.anchorMin = new Vector2(0f, 0f);
+            rt.anchorMax = new Vector2(1f, 0f);
+            rt.pivot = new Vector2(0.5f, 0f);
+            rt.anchoredPosition = Vector2.zero;
+            rt.sizeDelta = Vector2.zero;
+        }
+
         private static void Center(RectTransform rt, float w, float h)
         {
             rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
             rt.pivot = new Vector2(0.5f, 0.5f);
             rt.sizeDelta = new Vector2(w, h);
             rt.anchoredPosition = Vector2.zero;
+        }
+
+        private static void ApplyCardThumbLayout(RectTransform thumbFrame)
+        {
+            LockLayoutHeight(thumbFrame, ConceptLayout.CardThumbHeight);
+            var le = thumbFrame.GetComponent<LayoutElement>();
+            if (le == null) le = thumbFrame.gameObject.AddComponent<LayoutElement>();
+
+            if (ConceptLayout.CardThumbWidth > 0f)
+                LockLayoutWidth(thumbFrame, ConceptLayout.CardThumbWidth);
+            else
+            {
+                le.preferredWidth = -1;
+                le.minWidth = -1;
+                le.flexibleWidth = 1;
+            }
         }
 
         private static void LockLayoutWidth(RectTransform rt, float width)

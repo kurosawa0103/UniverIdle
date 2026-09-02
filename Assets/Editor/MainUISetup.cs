@@ -37,7 +37,7 @@ namespace UniverIdle.Editor
 
             Selection.activeGameObject = root;
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-            Debug.Log("[UniverIdle] 主界面已重建（布局以场景捕获为准，未捕获项保留 MainUILayoutParams.asset）。");
+            Debug.Log("[UniverIdle] 主界面已重建（布局来自 MainUILayoutParams.asset，未从场景覆盖）。");
         }
 
         private static void RemoveExistingRoot()

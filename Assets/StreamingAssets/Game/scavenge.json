@@ -16,11 +16,12 @@
   ],
   "actions": [
     {
-      "id": "scavenge_gate",
+      "id": "scavenge_gate_fork",
       "workId": "scavenge",
       "sceneId": "gate",
       "sceneName": "村口",
-      "displayName": "村口 · 拾荒",
+      "spotName": "岔路口",
+      "displayName": "村口 · 岔路口",
       "durationSeconds": 3.5,
       "xpReward": 6,
       "requiredWorkLevel": 1,
@@ -35,11 +36,51 @@
       ]
     },
     {
-      "id": "scavenge_street",
+      "id": "scavenge_gate_wang",
+      "workId": "scavenge",
+      "sceneId": "gate",
+      "sceneName": "村口",
+      "spotName": "老王家",
+      "displayName": "村口 · 老王家",
+      "durationSeconds": 4,
+      "xpReward": 7,
+      "requiredWorkLevel": 1,
+      "description": "老王家篱笆外常堆着换下来的破布和木屑，手快就有。",
+      "thumbColor": "#324838",
+      "loot": [
+        { "itemId": "rag", "chance": 0.92, "max": 2 },
+        { "itemId": "splinter", "chance": 0.55 },
+        { "itemId": "empty_bottle", "chance": 0.28 },
+        { "itemId": "worn_coin", "chance": 0.06 }
+      ]
+    },
+    {
+      "id": "scavenge_gate_li",
+      "workId": "scavenge",
+      "sceneId": "gate",
+      "sceneName": "村口",
+      "spotName": "老李家",
+      "displayName": "村口 · 老李家",
+      "durationSeconds": 4,
+      "xpReward": 7,
+      "requiredWorkLevel": 1,
+      "description": "老李家门前晾衣绳下，空瓶和褪色铜币比别处多一点点。",
+      "thumbColor": "#3A4838",
+      "loot": [
+        { "itemId": "empty_bottle", "chance": 0.62 },
+        { "itemId": "rag", "chance": 0.7 },
+        { "itemId": "worn_coin", "chance": 0.14 },
+        { "itemId": "splinter", "chance": 0.22 },
+        { "itemId": "stardust_shard", "chance": 0.008 }
+      ]
+    },
+    {
+      "id": "scavenge_street_corner",
       "workId": "scavenge",
       "sceneId": "street",
       "sceneName": "街道",
-      "displayName": "街道 · 扫街角",
+      "spotName": "街角",
+      "displayName": "街道 · 街角",
       "durationSeconds": 4,
       "xpReward": 8,
       "requiredWorkLevel": 2,
@@ -56,11 +97,52 @@
       ]
     },
     {
-      "id": "scavenge_barn",
+      "id": "scavenge_street_market",
+      "workId": "scavenge",
+      "sceneId": "street",
+      "sceneName": "街道",
+      "spotName": "早市残骸",
+      "displayName": "街道 · 早市残骸",
+      "durationSeconds": 4.5,
+      "xpReward": 9,
+      "requiredWorkLevel": 2,
+      "description": "摊贩收摊后留下的破筐和烂菜叶底下，偶尔能翻出铜钉。",
+      "thumbColor": "#424838",
+      "loot": [
+        { "itemId": "rag", "chance": 0.58 },
+        { "itemId": "copper_nail", "chance": 0.24 },
+        { "itemId": "empty_bottle", "chance": 0.46 },
+        { "itemId": "herb_sprout", "chance": 0.08 },
+        { "itemId": "worn_coin", "chance": 0.18 }
+      ]
+    },
+    {
+      "id": "scavenge_street_alley",
+      "workId": "scavenge",
+      "sceneId": "street",
+      "sceneName": "街道",
+      "spotName": "后巷",
+      "displayName": "街道 · 后巷",
+      "durationSeconds": 5,
+      "xpReward": 10,
+      "requiredWorkLevel": 2,
+      "description": "店铺后巷阴暗潮湿，碎木和空瓶堆在墙角，得小心碎瓷片。",
+      "thumbColor": "#384838",
+      "loot": [
+        { "itemId": "splinter", "chance": 0.68 },
+        { "itemId": "empty_bottle", "chance": 0.52 },
+        { "itemId": "copper_nail", "chance": 0.16 },
+        { "itemId": "worn_coin", "chance": 0.2 },
+        { "itemId": "stardust_shard", "chance": 0.012 }
+      ]
+    },
+    {
+      "id": "scavenge_barn_heap",
       "workId": "scavenge",
       "sceneId": "barn",
       "sceneName": "谷仓后",
-      "displayName": "谷仓后 · 翻废料",
+      "spotName": "废料堆",
+      "displayName": "谷仓后 · 废料堆",
       "durationSeconds": 5,
       "xpReward": 12,
       "requiredWorkLevel": 4,
@@ -77,11 +159,52 @@
       ]
     },
     {
-      "id": "scavenge_stream",
+      "id": "scavenge_barn_shed",
+      "workId": "scavenge",
+      "sceneId": "barn",
+      "sceneName": "谷仓后",
+      "spotName": "储物棚",
+      "displayName": "谷仓后 · 储物棚",
+      "durationSeconds": 5.5,
+      "xpReward": 13,
+      "requiredWorkLevel": 4,
+      "description": "棚子底下藏着去年没收干净的麻袋和碎木，药草芽概率略高。",
+      "thumbColor": "#584838",
+      "loot": [
+        { "itemId": "splinter", "chance": 0.7 },
+        { "itemId": "rag", "chance": 0.6 },
+        { "itemId": "herb_sprout", "chance": 0.2 },
+        { "itemId": "copper_nail", "chance": 0.12 },
+        { "itemId": "old_charm", "chance": 0.025 }
+      ]
+    },
+    {
+      "id": "scavenge_barn_fence",
+      "workId": "scavenge",
+      "sceneId": "barn",
+      "sceneName": "谷仓后",
+      "spotName": "篱笆边",
+      "displayName": "谷仓后 · 篱笆边",
+      "durationSeconds": 5,
+      "xpReward": 12,
+      "requiredWorkLevel": 4,
+      "description": "篱笆被风吹垮了一截，破布和空瓶卡在木刺之间。",
+      "thumbColor": "#4C4838",
+      "loot": [
+        { "itemId": "rag", "chance": 0.8 },
+        { "itemId": "empty_bottle", "chance": 0.48 },
+        { "itemId": "splinter", "chance": 0.5 },
+        { "itemId": "herb_sprout", "chance": 0.1 },
+        { "itemId": "worn_coin", "chance": 0.1 }
+      ]
+    },
+    {
+      "id": "scavenge_stream_shallow",
       "workId": "scavenge",
       "sceneId": "stream",
       "sceneName": "溪滩",
-      "displayName": "溪滩 · 捞漂物",
+      "spotName": "浅水区",
+      "displayName": "溪滩 · 浅水区",
       "durationSeconds": 7,
       "xpReward": 16,
       "requiredWorkLevel": 6,
@@ -97,11 +220,32 @@
       ]
     },
     {
-      "id": "scavenge_forge_alley",
+      "id": "scavenge_stream_eddies",
+      "workId": "scavenge",
+      "sceneId": "stream",
+      "sceneName": "溪滩",
+      "spotName": "回水湾",
+      "displayName": "溪滩 · 回水湾",
+      "durationSeconds": 8,
+      "xpReward": 18,
+      "requiredWorkLevel": 6,
+      "description": "回水湾里打着旋的杂物多，护符和星尘碎屑比浅水区更常见。",
+      "thumbColor": "#365850",
+      "loot": [
+        { "itemId": "empty_bottle", "chance": 0.5 },
+        { "itemId": "old_charm", "chance": 0.1 },
+        { "itemId": "copper_nail", "chance": 0.22 },
+        { "itemId": "herb_sprout", "chance": 0.14 },
+        { "itemId": "stardust_shard", "chance": 0.055 }
+      ]
+    },
+    {
+      "id": "scavenge_forge_slag",
       "workId": "scavenge",
       "sceneId": "forge_alley",
       "sceneName": "铁砧巷",
-      "displayName": "铁砧巷 · 捡炉渣",
+      "spotName": "炉渣堆",
+      "displayName": "铁砧巷 · 炉渣堆",
       "durationSeconds": 6,
       "xpReward": 18,
       "requiredWorkLevel": 9,
@@ -116,11 +260,31 @@
       ]
     },
     {
-      "id": "scavenge_monument",
+      "id": "scavenge_forge_scrap",
+      "workId": "scavenge",
+      "sceneId": "forge_alley",
+      "sceneName": "铁砧巷",
+      "spotName": "张铁匠铺后",
+      "displayName": "铁砧巷 · 张铁匠铺后",
+      "durationSeconds": 6.5,
+      "xpReward": 19,
+      "requiredWorkLevel": 9,
+      "description": "张铁匠铺后门外的废铁筐，炉渣和铜钉尤其多。",
+      "thumbColor": "#504038",
+      "loot": [
+        { "itemId": "slag", "chance": 0.75 },
+        { "itemId": "copper_nail", "chance": 0.52 },
+        { "itemId": "splinter", "chance": 0.18 },
+        { "itemId": "stardust_shard", "chance": 0.025 }
+      ]
+    },
+    {
+      "id": "scavenge_monument_base",
       "workId": "scavenge",
       "sceneId": "monument",
       "sceneName": "坠星碑",
-      "displayName": "坠星碑 · 耙星屑",
+      "spotName": "碑基",
+      "displayName": "坠星碑 · 碑基",
       "durationSeconds": 9,
       "xpReward": 24,
       "requiredWorkLevel": 12,
@@ -132,6 +296,26 @@
         { "itemId": "copper_nail", "chance": 0.2 },
         { "itemId": "slag", "chance": 0.18 },
         { "itemId": "herb_sprout", "chance": 0.08 }
+      ]
+    },
+    {
+      "id": "scavenge_monument_field",
+      "workId": "scavenge",
+      "sceneId": "monument",
+      "sceneName": "坠星碑",
+      "spotName": "星屑地",
+      "displayName": "坠星碑 · 星屑地",
+      "durationSeconds": 10,
+      "xpReward": 26,
+      "requiredWorkLevel": 12,
+      "description": "碑外一圈被星尘染色的裸地，耙起来费时，但护符与碎屑都不缺。",
+      "thumbColor": "#605040",
+      "loot": [
+        { "itemId": "stardust_shard", "chance": 0.14 },
+        { "itemId": "old_charm", "chance": 0.12 },
+        { "itemId": "copper_nail", "chance": 0.16 },
+        { "itemId": "slag", "chance": 0.14 },
+        { "itemId": "herb_sprout", "chance": 0.06 }
       ]
     }
   ]

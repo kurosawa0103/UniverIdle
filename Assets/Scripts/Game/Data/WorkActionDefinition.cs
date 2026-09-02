@@ -8,8 +8,11 @@ namespace UniverIdle.Game
     public string Id { get; set; }
     public string WorkId { get; set; }
     public string SceneId { get; set; }
-    /// <summary>横幅/地点用短名，如「村口」「街道」。</summary>
+    /// <summary>横幅/地点用短名，如「村口」——与 ActionCards 同属一个场景。</summary>
     public string SceneName { get; set; }
+    /// <summary>子地点名，如「老王家」；动作卡标题优先使用。</summary>
+    public string SpotName { get; set; }
+    /// <summary>完整动作名，如「村口 · 老王家」；详情与日志用。</summary>
     public string DisplayName { get; set; }
     public float DurationSeconds { get; set; }
     public int XpReward { get; set; }

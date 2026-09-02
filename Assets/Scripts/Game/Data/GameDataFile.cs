@@ -49,6 +49,8 @@ namespace UniverIdle.Game
     public string workId;
     public string sceneId;
     public string sceneName;
+    /// <summary>子地点名，如「老王家」；横幅用 sceneName，卡面用 spotName。</summary>
+    public string spotName;
     public string displayName;
     public float durationSeconds;
     public int xpReward;
