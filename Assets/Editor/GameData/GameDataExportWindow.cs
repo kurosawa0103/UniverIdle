@@ -438,8 +438,16 @@ namespace UniverIdle.Editor
             continue;
           }
 
-          var count = GameDataExcelExporter.CountDataRows(sheets, sheet);
-          _sheetStatus[sheet.Id] = count < 0 ? "无此表" : $"{count} 行";
+          try
+          {
+            var count = GameDataExcelExporter.CountDataRows(sheets, sheet);
+            _sheetStatus[sheet.Id] = count < 0 ? "无此表" : $"{count} 行";
+          }
+          catch (InvalidDataException ex)
+          {
+            _sheetStatus[sheet.Id] = "表头无效";
+            Debug.LogWarning($"[UniverIdle] {workbook.ExcelFileName}/{sheet.TabName}：{ex.Message}");
+          }
         }
       }
     }

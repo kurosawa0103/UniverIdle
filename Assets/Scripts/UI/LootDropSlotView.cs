@@ -23,7 +23,9 @@ namespace UniverIdle.UI
     public void Bind(string itemId, ItemDefinition item, bool revealed)
     {
       EnsureVisuals();
-      if (revealed && item != null)
+      if (revealed && LootRules.IsEmpty(itemId))
+        ShowEmpty();
+      else if (revealed && item != null)
         ShowRevealed(item);
       else
         ShowUnknown();
@@ -68,6 +70,18 @@ namespace UniverIdle.UI
       if (background != null) background.color = UnknownBg;
       if (icon != null) icon.gameObject.SetActive(false);
       if (unknownMark != null) unknownMark.gameObject.SetActive(true);
+    }
+
+    private void ShowEmpty()
+    {
+      if (background != null) background.color = UITheme.PanelLight;
+      if (icon != null) icon.gameObject.SetActive(false);
+      if (unknownMark != null)
+      {
+        unknownMark.gameObject.SetActive(true);
+        unknownMark.text = "—";
+        unknownMark.color = UITheme.Muted;
+      }
     }
 
     private void ShowRevealed(ItemDefinition item)

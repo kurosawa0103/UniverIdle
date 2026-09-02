@@ -9,11 +9,15 @@ namespace UniverIdle.Game
     private readonly Dictionary<string, WorkProgress> _works = new();
     private readonly Dictionary<string, WorkProgress> _sceneProgress = new();
 
+    private long _gold;
+
     public event Action OnInventoryChanged;
+    public event Action OnGoldChanged;
     public event Action<string> OnWorkChanged;
     public event Action<string, string> OnSceneProgressChanged;
 
     public IReadOnlyDictionary<string, long> Inventory => _inventory;
+    public long Gold => _gold;
 
     public WorkProgress GetWork(string workId)
     {
@@ -43,10 +47,17 @@ namespace UniverIdle.Game
 
     public void AddItem(string itemId, long amount)
     {
-      if (string.IsNullOrEmpty(itemId) || amount <= 0) return;
+      if (string.IsNullOrEmpty(itemId) || amount <= 0 || LootRules.IsEmpty(itemId)) return;
       _inventory.TryGetValue(itemId, out var current);
       _inventory[itemId] = current + amount;
       OnInventoryChanged?.Invoke();
+    }
+
+    public void AddGold(long amount)
+    {
+      if (amount <= 0) return;
+      _gold += amount;
+      OnGoldChanged?.Invoke();
     }
 
     public bool TryConsumeItem(string itemId, long amount)

@@ -29,6 +29,7 @@ namespace UniverIdle.UI
       public float Remaining;
       public bool Active;
       public bool IsItem;
+      public bool IsGold;
     }
 
     private sealed class Floater
@@ -97,6 +98,7 @@ namespace UniverIdle.UI
 
       var line = TakeSlot();
       line.IsItem = true;
+      line.IsGold = false;
       line.ItemId = itemId;
       line.Gained = gained;
       line.Total = totalOwned;
@@ -104,6 +106,36 @@ namespace UniverIdle.UI
       line.Active = true;
       line.View.Root.SetActive(true);
       RefreshItemLine(line);
+      SpawnGainFloater(line, gained);
+    }
+
+    public void PushGold(int gained, long totalOwned)
+    {
+      if (gained <= 0) return;
+      if (!_wired) WireLines();
+      if (!_wired) return;
+
+      var existing = FindActiveGoldLine();
+      if (existing != null)
+      {
+        existing.Gained += gained;
+        existing.Total = totalOwned;
+        existing.Remaining = defaultDuration;
+        RefreshGoldLine(existing);
+        SpawnGainFloater(existing, gained);
+        return;
+      }
+
+      var line = TakeSlot();
+      line.IsItem = false;
+      line.IsGold = true;
+      line.ItemId = null;
+      line.Gained = gained;
+      line.Total = totalOwned;
+      line.Remaining = defaultDuration;
+      line.Active = true;
+      line.View.Root.SetActive(true);
+      RefreshGoldLine(line);
       SpawnGainFloater(line, gained);
     }
 
@@ -115,6 +147,7 @@ namespace UniverIdle.UI
 
       var line = TakeSlot();
       line.IsItem = false;
+      line.IsGold = false;
       line.ItemId = null;
       line.Gained = 0;
       line.Total = 0;
@@ -263,6 +296,18 @@ namespace UniverIdle.UI
         Destroy(floater.Root);
     }
 
+    private LineState FindActiveGoldLine()
+    {
+      for (var i = 0; i < _lines.Length; i++)
+      {
+        var line = _lines[i];
+        if (line?.View == null) continue;
+        if (line.Active && line.IsGold)
+          return line;
+      }
+      return null;
+    }
+
     private LineState FindActiveItemLine(string itemId)
     {
       for (var i = 0; i < _lines.Length; i++)
@@ -299,6 +344,7 @@ namespace UniverIdle.UI
     {
       line.Active = false;
       line.IsItem = false;
+      line.IsGold = false;
       line.ItemId = null;
       line.Gained = 0;
       line.Total = 0;
@@ -324,6 +370,32 @@ namespace UniverIdle.UI
           view.Icon.sprite = null;
           view.Icon.color = UITheme.Muted;
         }
+      }
+
+      if (view.GainText != null)
+      {
+        view.GainText.gameObject.SetActive(true);
+        view.GainText.text = $"+{line.Gained}";
+      }
+
+      if (view.TotalText != null)
+      {
+        view.TotalText.gameObject.SetActive(true);
+        view.TotalText.text = line.Total.ToString();
+      }
+
+      if (view.MessageText != null)
+        view.MessageText.gameObject.SetActive(false);
+    }
+
+    private void RefreshGoldLine(LineState line)
+    {
+      var view = line.View;
+      if (view.Icon != null)
+      {
+        view.Icon.gameObject.SetActive(true);
+        view.Icon.sprite = null;
+        view.Icon.color = UITheme.Gold;
       }
 
       if (view.GainText != null)

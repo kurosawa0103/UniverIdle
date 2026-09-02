@@ -52,7 +52,7 @@ namespace UniverIdle.Editor
         "拾荒 · actions", "各地区子地点；description=右侧详情文案，每条不同；cost 列可留空"),
       new SheetInfo(
         "scavenge_loot", ScavengeExcelKey, "loot", WorkSheetKind.Loot,
-        "拾荒 · loot", "掉落：actionId + itemId；#itemName 列仅方便阅读，不导出"),
+        "拾荒 · loot", "掉落：actionId + itemId；chance=权重，每次随机 1 种；#itemName 列仅方便阅读，不导出"),
       new SheetInfo(
         "woodcutting_works", WoodcuttingExcelKey, "works", WorkSheetKind.Works,
         "砍树 · works", "砍树工作参数、经验公式"),

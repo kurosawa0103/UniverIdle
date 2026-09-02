@@ -23,6 +23,11 @@ namespace UniverIdle.Game
     public string CostItemId { get; set; }
     public int CostAmount { get; set; }
     public bool HasCost => !string.IsNullOrEmpty(CostItemId) && CostAmount > 0;
+    /// <summary>独立掷骰获得系统金币的概率（0～1）。</summary>
+    public float GoldChance { get; set; }
+    public int GoldMin { get; set; }
+    public int GoldMax { get; set; }
+    public bool HasGoldDrop => GoldChance > 0f && GoldMax > 0;
     public IReadOnlyList<LootEntry> LootTable { get; set; }
   }
 }

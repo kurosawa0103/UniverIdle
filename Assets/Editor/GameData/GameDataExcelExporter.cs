@@ -25,7 +25,18 @@ namespace UniverIdle.Editor
     {
       "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
       "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
+      "costItemId", "costAmount", "goldChance", "goldMin", "goldMax",
+    };
+    private static readonly string[] ActionHeadersLegacyWithCostNoGold =
+    {
+      "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
+      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
       "costItemId", "costAmount",
+    };
+    private static readonly string[] ActionHeadersLegacyNoCost =
+    {
+      "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
+      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
     };
     private static readonly string[] LootHeaders = { "actionId", "itemId", "chance", "min", "max" };
     private static readonly string[] LootExcelHeaders = { "actionId", "itemId", "#itemName", "chance", "min", "max" };
@@ -41,10 +52,17 @@ namespace UniverIdle.Editor
     {
       "动作ID", "所属工作", "地区ID", "地区名称", "子地点名", "卡片标题",
       "时长(秒)", "完成经验", "解锁所需工作等级", "详情文案(右侧)", "缩略图颜色",
-      "消耗道具ID", "消耗数量",
+      "消耗道具ID", "消耗数量", "金币概率0~1", "金币最少", "金币最多",
     };
     private static readonly string[] LootExcelHeaderComments =
       { "动作ID", "道具ID", "道具名(不导出)", "概率0~1", "最少数量", "最多数量" };
+
+    private enum ActionSheetLayout
+    {
+      Standard,
+      LegacyWithCostNoGold,
+      LegacyNoCost,
+    }
 
     public readonly struct ExportBundle
     {
@@ -181,6 +199,7 @@ namespace UniverIdle.Editor
         : null;
 
       var oldLoot = BuildLootLookup(data.actions);
+      var oldActions = BuildActionLookup(data.actions);
 
       foreach (var action in actions)
       {
@@ -192,6 +211,9 @@ namespace UniverIdle.Editor
           action.loot = preserved;
         else
           action.loot = Array.Empty<LootRow>();
+
+        if (oldActions.TryGetValue(action.id, out var oldAction))
+          PreserveGoldIfMissing(action, oldAction);
       }
 
       data.actions = actions.ToArray();
@@ -366,10 +388,13 @@ namespace UniverIdle.Editor
       {
         GameDataSheetRegistry.WorkSheetKind.Items => ResolveItemHeaderIndex(rows).headerIndex,
         GameDataSheetRegistry.WorkSheetKind.Works => FindHeaderRowIndex(rows, WorkHeaders),
-        GameDataSheetRegistry.WorkSheetKind.Actions => ResolveActionHeaderIndex(rows),
+        GameDataSheetRegistry.WorkSheetKind.Actions => TryResolveActionHeaderIndex(rows, out var actionHeaderIndex, out _)
+          ? actionHeaderIndex
+          : -1,
         GameDataSheetRegistry.WorkSheetKind.Loot => FindLootHeaderRowIndex(rows),
         _ => 0,
       };
+      if (headerIndex < 0) return -1;
       return Math.Max(0, rows.Count - headerIndex - 1);
     }
 
@@ -597,15 +622,18 @@ namespace UniverIdle.Editor
       if (rows == null || rows.Count == 0)
         throw new InvalidDataException("工作表为空。");
 
-      var headerIndex = ResolveActionHeaderIndex(rows);
-      ValidateHeaders(NormalizeRow(rows[headerIndex]), ActionHeaders);
+      var (headerIndex, layout) = ResolveActionHeaderIndexWithLayout(rows);
+      ValidateHeaders(NormalizeRow(rows[headerIndex]), ExpectedActionHeaders(layout));
 
       var list = new List<ActionRow>();
       for (var i = headerIndex + 1; i < rows.Count; i++)
       {
         var raw = rows[i] ?? Array.Empty<string>();
         if (IsCommentOrEmpty(raw)) continue;
-        if (IsHeaderEchoRow(raw, ActionHeaders)) continue;
+        if (IsHeaderEchoRow(raw, ActionHeaders) ||
+            IsHeaderEchoRow(raw, ActionHeadersLegacyWithCostNoGold) ||
+            IsHeaderEchoRow(raw, ActionHeadersLegacyNoCost))
+          continue;
 
         var data = new string[ActionHeaders.Length];
         for (var c = 0; c < ActionHeaders.Length; c++)
@@ -631,17 +659,80 @@ namespace UniverIdle.Editor
         thumbColor = r[10],
         costItemId = r.Length > 11 ? r[11] : string.Empty,
         costAmount = r.Length > 12 ? ParseInt(r[12]) : 0,
+        goldChance = r.Length > 13 ? ParseFloat(r[13]) : 0f,
+        goldMin = r.Length > 14 ? ParseInt(r[14]) : 0,
+        goldMax = r.Length > 15 ? ParseInt(r[15]) : 0,
       };
 
-    private static int ResolveActionHeaderIndex(List<string[]> rows)
+    private static bool TryResolveActionHeaderIndex(List<string[]> rows, out int headerIndex, out ActionSheetLayout layout)
     {
       for (var i = 0; i < rows.Count && i < 5; i++)
       {
         var header = NormalizeRow(rows[i]);
         if (HeadersMatch(header, ActionHeaders))
-          return i;
+        {
+          headerIndex = i;
+          layout = ActionSheetLayout.Standard;
+          return true;
+        }
+
+        if (HeadersMatch(header, ActionHeadersLegacyWithCostNoGold))
+        {
+          headerIndex = i;
+          layout = ActionSheetLayout.LegacyWithCostNoGold;
+          return true;
+        }
+
+        if (HeadersMatch(header, ActionHeadersLegacyNoCost))
+        {
+          headerIndex = i;
+          layout = ActionSheetLayout.LegacyNoCost;
+          return true;
+        }
       }
+
+      headerIndex = -1;
+      layout = ActionSheetLayout.Standard;
+      return false;
+    }
+
+    private static (int headerIndex, ActionSheetLayout layout) ResolveActionHeaderIndexWithLayout(List<string[]> rows)
+    {
+      if (TryResolveActionHeaderIndex(rows, out var headerIndex, out var layout))
+        return (headerIndex, layout);
       throw new InvalidDataException($"找不到有效 actions 表头行（应含 {ActionHeaders[0]} 等英文字段名，且含 spotName 列）。");
+    }
+
+    private static int ResolveActionHeaderIndex(List<string[]> rows) =>
+      ResolveActionHeaderIndexWithLayout(rows).headerIndex;
+
+    private static string[] ExpectedActionHeaders(ActionSheetLayout layout) =>
+      layout switch
+      {
+        ActionSheetLayout.LegacyWithCostNoGold => ActionHeadersLegacyWithCostNoGold,
+        ActionSheetLayout.LegacyNoCost => ActionHeadersLegacyNoCost,
+        _ => ActionHeaders,
+      };
+
+    private static void PreserveGoldIfMissing(ActionRow action, ActionRow oldAction)
+    {
+      if (action == null || oldAction == null || oldAction.goldMax <= 0) return;
+      if (action.goldChance > 0f || action.goldMax > 0) return;
+      action.goldChance = oldAction.goldChance;
+      action.goldMin = oldAction.goldMin;
+      action.goldMax = oldAction.goldMax;
+    }
+
+    private static Dictionary<string, ActionRow> BuildActionLookup(ActionRow[] actions)
+    {
+      var map = new Dictionary<string, ActionRow>(StringComparer.Ordinal);
+      if (actions == null) return map;
+      foreach (var action in actions)
+      {
+        if (string.IsNullOrWhiteSpace(action?.id)) continue;
+        map[action.id] = action;
+      }
+      return map;
     }
 
     private static Dictionary<string, List<LootRow>> ReadLootSheet(List<string[]> rows)
@@ -863,6 +954,9 @@ namespace UniverIdle.Editor
           action.description, action.thumbColor,
           action.costItemId ?? string.Empty,
           action.costAmount.ToString(CultureInfo.InvariantCulture),
+          action.goldChance.ToString(CultureInfo.InvariantCulture),
+          action.goldMin.ToString(CultureInfo.InvariantCulture),
+          action.goldMax.ToString(CultureInfo.InvariantCulture),
         });
       }
       return rows;
@@ -973,6 +1067,12 @@ namespace UniverIdle.Editor
         {
           sb.Append(",\n      \"costItemId\": ").Append(Q(action.costItemId));
           sb.Append(",\n      \"costAmount\": ").Append(action.costAmount);
+        }
+        if (action.goldChance > 0f && action.goldMax > 0)
+        {
+          sb.Append(",\n      \"goldChance\": ").Append(action.goldChance.ToString(CultureInfo.InvariantCulture));
+          sb.Append(",\n      \"goldMin\": ").Append(action.goldMin > 0 ? action.goldMin : 1);
+          sb.Append(",\n      \"goldMax\": ").Append(action.goldMax);
         }
         sb.Append(",\n      \"loot\": [\n");
         WriteLootRows(sb, action.loot);

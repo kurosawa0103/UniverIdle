@@ -182,6 +182,9 @@ namespace UniverIdle.Game
           ThumbColor = GameColorUtility.Parse(row.thumbColor, Color.white),
           CostItemId = string.IsNullOrWhiteSpace(row.costItemId) ? null : row.costItemId.Trim(),
           CostAmount = row.costAmount > 0 ? row.costAmount : 0,
+          GoldChance = row.goldChance,
+          GoldMin = NormalizeGoldMin(row.goldMin, row.goldMax),
+          GoldMax = NormalizeGoldMax(row.goldMin, row.goldMax),
           LootTable = loot,
         };
 
@@ -195,6 +198,19 @@ namespace UniverIdle.Game
       }
     }
 
+    private static int NormalizeGoldMin(int min, int max)
+    {
+      if (max <= 0) return 0;
+      return min <= 0 ? 1 : min;
+    }
+
+    private static int NormalizeGoldMax(int min, int max)
+    {
+      if (max <= 0) return 0;
+      if (min <= 0) return max;
+      return max < min ? min : max;
+    }
+
     private static List<LootEntry> BuildLoot(ActionRow row, IDictionary<string, ItemDefinition> items)
     {
       var loot = new List<LootEntry>();
@@ -203,7 +219,7 @@ namespace UniverIdle.Game
       foreach (var entry in row.loot)
       {
         if (string.IsNullOrEmpty(entry.itemId)) continue;
-        if (!items.ContainsKey(entry.itemId))
+        if (!LootRules.IsEmpty(entry.itemId) && !items.ContainsKey(entry.itemId))
           Debug.LogWarning($"[UniverIdle] 动作 {row.id} 掉落引用未知物品：{entry.itemId}");
 
         var min = entry.min <= 0 ? 1 : entry.min;

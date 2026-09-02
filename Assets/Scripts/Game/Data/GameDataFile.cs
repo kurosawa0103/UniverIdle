@@ -60,13 +60,19 @@ namespace UniverIdle.Game
     public string thumbColor;
     public string costItemId;
     public int costAmount;
+    /// <summary>独立掷骰：命中后随机 goldMin～goldMax 枚系统金币（与 loot 无关）。</summary>
+    public float goldChance;
+    public int goldMin;
+    public int goldMax;
     public LootRow[] loot;
   }
 
   [Serializable]
   public class LootRow
   {
+    /// <summary>道具 id；<c>_empty</c> 表示一无所获占位。</summary>
     public string itemId;
+    /// <summary>相对权重（不必加和为 1）；每次完成动作按权重随机 1 种。</summary>
     public float chance;
     public int min;
     public int max;

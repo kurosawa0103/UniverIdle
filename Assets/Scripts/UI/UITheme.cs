@@ -16,6 +16,7 @@ namespace UniverIdle.UI
         public static readonly Color Teal = Hex("#66B8A8");
         public static readonly Color TealBright = Hex("#84D4C4");
         public static readonly Color Accent = Hex("#E88860");
+        public static readonly Color Gold = Hex("#E8C060");
 
         public static readonly Color Cream = Hex("#F5F0E6");
         public static readonly Color Text = Hex("#ECE9E2");

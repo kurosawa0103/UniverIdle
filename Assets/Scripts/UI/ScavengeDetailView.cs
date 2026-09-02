@@ -126,17 +126,38 @@ namespace UniverIdle.UI
     {
       if (lootToast == null) return;
 
-      if (result.Loot == null || result.Loot.Count == 0)
+      var hasLoot = false;
+      if (result.Loot != null)
+      {
+        for (var i = 0; i < result.Loot.Count; i++)
+        {
+          if (LootRules.IsEmpty(result.Loot[i].ItemId)) continue;
+          hasLoot = true;
+          break;
+        }
+      }
+      var hasGold = result.GoldGained > 0;
+      if (!hasLoot && !hasGold)
       {
         lootToast.PushText("这次什么也没捡到。");
       }
       else
       {
-        for (var i = 0; i < result.Loot.Count; i++)
+        if (hasLoot)
         {
-          var drop = result.Loot[i];
-          var total = player != null ? player.GetItemCount(drop.ItemId) : drop.Amount;
-          lootToast.PushItem(drop.ItemId, drop.Amount, total);
+          for (var i = 0; i < result.Loot.Count; i++)
+          {
+            var drop = result.Loot[i];
+            if (LootRules.IsEmpty(drop.ItemId)) continue;
+            var total = player != null ? player.GetItemCount(drop.ItemId) : drop.Amount;
+            lootToast.PushItem(drop.ItemId, drop.Amount, total);
+          }
+        }
+
+        if (hasGold)
+        {
+          var goldTotal = player != null ? player.Gold : result.GoldGained;
+          lootToast.PushGold(result.GoldGained, goldTotal);
         }
       }
 

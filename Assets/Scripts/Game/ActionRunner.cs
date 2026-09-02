@@ -9,6 +9,7 @@ namespace UniverIdle.Game
     public WorkActionDefinition Action { get; set; }
     public IReadOnlyList<LootResult> Loot { get; set; }
     public int XpGained { get; set; }
+    public int GoldGained { get; set; }
     public bool LeveledUp { get; set; }
     public int NewLevel { get; set; }
     public bool WorkLeveledUp { get; set; }
@@ -18,17 +19,31 @@ namespace UniverIdle.Game
     public string FormatLootSummary()
     {
       if (Loot == null || Loot.Count == 0)
-        return "这次什么也没捡到。";
+        return GoldGained <= 0 ? "这次什么也没捡到。" : "获得：金币 ×" + GoldGained;
 
       var sb = new StringBuilder();
-      for (var i = 0; i < Loot.Count; i++)
+      var wrote = false;
+      if (Loot != null)
       {
-        if (i > 0) sb.Append("，");
-        var item = GameContent.GetItem(Loot[i].ItemId);
-        var name = item != null ? item.DisplayName : Loot[i].ItemId;
-        sb.Append(name).Append(" ×").Append(Loot[i].Amount);
+        for (var i = 0; i < Loot.Count; i++)
+        {
+          if (LootRules.IsEmpty(Loot[i].ItemId)) continue;
+          if (wrote) sb.Append("，");
+          var item = GameContent.GetItem(Loot[i].ItemId);
+          var name = item != null ? item.DisplayName : Loot[i].ItemId;
+          sb.Append(name).Append(" ×").Append(Loot[i].Amount);
+          wrote = true;
+        }
       }
-      return "获得：" + sb;
+
+      if (GoldGained > 0)
+      {
+        if (wrote) sb.Append("，");
+        sb.Append("金币 ×").Append(GoldGained);
+        wrote = true;
+      }
+
+      return wrote ? "获得：" + sb : "这次什么也没捡到。";
     }
   }
 
@@ -110,7 +125,18 @@ namespace UniverIdle.Game
 
       var loot = LootRoller.Roll(action.LootTable, _rng);
       foreach (var drop in loot)
+      {
+        if (LootRules.IsEmpty(drop.ItemId)) continue;
         _player.AddItem(drop.ItemId, drop.Amount);
+      }
+
+      var goldGained = 0;
+      if (action.HasGoldDrop)
+      {
+        goldGained = LootRoller.RollGold(action.GoldChance, action.GoldMin, action.GoldMax, _rng);
+        if (goldGained > 0)
+          _player.AddGold(goldGained);
+      }
 
       _player.AddWorkXp(workId, action.XpReward);
       _player.AddSceneXp(workId, sceneId, action.XpReward);
@@ -122,6 +148,7 @@ namespace UniverIdle.Game
         Action = action,
         Loot = loot,
         XpGained = action.XpReward,
+        GoldGained = goldGained,
         LeveledUp = sceneAfter > sceneBefore,
         NewLevel = sceneAfter,
         WorkLeveledUp = workAfter > workBefore,

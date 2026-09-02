@@ -2,6 +2,12 @@
   "version": 3,
   "items": [
     {
+      "id": "_empty",
+      "name": "（无）",
+      "icon": "-",
+      "description": "掉落表占位：本次未获得道具。"
+    },
+    {
       "id": "rag",
       "name": "破布",
       "icon": "item_rag",
