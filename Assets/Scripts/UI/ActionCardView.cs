@@ -15,12 +15,25 @@ namespace UniverIdle.UI
         [SerializeField] private CanvasGroup canvasGroup;
 
         public void Bind(string displayTitle, string metaLeft, string metaRight, bool locked,
-            Color thumbColor)
+            Sprite thumbSprite)
         {
             if (titleText != null) titleText.text = displayTitle;
             if (metaLeftText != null) metaLeftText.text = metaLeft;
             if (metaRightText != null) metaRightText.text = metaRight;
-            if (thumb != null) thumb.color = thumbColor;
+            if (thumb != null)
+            {
+                if (thumbSprite != null)
+                {
+                    thumb.sprite = thumbSprite;
+                    thumb.color = Color.white;
+                    thumb.preserveAspect = true;
+                }
+                else
+                {
+                    thumb.sprite = null;
+                    thumb.color = UITheme.PanelLight;
+                }
+            }
 
             if (canvasGroup != null)
             {

@@ -57,7 +57,8 @@ namespace UniverIdle.Game
     public int xpReward;
     public int requiredWorkLevel;
     public string description;
-    public string thumbColor;
+    /// <summary>缩略图文件名或 Resources 路径（无扩展名）；空=ActionImage/{actionId}；-=无图。</summary>
+    public string thumbImage;
     public string costItemId;
     public int costAmount;
     /// <summary>独立掷骰：命中后随机 goldMin～goldMax 枚系统金币（与 loot 无关）。</summary>

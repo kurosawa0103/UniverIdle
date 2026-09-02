@@ -179,7 +179,7 @@ namespace UniverIdle.Game
           XpReward = row.xpReward,
           RequiredWorkLevel = row.requiredWorkLevel <= 0 ? 1 : row.requiredWorkLevel,
           Description = row.description,
-          ThumbColor = GameColorUtility.Parse(row.thumbColor, Color.white),
+          ThumbImage = string.IsNullOrWhiteSpace(row.thumbImage) ? null : row.thumbImage.Trim(),
           CostItemId = string.IsNullOrWhiteSpace(row.costItemId) ? null : row.costItemId.Trim(),
           CostAmount = row.costAmount > 0 ? row.costAmount : 0,
           GoldChance = row.goldChance,

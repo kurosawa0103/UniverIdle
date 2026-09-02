@@ -356,7 +356,7 @@ namespace UniverIdle.UI
           metaLeft,
           metaRight,
           !canPerform,
-          action.ThumbColor);
+          ActionImageLoader.Get(action));
       }
     }
 

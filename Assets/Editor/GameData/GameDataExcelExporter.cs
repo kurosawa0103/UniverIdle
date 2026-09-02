@@ -24,19 +24,36 @@ namespace UniverIdle.Editor
     private static readonly string[] ActionHeaders =
     {
       "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
-      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
+      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbImage",
       "costItemId", "costAmount", "goldChance", "goldMin", "goldMax",
     };
     private static readonly string[] ActionHeadersLegacyWithCostNoGold =
     {
       "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
-      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
+      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbImage",
       "costItemId", "costAmount",
     };
     private static readonly string[] ActionHeadersLegacyNoCost =
     {
       "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
+      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbImage",
+    };
+    private static readonly string[] ActionHeadersLegacyWithCostNoGoldThumbColor =
+    {
+      "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
       "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
+      "costItemId", "costAmount",
+    };
+    private static readonly string[] ActionHeadersLegacyNoCostThumbColor =
+    {
+      "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
+      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
+    };
+    private static readonly string[] ActionHeadersLegacyStandardThumbColor =
+    {
+      "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
+      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
+      "costItemId", "costAmount", "goldChance", "goldMin", "goldMax",
     };
     private static readonly string[] LootHeaders = { "actionId", "itemId", "chance", "min", "max" };
     private static readonly string[] LootExcelHeaders = { "actionId", "itemId", "#itemName", "chance", "min", "max" };
@@ -51,7 +68,7 @@ namespace UniverIdle.Editor
     private static readonly string[] ActionHeaderComments =
     {
       "动作ID", "所属工作", "地区ID", "地区名称", "子地点名", "卡片标题",
-      "时长(秒)", "完成经验", "解锁所需工作等级", "详情文案(右侧)", "缩略图颜色",
+      "时长(秒)", "完成经验", "解锁所需工作等级", "详情文案(右侧)", "缩略图(空=动作ID)",
       "消耗道具ID", "消耗数量", "金币概率0~1", "金币最少", "金币最多",
     };
     private static readonly string[] LootExcelHeaderComments =
@@ -62,6 +79,9 @@ namespace UniverIdle.Editor
       Standard,
       LegacyWithCostNoGold,
       LegacyNoCost,
+      LegacyWithCostNoGoldThumbColor,
+      LegacyNoCostThumbColor,
+      LegacyStandardThumbColor,
     }
 
     public readonly struct ExportBundle
@@ -632,7 +652,10 @@ namespace UniverIdle.Editor
         if (IsCommentOrEmpty(raw)) continue;
         if (IsHeaderEchoRow(raw, ActionHeaders) ||
             IsHeaderEchoRow(raw, ActionHeadersLegacyWithCostNoGold) ||
-            IsHeaderEchoRow(raw, ActionHeadersLegacyNoCost))
+            IsHeaderEchoRow(raw, ActionHeadersLegacyNoCost) ||
+            IsHeaderEchoRow(raw, ActionHeadersLegacyWithCostNoGoldThumbColor) ||
+            IsHeaderEchoRow(raw, ActionHeadersLegacyNoCostThumbColor) ||
+            IsHeaderEchoRow(raw, ActionHeadersLegacyStandardThumbColor))
           continue;
 
         var data = new string[ActionHeaders.Length];
@@ -656,7 +679,7 @@ namespace UniverIdle.Editor
         xpReward = ParseInt(r[7]),
         requiredWorkLevel = ParseInt(r[8], 1),
         description = r[9],
-        thumbColor = r[10],
+        thumbImage = NormalizeThumbImageCell(r[10]),
         costItemId = r.Length > 11 ? r[11] : string.Empty,
         costAmount = r.Length > 12 ? ParseInt(r[12]) : 0,
         goldChance = r.Length > 13 ? ParseFloat(r[13]) : 0f,
@@ -689,6 +712,27 @@ namespace UniverIdle.Editor
           layout = ActionSheetLayout.LegacyNoCost;
           return true;
         }
+
+        if (HeadersMatch(header, ActionHeadersLegacyStandardThumbColor))
+        {
+          headerIndex = i;
+          layout = ActionSheetLayout.LegacyStandardThumbColor;
+          return true;
+        }
+
+        if (HeadersMatch(header, ActionHeadersLegacyWithCostNoGoldThumbColor))
+        {
+          headerIndex = i;
+          layout = ActionSheetLayout.LegacyWithCostNoGoldThumbColor;
+          return true;
+        }
+
+        if (HeadersMatch(header, ActionHeadersLegacyNoCostThumbColor))
+        {
+          headerIndex = i;
+          layout = ActionSheetLayout.LegacyNoCostThumbColor;
+          return true;
+        }
       }
 
       headerIndex = -1;
@@ -711,8 +755,18 @@ namespace UniverIdle.Editor
       {
         ActionSheetLayout.LegacyWithCostNoGold => ActionHeadersLegacyWithCostNoGold,
         ActionSheetLayout.LegacyNoCost => ActionHeadersLegacyNoCost,
+        ActionSheetLayout.LegacyWithCostNoGoldThumbColor => ActionHeadersLegacyWithCostNoGoldThumbColor,
+        ActionSheetLayout.LegacyNoCostThumbColor => ActionHeadersLegacyNoCostThumbColor,
+        ActionSheetLayout.LegacyStandardThumbColor => ActionHeadersLegacyStandardThumbColor,
         _ => ActionHeaders,
       };
+
+    private static string NormalizeThumbImageCell(string value)
+    {
+      if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+      var trimmed = value.Trim();
+      return trimmed.StartsWith("#", StringComparison.Ordinal) ? string.Empty : trimmed;
+    }
 
     private static void PreserveGoldIfMissing(ActionRow action, ActionRow oldAction)
     {
@@ -951,7 +1005,7 @@ namespace UniverIdle.Editor
           action.durationSeconds.ToString(CultureInfo.InvariantCulture),
           action.xpReward.ToString(CultureInfo.InvariantCulture),
           action.requiredWorkLevel.ToString(CultureInfo.InvariantCulture),
-          action.description, action.thumbColor,
+          action.description, action.thumbImage ?? string.Empty,
           action.costItemId ?? string.Empty,
           action.costAmount.ToString(CultureInfo.InvariantCulture),
           action.goldChance.ToString(CultureInfo.InvariantCulture),
@@ -1061,8 +1115,9 @@ namespace UniverIdle.Editor
         sb.Append("      \"durationSeconds\": ").Append(action.durationSeconds.ToString(CultureInfo.InvariantCulture)).Append(",\n");
         sb.Append("      \"xpReward\": ").Append(action.xpReward).Append(",\n");
         sb.Append("      \"requiredWorkLevel\": ").Append(action.requiredWorkLevel).Append(",\n");
-        sb.Append("      \"description\": ").Append(Q(action.description)).Append(",\n");
-        sb.Append("      \"thumbColor\": ").Append(Q(action.thumbColor));
+        sb.Append("      \"description\": ").Append(Q(action.description));
+        if (!string.IsNullOrWhiteSpace(action.thumbImage))
+          sb.Append(",\n      \"thumbImage\": ").Append(Q(action.thumbImage));
         if (!string.IsNullOrWhiteSpace(action.costItemId) && action.costAmount > 0)
         {
           sb.Append(",\n      \"costItemId\": ").Append(Q(action.costItemId));

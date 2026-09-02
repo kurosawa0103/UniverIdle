@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace UniverIdle.Game
 {
@@ -19,7 +19,11 @@ namespace UniverIdle.Game
     /// <summary>解锁本地区所需的整项工作等级（如拾荒 Lv.2）。</summary>
     public int RequiredWorkLevel { get; set; }
     public string Description { get; set; }
-    public Color ThumbColor { get; set; }
+    /// <summary>表内 thumbImage 列；空则按动作 id 在 ActionImage 目录查找。</summary>
+    public string ThumbImage { get; set; }
+    /// <summary>Resources 加载路径（无扩展名）；null 表示不尝试贴图。</summary>
+    public string ThumbImageResourcePath =>
+      WorkActionDefinition.ResolveThumbImageResourcePath(ThumbImage, Id);
     public string CostItemId { get; set; }
     public int CostAmount { get; set; }
     public bool HasCost => !string.IsNullOrEmpty(CostItemId) && CostAmount > 0;
@@ -29,5 +33,23 @@ namespace UniverIdle.Game
     public int GoldMax { get; set; }
     public bool HasGoldDrop => GoldChance > 0f && GoldMax > 0;
     public IReadOnlyList<LootEntry> LootTable { get; set; }
+
+    internal static string ResolveThumbImageResourcePath(string thumbImage, string actionId)
+    {
+      if (!string.IsNullOrWhiteSpace(thumbImage))
+      {
+        var value = thumbImage.Trim();
+        if (value.StartsWith("#", StringComparison.Ordinal))
+          return null;
+        if (value == "-" || value.Equals("none", StringComparison.OrdinalIgnoreCase))
+          return null;
+        return value.Contains("/")
+          ? value
+          : $"{GameDataPaths.ActionImageResourcesPrefix}/{value}";
+      }
+
+      if (string.IsNullOrEmpty(actionId)) return null;
+      return $"{GameDataPaths.ActionImageResourcesPrefix}/{actionId}";
+    }
   }
 }

@@ -26,7 +26,6 @@
       "xpReward": 6,
       "requiredWorkLevel": 1,
       "description": "洞口红土里的铜矿脉，矿镐敲下去就能剥出铜矿石，最适合新手练手。",
-      "thumbColor": "#B89468",
       "loot": [
         { "itemId": "copper_ore", "chance": 1 }
       ]
@@ -42,7 +41,6 @@
       "xpReward": 9,
       "requiredWorkLevel": 3,
       "description": "侧巷里的锡矿脉，色泽灰白，敲落即是锡矿石，常与铜矿混炼。",
-      "thumbColor": "#A8A098",
       "loot": [
         { "itemId": "tin_ore", "chance": 1 }
       ]
@@ -58,7 +56,6 @@
       "xpReward": 14,
       "requiredWorkLevel": 6,
       "description": "更深处的铁矿层，岩壁发黑，每镐下去必得铁矿石，锻打常用。",
-      "thumbColor": "#585048",
       "loot": [
         { "itemId": "iron_ore", "chance": 1 }
       ]
@@ -74,7 +71,6 @@
       "xpReward": 22,
       "requiredWorkLevel": 10,
       "description": "矿洞尽头的陨铁矿壁，微光脉动，开采慢但每镐必出陨铁矿石。",
-      "thumbColor": "#7060A0",
       "loot": [
         { "itemId": "meteor_ore", "chance": 1 }
       ]

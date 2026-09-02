@@ -14,9 +14,10 @@
       "description": "脏兮兮的布条，也许还能缝点什么。"
     },
     {
-      "id": "splinter",
-      "name": "碎木",
-      "description": "从废料里捡出的木片，生火或当柄都行。"
+      "id": "wood_scraps",
+      "name": "木头废料",
+      "icon": "item_wood_scraps",
+      "description": "从废料里捡出的木块，只能去生火了。"
     },
     {
       "id": "empty_bottle",
@@ -26,7 +27,8 @@
     },
     {
       "id": "copper_nail",
-      "name": "铜钉",
+      "name": "锈钉子",
+      "icon": "item_copper_nail",
       "description": "生锈但还能用的钉子，锻造常缺这个。"
     },
     {
