@@ -5,10 +5,12 @@ using UnityEngine.UI;
 
 namespace UniverIdle.UI
 {
-  /// <summary>按当前动作掉落表生成 slot；未掉落前为 ?，掉落后揭示对应道具。</summary>
+  /// <summary>按当前动作掉落表生成 slot；未掉落前为 ?，掉落后揭示对应道具。最多显示 5 格（与 Grid 每行 5 列一致）。</summary>
   [RequireComponent(typeof(GridLayoutGroup), typeof(ContentSizeFitter))]
   public sealed class LootPreviewView : MonoBehaviour
   {
+    private const int MaxPreviewSlots = 5;
+
     [SerializeField] private LootDropSlotView slotPrefab;
     [SerializeField] private Transform slotRoot;
 
@@ -44,8 +46,9 @@ namespace UniverIdle.UI
         _revealedByAction[_currentActionId] = revealed;
       }
 
-      EnsureSlotCount(table.Count);
-      for (var i = 0; i < table.Count; i++)
+      var slotCount = Mathf.Min(table.Count, MaxPreviewSlots);
+      EnsureSlotCount(slotCount);
+      for (var i = 0; i < slotCount; i++)
       {
         var entry = table[i];
         var item = GameContent.GetItem(entry.ItemId);

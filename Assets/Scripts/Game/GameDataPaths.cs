@@ -8,6 +8,9 @@ namespace UniverIdle.Game
     /// <summary>编辑器下直接读图：Assets/GameResources/ItemIcon/</summary>
     public const string ItemIconEditorFolder = "Assets/GameResources/ItemIcon";
 
+    /// <summary>系统金币图标 Resources 路径（无扩展名）。</summary>
+    public const string GoldIconResourcePath = "ItemIcon/item_gold";
+
     /// <summary>Resources.Load 用路径前缀，对应 ActionImage 目录。</summary>
     public const string ActionImageResourcesPrefix = "ActionImage";
 

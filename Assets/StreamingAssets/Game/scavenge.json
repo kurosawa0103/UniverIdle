@@ -35,8 +35,7 @@
         { "itemId": "rag", "chance": 0.88 },
         { "itemId": "empty_bottle", "chance": 0.42 },
         { "itemId": "wood_scraps", "chance": 0.3 },
-        { "itemId": "worn_coin", "chance": 0.08 },
-        { "itemId": "stardust_shard", "chance": 0.005 }
+        { "itemId": "worn_coin", "chance": 0.08 }
       ]
     },
     {

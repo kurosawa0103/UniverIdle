@@ -386,6 +386,9 @@ namespace UniverIdle.UI
 
       if (view.MessageText != null)
         view.MessageText.gameObject.SetActive(false);
+
+      view.RefreshLayout();
+      view.PunchGainNumbers();
     }
 
     private void RefreshGoldLine(LineState line)
@@ -394,8 +397,17 @@ namespace UniverIdle.UI
       if (view.Icon != null)
       {
         view.Icon.gameObject.SetActive(true);
-        view.Icon.sprite = null;
-        view.Icon.color = UITheme.Gold;
+        var sprite = GoldIconLoader.Get();
+        if (sprite != null)
+        {
+          view.Icon.sprite = sprite;
+          view.Icon.color = Color.white;
+        }
+        else
+        {
+          view.Icon.sprite = null;
+          view.Icon.color = UITheme.Gold;
+        }
       }
 
       if (view.GainText != null)
@@ -412,6 +424,9 @@ namespace UniverIdle.UI
 
       if (view.MessageText != null)
         view.MessageText.gameObject.SetActive(false);
+
+      view.RefreshLayout();
+      view.PunchGainNumbers();
     }
 
     private void RefreshTextLine(LineState line, string message)
@@ -425,6 +440,8 @@ namespace UniverIdle.UI
         view.MessageText.gameObject.SetActive(true);
         view.MessageText.text = message;
       }
+
+      view.RefreshLayout();
     }
   }
 }
