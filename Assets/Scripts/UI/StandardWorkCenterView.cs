@@ -52,11 +52,11 @@ namespace UniverIdle.UI
       {
         var card = actionCards[i];
         if (card == null) continue;
-        var btn = card.GetComponent<Button>();
-        if (btn == null) continue;
         var index = i;
-        btn.onClick.RemoveAllListeners();
-        btn.onClick.AddListener(() => OnActionCardClicked(index));
+        var button = card.GetComponent<Button>();
+        if (button == null) continue;
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(() => OnActionSelected(index));
       }
     }
 
@@ -73,9 +73,10 @@ namespace UniverIdle.UI
         _activeActionId = FindFirstUnlockedActionId();
 
       if (!string.IsNullOrEmpty(_activeActionId))
-        SelectAction(_activeActionId, autoStart: true);
+        SelectAction(_activeActionId);
       else if (_visibleActions.Count > 0)
         host.ShowActionDetail(_visibleActions[0]);
+      host.RefreshDetailWorkButton();
     }
 
     public override void TickProgress(MainUIController host)
@@ -110,6 +111,7 @@ namespace UniverIdle.UI
       var action = GameContent.GetAction(_activeActionId);
       if (action != null)
         host.ShowActionDetail(action);
+      host.RefreshDetailWorkButton();
     }
 
     public void OnActionStopped(WorkActionDefinition action, MainUIController host)
@@ -121,15 +123,37 @@ namespace UniverIdle.UI
       host.ShowActionStoppedDetail(action);
       RefreshActionCardBindings();
       UpdateActionSelectionUi();
+      host.RefreshDetailWorkButton();
     }
 
-    private void OnActionCardClicked(int index)
+    private void OnActionSelected(int index)
     {
       if (_host == null || index >= _visibleActions.Count) return;
-      SelectAction(_visibleActions[index].Id, autoStart: true);
+      SelectAction(_visibleActions[index].Id);
     }
 
-    private void SelectAction(string actionId, bool autoStart)
+    public bool CanStartSelectedAction()
+    {
+      if (_host == null || string.IsNullOrEmpty(_activeActionId)) return false;
+      var runner = _host.Session?.Runner;
+      if (runner != null && runner.IsRunning) return false;
+      var action = GameContent.GetAction(_activeActionId);
+      return action != null && action.WorkId == WorkId &&
+             SceneProgressRules.CanPerform(_host.Session.Player, action);
+    }
+
+    public bool TryStartSelectedAction()
+    {
+      if (!CanStartSelectedAction()) return false;
+      var action = GameContent.GetAction(_activeActionId);
+      if (action == null || !_host.Session.Runner.TryStart(action)) return false;
+      if (progressLabelText != null)
+        progressLabelText.text = "进行中 · " + FormatSpotTitle(action);
+      _host.RefreshDetailWorkButton();
+      return true;
+    }
+
+    private void SelectAction(string actionId)
     {
       var action = GameContent.GetAction(actionId);
       if (action == null || action.WorkId != WorkId || _host == null) return;
@@ -141,10 +165,7 @@ namespace UniverIdle.UI
       UpdateActionSelectionUi();
       _host.ShowActionDetail(action);
       UpdateLocationBannerForScene();
-
-      if (autoStart && SceneProgressRules.CanPerform(_host.Session.Player, action) &&
-          _host.Session.Runner.TryStart(action) && progressLabelText != null)
-        progressLabelText.text = "进行中 · " + FormatSpotTitle(action);
+      _host.RefreshDetailWorkButton();
     }
 
     private void EnsureActiveScene()

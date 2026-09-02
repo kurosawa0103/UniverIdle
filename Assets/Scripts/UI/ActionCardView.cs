@@ -14,17 +14,9 @@ namespace UniverIdle.UI
         [SerializeField] private TextMeshProUGUI metaRightText;
         [SerializeField] private CanvasGroup canvasGroup;
 
-        public string DisplayName { get; private set; }
-        public string Description { get; private set; }
-        public bool IsLocked { get; private set; }
-
         public void Bind(string displayTitle, string metaLeft, string metaRight, string description, bool locked,
             Color thumbColor)
         {
-            DisplayName = displayTitle;
-            Description = description;
-            IsLocked = locked;
-
             if (titleText != null) titleText.text = displayTitle;
             if (metaLeftText != null) metaLeftText.text = metaLeft;
             if (metaRightText != null) metaRightText.text = metaRight;

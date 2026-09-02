@@ -19,6 +19,7 @@ namespace UniverIdle.UI
     [Header("右侧详情")]
     [SerializeField] private TextMeshProUGUI detailTitleText;
     [SerializeField] private TextMeshProUGUI detailBodyText;
+    [SerializeField] private Button detailWorkButton;
 
     [Header("背包")]
     [SerializeField] private InventoryPanelView inventoryPanel;
@@ -96,6 +97,12 @@ namespace UniverIdle.UI
         inventoryButton.onClick.RemoveAllListeners();
         inventoryButton.onClick.AddListener(ToggleInventoryPanel);
       }
+
+      if (detailWorkButton != null)
+      {
+        detailWorkButton.onClick.RemoveAllListeners();
+        detailWorkButton.onClick.AddListener(OnDetailWorkClicked);
+      }
     }
 
     private void ResolveReferences()
@@ -126,17 +133,40 @@ namespace UniverIdle.UI
       }
 
       if (detailTitleText == null)
-        detailTitleText = FindTmp("Body/Detail/Text");
+        detailTitleText = FindTmp("Detail/Text") ?? FindTmp("Body/Detail/Text");
 
       if (detailBodyText == null)
       {
-        var detail = transform.Find("Body/Detail");
+        var detail = FindDetailTransform();
         if (detail != null)
         {
           var tmps = detail.GetComponentsInChildren<TextMeshProUGUI>(true);
           if (tmps.Length > 1) detailBodyText = tmps[1];
         }
       }
+
+      if (detailWorkButton == null)
+      {
+        var detail = FindDetailTransform();
+        if (detail != null)
+        {
+          foreach (var btn in detail.GetComponentsInChildren<Button>(true))
+          {
+            if (btn.gameObject.name == "Btn_工作")
+            {
+              detailWorkButton = btn;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    private Transform FindDetailTransform()
+    {
+      var detail = transform.Find("Detail");
+      if (detail != null) return detail;
+      return transform.Find("Body/Detail");
     }
 
     private TextMeshProUGUI FindTmp(string path)
@@ -188,6 +218,7 @@ namespace UniverIdle.UI
 
       workCenterHost.TryShow(workId, this);
       RefreshWorkNav();
+      RefreshDetailWorkButton();
     }
 
     public void ShowActionDetail(WorkActionDefinition action)
@@ -198,13 +229,24 @@ namespace UniverIdle.UI
         detailTitleText.text = action.DisplayName;
       if (detailBodyText != null)
         detailBodyText.text = WorkActionUiFormatter.BuildDescription(action, _session.Player, work);
+      RefreshDetailWorkButton();
     }
 
     public void ShowActionStoppedDetail(WorkActionDefinition action)
     {
       if (detailBodyText != null && action != null)
         detailBodyText.text = SceneProgressRules.FormatCostHint(action) + "\n\n请补充道具后重新开始。";
+      RefreshDetailWorkButton();
     }
+
+    public void RefreshDetailWorkButton()
+    {
+      if (detailWorkButton == null) return;
+      var center = GetActiveStandardCenter();
+      detailWorkButton.interactable = center != null && center.CanStartSelectedAction();
+    }
+
+    private void OnDetailWorkClicked() => GetActiveStandardCenter()?.TryStartSelectedAction();
 
     private void RefreshInventory() => inventoryPanel?.Refresh(_session?.Player);
 
@@ -242,6 +284,7 @@ namespace UniverIdle.UI
         _session.Runner.Stop();
 
       GetActiveStandardCenter()?.OnInventoryChanged(this);
+      RefreshDetailWorkButton();
     }
 
     private void OnActionStopped(WorkActionDefinition action)
@@ -271,6 +314,7 @@ namespace UniverIdle.UI
       }
       RefreshInventory();
       RefreshWorkNav();
+      RefreshDetailWorkButton();
     }
 
     private void ToggleInventoryPanel() => inventoryPanel?.Toggle(_session?.Player);
