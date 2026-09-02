@@ -16,13 +16,6 @@ namespace UniverIdle.UI
 
     private readonly List<InventorySlotView> _slots = new();
 
-    public void Configure(RectTransform container, TMP_FontAsset fontAsset, TextMeshProUGUI emptyText = null)
-    {
-      slotContainer = container;
-      font = fontAsset;
-      emptyLabel = emptyText;
-    }
-
     public void Refresh(PlayerState player)
     {
       if (player == null || slotContainer == null) return;

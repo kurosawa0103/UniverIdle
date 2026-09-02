@@ -47,23 +47,5 @@ namespace UniverIdle.UI
     }
 
     public bool TryGet(string workId, out WorkCenterView view) => _views.TryGetValue(workId, out view);
-
-    /// <summary>编辑器重建后预览：只切换显示，不跑 Refresh。</summary>
-    public bool SetActiveWorkPreview(string workId)
-    {
-      EnsureRegistered();
-      if (!_views.TryGetValue(workId, out var next) || next == null) return false;
-
-      foreach (var pair in _views)
-      {
-        var view = pair.Value;
-        if (view == null) continue;
-        var active = view == next;
-        view.gameObject.SetActive(active);
-        if (active) Active = view;
-      }
-
-      return true;
-    }
   }
 }

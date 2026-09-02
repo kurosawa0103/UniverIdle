@@ -16,14 +16,6 @@ namespace UniverIdle.UI
 
     public bool IsOpen => overlayRoot != null && overlayRoot.activeSelf;
 
-    public void Configure(GameObject root, InventoryGridView inventoryGrid, Button close, Button backdrop)
-    {
-      overlayRoot = root;
-      grid = inventoryGrid;
-      closeButton = close;
-      backdropButton = backdrop;
-    }
-
     private void Awake()
     {
       ResolveReferences();

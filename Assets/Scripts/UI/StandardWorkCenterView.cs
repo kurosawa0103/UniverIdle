@@ -18,33 +18,21 @@ namespace UniverIdle.UI
     [SerializeField] private Image progressFill;
     [SerializeField] private TextMeshProUGUI progressLabelText;
     [SerializeField] private TextMeshProUGUI progressTimeText;
+    [SerializeField] private Transform sceneTagsRoot;
 
     private MainUIController _host;
     private string _activeActionId;
     private string _activeSceneId;
     private readonly List<WorkActionDefinition> _visibleActions = new();
-    private readonly List<WorkSceneGroup> _sceneGroups = new();
-    private Transform _sceneTagsRoot;
     private readonly List<GameObject> _sceneTagObjects = new();
     private bool _wired;
 
-    public void Configure(
-      string workId,
-      TextMeshProUGUI locationTitle,
-      List<ActionCardView> cards,
-      Image progress,
-      TextMeshProUGUI progressLabel,
-      TextMeshProUGUI progressTime)
+    private IReadOnlyList<WorkSceneGroup> SceneGroups => GameContent.GetSceneGroupsForWork(WorkId);
+
+    private void Awake()
     {
-      BindWork(workId);
-      locationTitleText = locationTitle;
-      actionCards = cards;
-      progressFill = progress;
-      progressLabelText = progressLabel;
-      progressTimeText = progressTime;
-      _sceneTagsRoot = locationTitleText != null
-        ? locationTitleText.transform.parent?.Find("Tags")
-        : null;
+      if (sceneTagsRoot == null && locationTitleText != null)
+        sceneTagsRoot = locationTitleText.transform.parent?.Find("Tags");
     }
 
     public override void OnActivated(MainUIController host)
@@ -75,7 +63,6 @@ namespace UniverIdle.UI
     public override void Refresh(MainUIController host)
     {
       _host = host;
-      RebuildSceneGroups();
       EnsureActiveScene();
       UpdateLocationBannerForScene();
       RefreshSceneTags();
@@ -169,16 +156,10 @@ namespace UniverIdle.UI
         progressLabelText.text = "进行中 · " + FormatSpotTitle(action);
     }
 
-    private void RebuildSceneGroups()
-    {
-      _sceneGroups.Clear();
-      foreach (var group in GameContent.GetSceneGroupsForWork(WorkId))
-        _sceneGroups.Add(group);
-    }
-
     private void EnsureActiveScene()
     {
-      if (_sceneGroups.Count == 0)
+      var groups = SceneGroups;
+      if (groups.Count == 0)
       {
         _activeSceneId = null;
         return;
@@ -204,7 +185,7 @@ namespace UniverIdle.UI
         return;
       }
 
-      _activeSceneId = FindFirstAccessibleSceneId() ?? _sceneGroups[0].SceneId;
+      _activeSceneId = FindFirstAccessibleSceneId() ?? groups[0].SceneId;
     }
 
     private void SetActiveScene(string sceneId, bool refreshCards)
@@ -232,7 +213,8 @@ namespace UniverIdle.UI
 
     private WorkSceneGroup FindSceneGroup(string sceneId)
     {
-      foreach (var group in _sceneGroups)
+      if (string.IsNullOrEmpty(sceneId)) return null;
+      foreach (var group in SceneGroups)
       {
         if (group.SceneId == sceneId) return group;
       }
@@ -243,12 +225,13 @@ namespace UniverIdle.UI
     {
       if (_host == null) return null;
       var player = _host.Session.Player;
-      foreach (var group in _sceneGroups)
+      foreach (var group in SceneGroups)
       {
         if (player.GetWork(WorkId).Level >= group.MinRequiredWorkLevel)
           return group.SceneId;
       }
-      return _sceneGroups.Count > 0 ? _sceneGroups[0].SceneId : null;
+      var groups = SceneGroups;
+      return groups.Count > 0 ? groups[0].SceneId : null;
     }
 
     private void RefreshActionCardBindings()
@@ -303,13 +286,14 @@ namespace UniverIdle.UI
 
     private void RefreshSceneTags()
     {
-      if (_sceneTagsRoot == null) return;
+      if (sceneTagsRoot == null) return;
 
       ClearSceneTags();
-      if (_sceneGroups.Count <= 1) return;
+      var groups = SceneGroups;
+      if (groups.Count <= 1) return;
 
       var player = _host?.Session?.Player;
-      foreach (var group in _sceneGroups)
+      foreach (var group in groups)
       {
         var sceneId = group.SceneId;
         var unlocked = player != null && player.GetWork(WorkId).Level >= group.MinRequiredWorkLevel;
@@ -332,15 +316,15 @@ namespace UniverIdle.UI
       }
       _sceneTagObjects.Clear();
 
-      if (_sceneTagsRoot == null) return;
-      for (var i = _sceneTagsRoot.childCount - 1; i >= 0; i--)
-        Destroy(_sceneTagsRoot.GetChild(i).gameObject);
+      if (sceneTagsRoot == null) return;
+      for (var i = sceneTagsRoot.childCount - 1; i >= 0; i--)
+        Destroy(sceneTagsRoot.GetChild(i).gameObject);
     }
 
     private GameObject CreateSceneTag(string label, bool selected, bool unlocked, string sceneId)
     {
       var rt = new GameObject($"SceneTag_{sceneId}", typeof(RectTransform)).GetComponent<RectTransform>();
-      rt.SetParent(_sceneTagsRoot, false);
+      rt.SetParent(sceneTagsRoot, false);
       rt.sizeDelta = new Vector2(0f, 22f);
 
       var le = rt.gameObject.AddComponent<LayoutElement>();

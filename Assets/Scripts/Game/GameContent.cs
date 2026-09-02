@@ -94,16 +94,6 @@ namespace UniverIdle.Game
       return groups;
     }
 
-    public static WorkSceneGroup GetSceneGroup(string workId, string sceneId)
-    {
-      if (string.IsNullOrEmpty(workId) || string.IsNullOrEmpty(sceneId)) return null;
-      foreach (var group in GetSceneGroupsForWork(workId))
-      {
-        if (group.SceneId == sceneId) return group;
-      }
-      return null;
-    }
-
 #if UNITY_EDITOR
     /// <summary>编辑器改 JSON 后可在菜单强制重载（Play 模式有效）。</summary>
     public static void ReloadForEditor()

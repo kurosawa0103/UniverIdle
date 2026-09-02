@@ -19,47 +19,18 @@ namespace UniverIdle.UI
     [SerializeField] private bool available = true;
 
     public string WorkId => workId;
-    public string LocationName { get; private set; }
     public bool IsAvailable => available && !string.IsNullOrEmpty(workId);
 
     private Color _iconTint;
 
-    private void Awake() => RestoreWorkIdFromObjectNameIfNeeded();
-
-    public void Setup(Image bg, Outline outline, Image accent, Image iconBg, TextMeshProUGUI name, TextMeshProUGUI lv, Image xp,
-      string workId, string skillName, string locationName, int level, float xpRatio, Color iconTint, bool available = true)
+    private void Awake()
     {
-      background = bg;
-      border = outline;
-      accentBar = accent;
-      iconBackground = iconBg;
-      nameText = name;
-      levelText = lv;
-      xpFill = xp;
-      ApplyConfig(workId, skillName, locationName, level, xpRatio, iconTint, available);
-    }
-
-    /// <summary>预制体已挂好引用时，仅写入运行时数据。</summary>
-    public void Configure(string workId, string skillName, string locationName, int level, float xpRatio, Color iconTint,
-      bool available = true)
-    {
-      ApplyConfig(workId, skillName, locationName, level, xpRatio, iconTint, available);
-    }
-
-    private void ApplyConfig(string id, string skillName, string locationName, int level, float xpRatio,
-      Color iconTint, bool isAvailable)
-    {
-      workId = id;
-      LocationName = locationName;
-      _iconTint = iconTint;
-      available = isAvailable && !string.IsNullOrEmpty(id);
-      if (nameText != null) nameText.text = skillName;
-      ApplyLockedVisual(!available);
-      if (available)
-        UpdateProgress(level, xpRatio);
-      else if (levelText != null)
+      RestoreWorkIdFromObjectNameIfNeeded();
+      if (iconBackground != null)
+        _iconTint = iconBackground.color;
+      ApplyLockedVisual(!IsAvailable);
+      if (!IsAvailable && levelText != null)
         levelText.text = "敬请期待";
-      SetSelected(false);
     }
 
     private void RestoreWorkIdFromObjectNameIfNeeded()
@@ -108,7 +79,7 @@ namespace UniverIdle.UI
       if (nameText != null)
         nameText.color = locked ? UITheme.Muted : UITheme.Text;
       if (levelText != null)
-        levelText.color = locked ? UITheme.Muted : UITheme.Muted;
+        levelText.color = UITheme.Muted;
       if (xpFill != null)
         xpFill.fillAmount = locked ? 0f : xpFill.fillAmount;
     }

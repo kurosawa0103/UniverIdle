@@ -292,23 +292,5 @@ namespace UniverIdle.UI
       button.onClick.RemoveAllListeners();
       button.onClick.AddListener(() => SelectWork(workId));
     }
-
-#if UNITY_EDITOR
-    public void SetReferences(
-      List<SkillNavItemView> skills,
-      WorkCenterHost centerHost,
-      TextMeshProUGUI detailTitle,
-      TextMeshProUGUI detailBody,
-      InventoryPanelView inventory,
-      Button inventoryOpenButton)
-    {
-      skillItems = skills;
-      workCenterHost = centerHost;
-      detailTitleText = detailTitle;
-      detailBodyText = detailBody;
-      inventoryPanel = inventory;
-      inventoryButton = inventoryOpenButton;
-    }
-#endif
   }
 }

@@ -36,21 +36,6 @@ namespace UniverIdle.UI
                 canvasGroup.interactable = true;
                 canvasGroup.blocksRaycasts = true;
             }
-            SetSelected(false);
-        }
-
-        public void Setup(Image bg, Outline outline, Image thumbImg, TextMeshProUGUI title, TextMeshProUGUI metaL, TextMeshProUGUI metaR,
-            CanvasGroup group, string displayTitle, string metaLeft, string metaRight, string description, bool locked,
-            Color thumbColor)
-        {
-            background = bg;
-            border = outline;
-            thumb = thumbImg;
-            titleText = title;
-            metaLeftText = metaL;
-            metaRightText = metaR;
-            canvasGroup = group;
-            Bind(displayTitle, metaLeft, metaRight, description, locked, thumbColor);
         }
 
         public void SetSelected(bool selected)

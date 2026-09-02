@@ -25,13 +25,6 @@ namespace UniverIdle.Editor
       "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
       "costItemId", "costAmount",
     };
-    /// <summary>旧版 actions 表（无 spotName 列）；读表时自动兼容。</summary>
-    private static readonly string[] ActionHeadersLegacy =
-    {
-      "id", "workId", "sceneId", "sceneName", "displayName",
-      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
-      "costItemId", "costAmount",
-    };
     private static readonly string[] LootHeaders = { "actionId", "itemId", "chance", "min", "max" };
     private static readonly string[] LootExcelHeaders = { "actionId", "itemId", "#itemName", "chance", "min", "max" };
 
@@ -528,86 +521,51 @@ namespace UniverIdle.Editor
       if (rows == null || rows.Count == 0)
         throw new InvalidDataException("工作表为空。");
 
-      var (headerIndex, hasSpotName) = ResolveActionHeader(rows);
-      var expectedHeaders = hasSpotName ? ActionHeaders : ActionHeadersLegacy;
-      ValidateHeaders(NormalizeRow(rows[headerIndex]), expectedHeaders);
+      var headerIndex = ResolveActionHeaderIndex(rows);
+      ValidateHeaders(NormalizeRow(rows[headerIndex]), ActionHeaders);
 
       var list = new List<ActionRow>();
       for (var i = headerIndex + 1; i < rows.Count; i++)
       {
         var raw = rows[i] ?? Array.Empty<string>();
         if (IsCommentOrEmpty(raw)) continue;
-        if (IsHeaderEchoRow(raw, expectedHeaders)) continue;
+        if (IsHeaderEchoRow(raw, ActionHeaders)) continue;
 
-        var data = new string[expectedHeaders.Length];
-        for (var c = 0; c < expectedHeaders.Length; c++)
+        var data = new string[ActionHeaders.Length];
+        for (var c = 0; c < ActionHeaders.Length; c++)
           data[c] = c < raw.Length ? (raw[c] ?? string.Empty).Trim() : string.Empty;
-        list.Add(ParseActionRow(data, hasSpotName));
+        list.Add(ParseActionRow(data));
       }
       return list;
     }
 
-    private static ActionRow ParseActionRow(string[] r, bool hasSpotName)
-    {
-      if (hasSpotName)
-      {
-        return new ActionRow
-        {
-          id = r[0],
-          workId = r[1],
-          sceneId = r[2],
-          sceneName = r[3],
-          spotName = r[4],
-          displayName = r[5],
-          durationSeconds = ParseFloat(r[6]),
-          xpReward = ParseInt(r[7]),
-          requiredWorkLevel = ParseInt(r[8], 1),
-          description = r[9],
-          thumbColor = r[10],
-          costItemId = r.Length > 11 ? r[11] : string.Empty,
-          costAmount = r.Length > 12 ? ParseInt(r[12]) : 0,
-        };
-      }
-
-      var displayName = r[4];
-      return new ActionRow
+    private static ActionRow ParseActionRow(string[] r) =>
+      new ActionRow
       {
         id = r[0],
         workId = r[1],
         sceneId = r[2],
         sceneName = r[3],
-        spotName = DeriveSpotName(displayName),
-        displayName = displayName,
-        durationSeconds = ParseFloat(r[5]),
-        xpReward = ParseInt(r[6]),
-        requiredWorkLevel = ParseInt(r[7], 1),
-        description = r[8],
-        thumbColor = r[9],
-        costItemId = r.Length > 10 ? r[10] : string.Empty,
-        costAmount = r.Length > 11 ? ParseInt(r[11]) : 0,
+        spotName = r[4],
+        displayName = r[5],
+        durationSeconds = ParseFloat(r[6]),
+        xpReward = ParseInt(r[7]),
+        requiredWorkLevel = ParseInt(r[8], 1),
+        description = r[9],
+        thumbColor = r[10],
+        costItemId = r.Length > 11 ? r[11] : string.Empty,
+        costAmount = r.Length > 12 ? ParseInt(r[12]) : 0,
       };
-    }
 
-    private static string DeriveSpotName(string displayName)
-    {
-      if (string.IsNullOrEmpty(displayName)) return string.Empty;
-      var sep = displayName.IndexOf('·');
-      if (sep >= 0 && sep < displayName.Length - 1)
-        return displayName.Substring(sep + 1).Trim();
-      return displayName;
-    }
-
-    private static (int headerIndex, bool hasSpotName) ResolveActionHeader(List<string[]> rows)
+    private static int ResolveActionHeaderIndex(List<string[]> rows)
     {
       for (var i = 0; i < rows.Count && i < 5; i++)
       {
         var header = NormalizeRow(rows[i]);
         if (HeadersMatch(header, ActionHeaders))
-          return (i, true);
-        if (HeadersMatch(header, ActionHeadersLegacy))
-          return (i, false);
+          return i;
       }
-      throw new InvalidDataException($"找不到有效 actions 表头行（应含 {ActionHeaders[0]} 等英文字段名）。");
+      throw new InvalidDataException($"找不到有效 actions 表头行（应含 {ActionHeaders[0]} 等英文字段名，且含 spotName 列）。");
     }
 
     private static Dictionary<string, List<LootRow>> ReadLootSheet(List<string[]> rows)

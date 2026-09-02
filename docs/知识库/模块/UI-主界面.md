@@ -45,7 +45,7 @@ Assets/Scripts/Game/GameContent.cs
 | `ActionCardView` | 动作卡预制/实例 | 标题、元信息、Thumb |
 | `InventoryPanelView` | 背包面板 | Grid、关闭按钮 |
 
-布局（Grid Cell、Banner 高度等）**全部在 Inspector / RectTransform 里手调**，无代码生成器。
+布局（Grid Cell、Banner 高度、栏宽等）**以 `Demo.unity` 场景为准**，在 Inspector / RectTransform 里手调；本文档不写固定像素，避免与场景脱节。
 
 ## 左栏工作（当前）
 
@@ -72,5 +72,6 @@ Assets/Scripts/Game/GameContent.cs
 
 | 日期 | 变更 |
 |------|------|
+| 2026-09-02 | 冗余清理：删生成器接线 API、UITheme 死色、GetSceneGroup、场景分组缓存等 |
 | 2026-09-02 | 移除 Editor 一键重建 / 布局调参；改场景手配 |
 | 2026-09-01 | 接拾荒挂机；底栏改动态背包；左栏收窄为拾荒 |
