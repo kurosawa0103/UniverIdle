@@ -26,6 +26,8 @@ Assets/Scripts/UI/SkillNavItemView.cs
 Assets/Scripts/UI/ActionCardView.cs
 Assets/Scripts/UI/InventoryPanelView.cs
 Assets/Scripts/UI/InventoryGridView.cs
+Assets/Scripts/UI/LootPreviewView.cs
+Assets/Scripts/UI/LootDropSlotView.cs
 Assets/Scripts/UI/UITheme.cs
 Assets/Scripts/Game/GameSession.cs
 Assets/Scripts/Game/GameContent.cs
@@ -38,14 +40,15 @@ Assets/Scripts/Game/GameContent.cs
 | 组件 | 挂哪里 | 要拖的引用 |
 |------|--------|------------|
 | `GameSession` | `App` | — |
-| `MainUIController` | `App` | `skillItems`、`workCenterHost`、详情 TMP、背包按钮/面板 |
+| `MainUIController` | `App` | `skillItems`、`workCenterHost`、详情 TMP、`detailWorkButton`、`lootPreview`、背包按钮/面板 |
 | `WorkCenterHost` | `App/Body/Center` | 各 `WorkView_*` 子物体 |
 | `StandardWorkCenterView` | 各 `WorkView_*` | Banner、ActionCards、RunningBar 等 |
 | `SkillNavItemView` | 左栏每项 | `workId`、高亮状态 |
 | `ActionCardView` | 动作卡预制/实例 | 标题、元信息、Thumb |
 | `InventoryPanelView` | 背包面板 | Grid、关闭按钮 |
+| `LootPreviewView` | `Detail/掉落预览` | `slotPrefab` → `GameResources/Prefab/掉落slot.prefab` |
 
-布局（Grid Cell、Banner 高度、栏宽等）**以 `Demo.unity` 场景为准**，在 Inspector / RectTransform 里手调；本文档不写固定像素，避免与场景脱节。
+布局（Grid Cell、Banner 高度、栏宽等）**以预制体/场景为准**，在 Inspector / RectTransform 里手调；Agent **默认只改脚本**，预制体由你改（见 `.cursor/rules/UI-手配预制体.mdc`）。
 
 ## 左栏工作（当前）
 
@@ -72,6 +75,7 @@ Assets/Scripts/Game/GameContent.cs
 
 | 日期 | 变更 |
 |------|------|
+| 2026-09-02 | 约定 UI 以预制体手配为准；掉落预览 + `掉落slot` 预制体 |
 | 2026-09-02 | 冗余清理：删生成器接线 API、UITheme 死色、GetSceneGroup、场景分组缓存等 |
 | 2026-09-02 | 移除 Editor 一键重建 / 布局调参；改场景手配 |
 | 2026-09-01 | 接拾荒挂机；底栏改动态背包；左栏收窄为拾荒 |

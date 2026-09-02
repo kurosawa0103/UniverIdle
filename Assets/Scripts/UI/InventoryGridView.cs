@@ -148,7 +148,7 @@ namespace UniverIdle.UI
       }
 
       _icon.sprite = null;
-      _icon.color = item != null ? item.DisplayColor : UITheme.Muted;
+      _icon.color = UITheme.Muted;
     }
 
     private static string FormatCount(long count) =>

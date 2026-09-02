@@ -1,0 +1,42 @@
+---
+description: 主界面 UI 以预制体/场景手配为准；Agent 默认只改脚本，不直接改 prefab/scene YAML
+alwaysApply: true
+---
+
+# UI 手配预制体约定
+
+与 [UI-主界面.md](../../docs/知识库/模块/UI-主界面.md) 一致：**布局与引用以场景/预制体为准**。
+
+## 分工
+
+| 谁 | 做什么 |
+|----|--------|
+| **你** | 改 `Assets/GameResources/Prefab/*.prefab`、`Demo.unity`：层级、RectTransform、拖 `[SerializeField]`、摆按钮/slot |
+| **Agent** | 只改 `Assets/Scripts/**`、配表 `StreamingAssets`；**默认不编辑** `*.prefab` / `*.unity` |
+
+除非你明确说 **「帮我改 prefab」** / **「直接写进预制体」**，否则 Agent 不碰预制体 YAML。
+
+## Agent 加 UI 功能时
+
+1. 脚本加字段 + 必要时 `ResolveReferences` 按节点名兜底（如 `Detail`、`Btn_工作`）。
+2. 在对话里写清 **挂哪、拖什么**（一条清单即可），由你在 Inspector 里拖引用。
+3. **不要**再建 `MainUISetup`、一键布局生成器、Editor 自动改 prefab 菜单（除非你要）。
+4. 需要重复用的格子 → 单独 **slot 预制体** + 运行时 `Instantiate`（如 `掉落slot.prefab`），容器本身仍手配。
+
+## 常用预制体
+
+| 预制体 | 用途 |
+|--------|------|
+| `UniverIdle_MainUI.prefab` | 主界面根；`MainUIController`、`掉落预览` 等 |
+| `掉落slot.prefab` | 掉落预览单格；`LootDropSlotView` |
+
+## 掉落预览（当前）
+
+- `Detail/掉落预览` → `LootPreviewView`：`slotPrefab` 拖 `掉落slot.prefab`
+- `MainUIController` → `lootPreview` 拖上面的 `LootPreviewView`
+- 槽位数量、? / 揭示：代码按动作 `loot` 表生成，**不用**在预览下手动摆 slot
+
+## 禁止
+
+- 为「少拖一次引用」去改 prefab 里大量坐标/LayoutGroup（除非你要求）
+- 用 Editor 脚本偷偷改场景布局替代你的手配

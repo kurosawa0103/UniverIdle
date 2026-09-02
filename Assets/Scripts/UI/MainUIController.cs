@@ -20,6 +20,7 @@ namespace UniverIdle.UI
     [SerializeField] private TextMeshProUGUI detailTitleText;
     [SerializeField] private TextMeshProUGUI detailBodyText;
     [SerializeField] private Button detailWorkButton;
+    [SerializeField] private LootPreviewView lootPreview;
 
     [Header("背包")]
     [SerializeField] private InventoryPanelView inventoryPanel;
@@ -136,14 +137,7 @@ namespace UniverIdle.UI
         detailTitleText = FindTmp("Detail/Text") ?? FindTmp("Body/Detail/Text");
 
       if (detailBodyText == null)
-      {
-        var detail = FindDetailTransform();
-        if (detail != null)
-        {
-          var tmps = detail.GetComponentsInChildren<TextMeshProUGUI>(true);
-          if (tmps.Length > 1) detailBodyText = tmps[1];
-        }
-      }
+        detailBodyText = FindDetailBodyText();
 
       if (detailWorkButton == null)
       {
@@ -160,6 +154,9 @@ namespace UniverIdle.UI
           }
         }
       }
+
+      if (lootPreview == null)
+        lootPreview = GetComponentInChildren<LootPreviewView>(true);
     }
 
     private Transform FindDetailTransform()
@@ -167,6 +164,20 @@ namespace UniverIdle.UI
       var detail = transform.Find("Detail");
       if (detail != null) return detail;
       return transform.Find("Body/Detail");
+    }
+
+    private TextMeshProUGUI FindDetailBodyText()
+    {
+      var detail = FindDetailTransform();
+      if (detail == null) return null;
+      for (var i = 0; i < detail.childCount; i++)
+      {
+        var child = detail.GetChild(i);
+        if (child.name != "Text") continue;
+        var tmp = child.GetComponent<TextMeshProUGUI>();
+        if (tmp != null && tmp != detailTitleText) return tmp;
+      }
+      return null;
     }
 
     private TextMeshProUGUI FindTmp(string path)
@@ -229,6 +240,7 @@ namespace UniverIdle.UI
         detailTitleText.text = action.DisplayName;
       if (detailBodyText != null)
         detailBodyText.text = WorkActionUiFormatter.BuildDescription(action, _session.Player, work);
+      lootPreview?.Bind(action);
       RefreshDetailWorkButton();
     }
 
@@ -312,6 +324,7 @@ namespace UniverIdle.UI
         }
         detailBodyText.text = text;
       }
+      lootPreview?.RevealLoot(result);
       RefreshInventory();
       RefreshWorkNav();
       RefreshDetailWorkButton();

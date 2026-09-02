@@ -13,8 +13,9 @@ namespace UniverIdle.Editor
 {
   public static class GameDataExcelExporter
   {
-    private static readonly string[] ItemHeaders = { "id", "name", "color", "icon", "description" };
-    private static readonly string[] ItemHeadersLegacy = { "id", "name", "color", "description" };
+    private static readonly string[] ItemHeaders = { "id", "name", "icon", "description" };
+    private static readonly string[] ItemHeadersLegacyColorIcon = { "id", "name", "color", "icon", "description" };
+    private static readonly string[] ItemHeadersLegacyColorNoIcon = { "id", "name", "color", "description" };
     private static readonly string[] WorkHeaders =
     {
       "id", "name", "locationName", "iconColor",
@@ -30,7 +31,7 @@ namespace UniverIdle.Editor
     private static readonly string[] LootExcelHeaders = { "actionId", "itemId", "#itemName", "chance", "min", "max" };
 
     private static readonly string[] ItemHeaderComments =
-      { "道具ID", "显示名称", "颜色", "图标(空=自动)", "描述" };
+      { "道具ID", "显示名称", "图标(空=自动)", "描述" };
     private static readonly string[] WorkHeaderComments =
     {
       "工作ID", "工作名称", "地点名称", "图标颜色",
@@ -494,13 +495,20 @@ namespace UniverIdle.Editor
       }
     }
 
+    private enum ItemSheetLayout
+    {
+      Standard,
+      LegacyWithColorIcon,
+      LegacyWithColorNoIcon,
+    }
+
     private static List<ItemRow> ReadItemSheet(List<string[]> rows)
     {
       if (rows == null || rows.Count == 0)
         throw new InvalidDataException("工作表为空。");
 
-      var (headerIndex, hasIcon) = ResolveItemHeaderIndex(rows);
-      var expectedHeaders = hasIcon ? ItemHeaders : ItemHeadersLegacy;
+      var (headerIndex, layout) = ResolveItemHeaderIndex(rows);
+      var expectedHeaders = ExpectedItemHeaders(layout);
       ValidateHeaders(NormalizeRow(rows[headerIndex]), expectedHeaders);
 
       var list = new List<ItemRow>();
@@ -513,41 +521,60 @@ namespace UniverIdle.Editor
         var data = new string[expectedHeaders.Length];
         for (var c = 0; c < expectedHeaders.Length; c++)
           data[c] = c < raw.Length ? (raw[c] ?? string.Empty).Trim() : string.Empty;
-        list.Add(ParseItemRow(data, hasIcon));
+        list.Add(ParseItemRow(data, layout));
       }
       return list;
     }
 
-    private static ItemRow ParseItemRow(string[] r, bool hasIcon) =>
-      hasIcon
-        ? new ItemRow
+    private static ItemRow ParseItemRow(string[] r, ItemSheetLayout layout) =>
+      layout switch
+      {
+        ItemSheetLayout.Standard => new ItemRow
         {
           id = r[0],
           name = r[1],
-          color = r[2],
+          icon = r[2],
+          description = r[3],
+        },
+        ItemSheetLayout.LegacyWithColorIcon => new ItemRow
+        {
+          id = r[0],
+          name = r[1],
           icon = r[3],
           description = r[4],
-        }
-        : new ItemRow
+        },
+        ItemSheetLayout.LegacyWithColorNoIcon => new ItemRow
         {
           id = r[0],
           name = r[1],
-          color = r[2],
           icon = string.Empty,
           description = r[3],
-        };
+        },
+        _ => throw new InvalidDataException("未知 items 表布局。"),
+      };
 
-    private static (int headerIndex, bool hasIcon) ResolveItemHeaderIndex(List<string[]> rows)
+    private static string[] ExpectedItemHeaders(ItemSheetLayout layout) =>
+      layout switch
+      {
+        ItemSheetLayout.Standard => ItemHeaders,
+        ItemSheetLayout.LegacyWithColorIcon => ItemHeadersLegacyColorIcon,
+        ItemSheetLayout.LegacyWithColorNoIcon => ItemHeadersLegacyColorNoIcon,
+        _ => ItemHeaders,
+      };
+
+    private static (int headerIndex, ItemSheetLayout layout) ResolveItemHeaderIndex(List<string[]> rows)
     {
       for (var i = 0; i < rows.Count && i < 5; i++)
       {
         var header = NormalizeRow(rows[i]);
         if (HeadersMatch(header, ItemHeaders))
-          return (i, true);
-        if (HeadersMatch(header, ItemHeadersLegacy))
-          return (i, false);
+          return (i, ItemSheetLayout.Standard);
+        if (HeadersMatch(header, ItemHeadersLegacyColorIcon))
+          return (i, ItemSheetLayout.LegacyWithColorIcon);
+        if (HeadersMatch(header, ItemHeadersLegacyColorNoIcon))
+          return (i, ItemSheetLayout.LegacyWithColorNoIcon);
       }
-      throw new InvalidDataException($"找不到有效 items 表头行（应含 {ItemHeaders[0]} 等英文字段名，含或不含 icon 列）。");
+      throw new InvalidDataException($"找不到有效 items 表头行（应含 {ItemHeaders[0]} 等英文字段名）。");
     }
 
     private static List<WorkRow> ReadWorkSheet(List<string[]> rows) =>
@@ -795,7 +822,7 @@ namespace UniverIdle.Editor
       {
         rows.Add(new[]
         {
-          item.id, item.name, item.color, item.icon ?? string.Empty, item.description,
+          item.id, item.name, item.icon ?? string.Empty, item.description,
         });
       }
       return rows;
@@ -892,7 +919,6 @@ namespace UniverIdle.Editor
         sb.Append("    {\n");
         sb.Append("      \"id\": ").Append(Q(item.id)).Append(",\n");
         sb.Append("      \"name\": ").Append(Q(item.name)).Append(",\n");
-        sb.Append("      \"color\": ").Append(Q(item.color)).Append(",\n");
         if (!string.IsNullOrEmpty(item.icon))
           sb.Append("      \"icon\": ").Append(Q(item.icon)).Append(",\n");
         sb.Append("      \"description\": ").Append(Q(item.description)).Append("\n");

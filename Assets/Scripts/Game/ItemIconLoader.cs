@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace UniverIdle.Game
 {
-  /// <summary>按道具表 icon 字段加载 Sprite；找不到时由 UI 回退到 DisplayColor。</summary>
+  /// <summary>按道具表 icon 字段加载 Sprite；找不到时由 UI 使用占位色。</summary>
   internal static class ItemIconLoader
   {
     private static readonly Dictionary<string, Sprite> Cache = new();

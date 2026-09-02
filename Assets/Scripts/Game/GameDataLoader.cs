@@ -107,7 +107,6 @@ namespace UniverIdle.Game
         items[row.id] = new ItemDefinition(
           row.id,
           row.name,
-          GameColorUtility.Parse(row.color, Color.gray),
           row.icon,
           row.description);
       }
