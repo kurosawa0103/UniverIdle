@@ -13,6 +13,7 @@ namespace UniverIdle.Editor
     public static partial class MainUISetup
     {
         private const string RootName = "UniverIdle_MainUI";
+        public const string RootNameForEditor = RootName;
 
         [MenuItem("UniverIdle/创建主界面（当前场景）")]
         public static void CreateMainUI()

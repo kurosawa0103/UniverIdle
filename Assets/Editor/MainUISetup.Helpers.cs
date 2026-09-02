@@ -227,6 +227,71 @@ namespace UniverIdle.Editor
             le.flexibleHeight = 0;
         }
 
+        private static Transform FindWorkViewActionCards(Transform workView)
+        {
+            if (workView == null) return null;
+            var nested = workView.Find("LocationBanner/ActionCards");
+            return nested != null ? nested : workView.Find("ActionCards");
+        }
+
+        private static Transform FindWorkViewBannerArt(Transform workView)
+        {
+            if (workView == null) return null;
+            var art = workView.Find("LocationBanner/BannerArt");
+            return art != null ? art : workView.Find("LocationBanner");
+        }
+
+        private static Transform FindWorkViewBannerText(Transform workView)
+        {
+            if (workView == null) return null;
+            var text = workView.Find("LocationBanner/BannerArt/BannerText");
+            return text != null ? text : workView.Find("LocationBanner/BannerText");
+        }
+
+        private static void IgnoreLayout(Transform t)
+        {
+            if (t == null) return;
+            var le = t.GetComponent<LayoutElement>();
+            if (le == null) le = t.gameObject.AddComponent<LayoutElement>();
+            le.ignoreLayout = true;
+        }
+
+        private static void ConfigureActionCardsGrid(RectTransform row)
+        {
+            var hlg = row.GetComponent<HorizontalLayoutGroup>();
+            if (hlg != null)
+                Object.DestroyImmediate(hlg);
+
+            var grid = row.GetComponent<GridLayoutGroup>();
+            if (grid == null)
+                grid = row.gameObject.AddComponent<GridLayoutGroup>();
+
+            grid.spacing = new Vector2(ConceptLayout.CardGap, ConceptLayout.CardGap);
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = ConceptLayout.CardGridColumns;
+            grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
+            grid.childAlignment = TextAnchor.UpperLeft;
+            grid.cellSize = new Vector2(
+                ConceptLayout.CardGridCellWidth > 0f ? ConceptLayout.CardGridCellWidth : 140f,
+                ConceptLayout.CardGridCellHeight);
+
+            var fitter = row.GetComponent<ContentSizeFitter>();
+            if (fitter == null)
+                fitter = row.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var rowLe = row.GetComponent<LayoutElement>();
+            if (rowLe == null)
+                rowLe = row.gameObject.AddComponent<LayoutElement>();
+            rowLe.flexibleHeight = 0;
+
+            var sizer = row.GetComponent<UniverIdle.UI.ActionCardGridSizer>();
+            if (sizer == null)
+                sizer = row.gameObject.AddComponent<UniverIdle.UI.ActionCardGridSizer>();
+            sizer.Configure(ConceptLayout.CardGridColumns, ConceptLayout.CardGridCellWidth, ConceptLayout.CardGridCellHeight);
+        }
+
         private static void AddLayout(GameObject go, float w, float h)
         {
             var le = go.GetComponent<LayoutElement>();

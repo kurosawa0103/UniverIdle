@@ -25,6 +25,10 @@ namespace UniverIdle.Editor
 
         {
 
+            public static Vector2 ReferenceResolution => L.referenceResolution;
+
+            public static float MatchWidthOrHeight => L.matchWidthOrHeight;
+
             public static float DividerThickness => L.dividerThickness;
 
             public static bool UseBodyFlexSpacer => L.useBodyFlexSpacer;
@@ -129,6 +133,12 @@ namespace UniverIdle.Editor
 
             public static float CardGap => L.cardGap;
 
+            public static int CardGridColumns => Mathf.Max(1, L.cardGridColumns);
+
+            public static float CardGridCellWidth => L.cardGridCellWidth;
+
+            public static float CardGridCellHeight => L.cardGridCellHeight;
+
             public static float CardPadding => L.cardPadding;
 
             public static float CardVlgSpacing => L.cardVlgSpacing;
@@ -156,8 +166,10 @@ namespace UniverIdle.Editor
                 }
             }
 
-            /// <summary>ActionCards 行与单卡统一高度（取 cardMin / row 较大值）。</summary>
             public static float ActionCardHeight => Mathf.Max(L.cardMinHeight, L.actionCardsRowHeight);
+
+            /// <summary>LocationBanner 整块高度（BannerArt + 间距 + ActionCards）。</summary>
+            public static float SceneBlockHeight => L.bannerHeight + L.centerGap + ActionCardHeight;
 
             public static float CardThumbInnerWidth => L.cardThumbWidth > 0f
                 ? Mathf.Max(40f, L.cardThumbWidth - 12f)
@@ -202,6 +214,10 @@ namespace UniverIdle.Editor
             public static float DetailGap => L.detailGap;
 
             public static float DetailHeroHeight => L.detailHeroHeight;
+
+            public static float DetailHeroThumbWidth => L.detailHeroThumbWidth;
+
+            public static float DetailHeroThumbHeight => L.detailHeroThumbHeight;
 
             public static float DetailTitleHeight => L.detailTitleHeight;
 

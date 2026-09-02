@@ -104,6 +104,10 @@ suitable for nine-slice panel / button / slot / progress bar, no text no icons
 
 生图时 **必须** `reference_image_paths` 指向同名的 `sketch/{file}.png`，保证构图一致、只换画风。
 
+## 图片炼金术（克制扁平道具）
+
+拾荒等 **炼金术扁平道具** 另走 `.cursor/rules/图片炼金术.mdc`：样张在 `图片炼金术/`，输出 `assets/item_{itemId}.png`，**512×512**。
+
 ## 禁止
 
 - 未读概念图就批量生成「通用奇幻图标」

@@ -35,7 +35,7 @@ MonoBehaviour:
   sidebarWidth: 380
   centerPreferredWidth: 1200
   centerFlexibleWidth: 1
-  detailPreferredWidth: 418.01
+  detailPreferredWidth: 400
   detailMinWidth: -1
   detailFlexibleWidth: 0
   sidebarPadH: 8
@@ -58,6 +58,7 @@ MonoBehaviour:
   cardPadding: 10
   cardVlgSpacing: 8
   cardGap: 10
+  cardGridColumns: 3
   cardTitleHeight: 18
   cardMetaHeight: 16
   cardTitleFont: 14
@@ -75,20 +76,22 @@ MonoBehaviour:
   runningTimeFont: 13
   detailPadding: 14
   detailGap: 12
-  detailHeroHeight: 132
+  detailHeroHeight: 200
+  detailHeroThumbWidth: 200
+  detailHeroThumbHeight: 200
   detailTitleHeight: 22
   detailBodyHeight: 64
   detailBodyFlexibleHeight: 1
   detailReqLineHeight: 18
   detailBodyLineSpacing: 6
-  detailTitleFont: 16
-  detailBodyFont: 13
+  detailTitleFont: 32
+  detailBodyFont: 24
   detailReqFont: 12
   detailChildForceExpandWidth: 1
   invPanelSize: {x: 520, y: 560}
   invPanelPadding: 16
   invPanelGap: 12
-  invPanelHeaderHeight: 36
+  invPanelHeaderHeight: 40
   invPanelTitleFont: 18
   invPanelCloseSize: 32
   invPanelSlotWidth: 88

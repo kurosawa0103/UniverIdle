@@ -1,0 +1,74 @@
+---
+description: 图片炼金术文件夹画风——克制扁平道具图标生成约定
+globs: docs/设计/概念图/图片炼金术/**,docs/设计/概念图/assets/item_*.png
+alwaysApply: false
+---
+
+# 图片炼金术 · 道具图标生图
+
+用户要求按 **图片炼金术** 画风出图时，以本规则为准。
+
+## 权威参考
+
+1. **画风样张**：`docs/设计/概念图/图片炼金术/` 内已有 PNG（如 `item_firefly_shrimp.png`、`item_copper_ingot.png`）
+2. **名词与 id**：`Assets/StreamingAssets/Game/items.json`
+3. **输出目录**：`docs/设计/概念图/assets/`
+4. **清单登记**：`docs/设计/概念图/资源清单.md`
+
+## 画风（克制扁平 · 炼金术）
+
+与主概念「蜡笔手绘 v3」**分开**：本批为 **克制扁平矢量贴纸风**，线条干净、色块简洁。
+
+| 要素 | 要求 |
+|------|------|
+| 线稿 | 粗深褐描边，圆角端点，线宽一致 |
+| 填色 | 低饱和土色块；可极轻 2.5D 明暗（顶亮侧暗），**不要**复杂渐变光晕 |
+| 造型 | 几何简化、居中、占画布约 70% |
+| 尺寸 | **512×512** PNG，**RGBA 透明底**（生图后必须跑抠底脚本） |
+| 禁止 | 发光 halo、闪粉、萌系大眼、文字、水印、写实照片感 |
+
+### 配色参考（可与 items.json `color` 呼应）
+
+| 用途 | 色值 |
+|------|------|
+| 描边 | `#3a3228` |
+| 灰青 | `#90a098` |
+| 陶土 | `#c87048` |
+| 铜/琥珀 | `#f0c96e` |
+| 奶油高光 | `#f0e8d8` |
+| 木褐 | `#8a6a48` |
+
+## 命名
+
+```
+item_{itemId}.png
+```
+
+`itemId` 与 `items.json` 一致，例如 `rag` → `item_rag.png`。
+
+## Prompt 模板（每批只改 Subject）
+
+```
+{Subject}, restrained flat vector game item icon,
+thick dark brown outline rounded caps, simple geometric shapes,
+muted desaturated earth tones teal terracotta cream warm gray,
+subtle flat 2.5D shading on faces only, centered composition,
+512x512 square, lots of empty margin,
+NO glow halos NO sparkles NO cute chibi NO text NO watermark,
+transparent background PNG
+```
+
+生图时 **必须** `reference_image_paths` 指向 `图片炼金术/` 下同批或同类样张（优先 `item_firefly_shrimp.png` + `item_copper_ingot.png`），保持线宽与扁平语言一致。
+
+## 生图后必做
+
+1. 写入 `docs/设计/概念图/assets/item_{id}.png`
+2. **抠透明通道**：运行 `python docs/设计/概念图/scripts/flatten_item_alpha.py`（或指定文件名参数）  
+   - 从四角采样浅灰/白底并 flood-fill 去底 → **RGBA 512×512**
+3. 更新 `资源清单.md` 对应行
+4. 说明：中文名、itemId、是否覆盖旧图
+
+## 禁止
+
+- 未读 `图片炼金术/` 样张就自由发挥成蜡笔手绘或网游金光风
+- 自造 `items.json` 里没有的 itemId（除非用户先扩表）

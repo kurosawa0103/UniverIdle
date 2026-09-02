@@ -6,10 +6,15 @@ namespace UniverIdle.Editor
 {
     /// <summary>主界面布局参数。Inspector 由 Odin 绘制。</summary>
     [Title("主界面布局参数", "UniverIdle_MainUI", TitleAlignments.Centered)]
-    [InfoBox("这是你的布局配置：改完保存 asset，点「创建主界面」生效。代码新增字段时 Unity 只会多出新项，不会重置你已填的数。只有点「从场景同步」才会用场景覆盖对应字段。", InfoMessageType.Info)]
+    [InfoBox("推荐用菜单「UniverIdle → 布局调参窗口」：改参数可实时预览，满意后保存到场景 / Asset。整页重建用「创建主界面」。", InfoMessageType.Info)]
     public class MainUILayoutParams : ScriptableObject
     {
         public const string DefaultAssetPath = "Assets/Editor/MainUILayoutParams.asset";
+
+        [PropertyOrder(-11)]
+        [Button("打开布局调参窗口", ButtonSizes.Large)]
+        [GUIColor(0.55f, 0.78f, 0.95f)]
+        private void OpenLayoutTuneWindow() => MainUILayoutTuneWindow.ShowWindow();
 
         [PropertyOrder(-10)]
         [Button("从场景同步布局参数", ButtonSizes.Medium)]
@@ -165,8 +170,8 @@ namespace UniverIdle.Editor
         public bool useCenterFlexSpacer = true;
 
         [FoldoutGroup("Scene · 场景（Banner + ActionCards）")]
-        [LabelText("横幅高度")]
-        [Tooltip("LocationBanner：当前场景名，如「村口」")]
+        [LabelText("横幅区高度")]
+        [Tooltip("LocationBanner/BannerArt：场景名与 Tags 区域")]
         public float bannerHeight = 130f;
 
         [FoldoutGroup("Scene · 场景（Banner + ActionCards）")]
@@ -197,60 +202,75 @@ namespace UniverIdle.Editor
         [Tooltip("微光 / 安全 / 星级 标签高度")]
         public float tagHeight = 22f;
 
-        [FoldoutGroup("Scene · 场景内地点 ActionCards", expanded: true)]
-        [HorizontalGroup("Scene · 场景内地点 ActionCards/尺寸")]
+        [FoldoutGroup("Scene · 场景（Banner + ActionCards）")]
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/卡片")]
         [LabelText("整卡高度")]
-        [Tooltip("Card_占位 等单卡高度")]
+        [Tooltip("LocationBanner/ActionCards 下单卡高度")]
         public float cardMinHeight = 250f;
 
-        [HorizontalGroup("Scene · 场景内地点 ActionCards/尺寸")]
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/卡片")]
         [LabelText("行高度")]
-        [Tooltip("ActionCards 整行")]
+        [Tooltip("LocationBanner/ActionCards 整行")]
         public float actionCardsRowHeight = 250f;
 
-        [FoldoutGroup("Scene · 场景内地点 ActionCards")]
-        [HorizontalGroup("Scene · 场景内地点 ActionCards/Thumb")]
+        [FoldoutGroup("Scene · 场景（Banner + ActionCards）")]
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/Thumb")]
         [LabelText("Thumb 高度")]
-        [Tooltip("Card_*/Thumb 区域高度")]
         public float cardThumbHeight = 160f;
 
-        [HorizontalGroup("Scene · 场景内地点 ActionCards/Thumb")]
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/Thumb")]
         [LabelText("Thumb 宽度")]
-        [Tooltip("0 = 横向拉满卡片；>0 为固定像素宽")]
+        [Tooltip("0 = 横向拉满卡片")]
         public float cardThumbWidth = 0f;
 
-        [FoldoutGroup("Scene · 场景内地点 ActionCards")]
-        [HorizontalGroup("Scene · 场景内地点 ActionCards/内边距")]
+        [FoldoutGroup("Scene · 场景（Banner + ActionCards）")]
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/卡内边距")]
         [LabelText("卡片 Padding")]
         public float cardPadding = 10f;
 
-        [HorizontalGroup("Scene · 场景内地点 ActionCards/内边距")]
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/卡内边距")]
         [LabelText("卡内行间距")]
         public float cardVlgSpacing = 8f;
 
-        [FoldoutGroup("Scene · 场景内地点 ActionCards")]
+        [FoldoutGroup("Scene · 场景（Banner + ActionCards）")]
         [LabelText("卡间距")]
         public float cardGap = 10f;
 
-        [FoldoutGroup("Scene · 场景内地点 ActionCards")]
-        [HorizontalGroup("Scene · 场景内地点 ActionCards/行高")]
+        [FoldoutGroup("Scene · 场景（Banner + ActionCards）")]
+        [LabelText("Grid 列数")]
+        [Tooltip("ActionCards 的 GridLayoutGroup 固定列数")]
+        public int cardGridColumns = 3;
+
+        [FoldoutGroup("Scene · 场景（Banner + ActionCards）")]
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/Grid Cell")]
+        [LabelText("Cell 宽")]
+        [Tooltip("GridLayoutGroup.cellSize.x；0 = 按容器宽度均分")]
+        public float cardGridCellWidth = 350f;
+
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/Grid Cell")]
+        [LabelText("Cell 高")]
+        [Tooltip("GridLayoutGroup.cellSize.y")]
+        public float cardGridCellHeight = 250f;
+
+        [FoldoutGroup("Scene · 场景（Banner + ActionCards）")]
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/卡行高")]
         [LabelText("标题行高")]
         public float cardTitleHeight = 18f;
 
-        [HorizontalGroup("Scene · 场景内地点 ActionCards/行高")]
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/卡行高")]
         [LabelText("Meta 行高")]
         public float cardMetaHeight = 16f;
 
-        [FoldoutGroup("Scene · 场景内地点 ActionCards")]
-        [HorizontalGroup("Scene · 场景内地点 ActionCards/字号")]
+        [FoldoutGroup("Scene · 场景（Banner + ActionCards）")]
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/卡字号")]
         [LabelText("标题字号")]
         public float cardTitleFont = 14f;
 
-        [HorizontalGroup("Scene · 场景内地点 ActionCards/字号")]
+        [HorizontalGroup("Scene · 场景（Banner + ActionCards）/卡字号")]
         [LabelText("元信息字号")]
         public float cardMetaFont = 12f;
 
-        [FoldoutGroup("Scene · 场景内地点 ActionCards")]
+        [FoldoutGroup("Scene · 场景（Banner + ActionCards）")]
         [LabelText("产出字号")]
         public float cardYieldFont = 11f;
 
@@ -305,8 +325,17 @@ namespace UniverIdle.Editor
         public float detailGap = 12f;
 
         [FoldoutGroup("Detail · 右侧详情")]
-        [LabelText("Hero 高度")]
+        [LabelText("配图区高度")]
         public float detailHeroHeight = 132f;
+
+        [FoldoutGroup("Detail · 右侧详情")]
+        [HorizontalGroup("Detail · 右侧详情/配图缩略图")]
+        [LabelText("缩略图宽")]
+        public float detailHeroThumbWidth = 80f;
+
+        [HorizontalGroup("Detail · 右侧详情/配图缩略图")]
+        [LabelText("缩略图高")]
+        public float detailHeroThumbHeight = 80f;
 
         [FoldoutGroup("Detail · 右侧详情")]
         [HorizontalGroup("Detail · 右侧详情/文本行")]
@@ -361,7 +390,8 @@ namespace UniverIdle.Editor
 
         [FoldoutGroup("Inventory · 背包浮层")]
         [LabelText("标题栏高度")]
-        public float invPanelHeaderHeight = 36f;
+        [Tooltip("Panel/Header 行高；Panel 的 VerticalLayoutGroup 不得 Force Expand Height")]
+        public float invPanelHeaderHeight = 40f;
 
         [FoldoutGroup("Inventory · 背包浮层")]
         [LabelText("标题字号")]

@@ -9,8 +9,7 @@ namespace UniverIdle.UI
 {
   /// <summary>
   /// 横幅 + 动作卡 + 进度条的标准工作 Center。
-  /// LocationBanner 与 ActionCards 共同表示<strong>一个场景</strong>：
-  /// 横幅 = 场景名（如村口），动作卡 = 该场景下的子地点（如老王家、老李家）。
+  /// LocationBanner 表示一个场景块：BannerArt（场景名/Tags）+ ActionCards（子地点卡）。
   /// </summary>
   public sealed class StandardWorkCenterView : WorkCenterView
   {

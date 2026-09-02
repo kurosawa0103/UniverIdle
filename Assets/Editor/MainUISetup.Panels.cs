@@ -173,8 +173,7 @@ namespace UniverIdle.Editor
 
             var banner = CreateBanner(root, font, out var locationTitle);
             var actions = new List<ActionCardView>();
-            var cardsRow = CreateActionCards(root, font, actions);
-            LockLayoutHeight(cardsRow, ConceptLayout.ActionCardHeight);
+            var cardsRow = CreateActionCards(banner, font, actions);
 
             if (ConceptLayout.UseCenterFlexSpacer)
             {
@@ -196,35 +195,53 @@ namespace UniverIdle.Editor
         private static RectTransform CreateBanner(RectTransform parent, TMP_FontAsset font, out TextMeshProUGUI title)
         {
             var banner = CreateRect("LocationBanner", parent);
-            AddLayout(banner.gameObject, 0, ConceptLayout.BannerHeight);
+            var bannerVlg = banner.gameObject.AddComponent<VerticalLayoutGroup>();
+            ConfigureLayoutGroup(bannerVlg, expandWidth: true, expandHeight: false);
+            bannerVlg.spacing = ConceptLayout.CenterGap;
+            bannerVlg.childAlignment = TextAnchor.UpperLeft;
+
+            var bannerFitter = banner.gameObject.AddComponent<ContentSizeFitter>();
+            bannerFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            bannerFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var bannerLe = banner.gameObject.AddComponent<LayoutElement>();
+            bannerLe.flexibleHeight = 0;
 
             var bg = banner.gameObject.AddComponent<Image>();
             bg.color = UITheme.BannerBg;
             bg.raycastTarget = false;
             StyleOutline(bg, UITheme.Border, new Vector2(1, -1));
 
-            var gradMid = CreateColorBlock("GradMid", banner, UITheme.BannerMid, Vector2.zero);
+            var bannerArt = CreateRect("BannerArt", banner);
+            LockLayoutHeight(bannerArt, ConceptLayout.BannerHeight);
+            var artLe = bannerArt.gameObject.GetComponent<LayoutElement>();
+            if (artLe != null) artLe.flexibleWidth = 1;
+
+            var gradMid = CreateColorBlock("GradMid", bannerArt, UITheme.BannerMid, Vector2.zero);
             var gradMidRt = gradMid.rectTransform;
             gradMidRt.anchorMin = Vector2.zero;
             gradMidRt.anchorMax = Vector2.one;
             gradMidRt.offsetMin = Vector2.zero;
             gradMidRt.offsetMax = Vector2.zero;
             gradMid.color = new Color(UITheme.BannerMid.r, UITheme.BannerMid.g, UITheme.BannerMid.b, 0.85f);
+            IgnoreLayout(gradMidRt);
 
-            CreateBannerStar(banner, 0.78f, 0.72f, 4f, UITheme.StarLight);
-            CreateBannerStar(banner, 0.84f, 0.58f, 3f, UITheme.StarLight);
-            CreateBannerStar(banner, 0.9f, 0.78f, 3f, UITheme.StarWarm);
+            CreateBannerStar(bannerArt, 0.78f, 0.72f, 4f, UITheme.StarLight);
+            CreateBannerStar(bannerArt, 0.84f, 0.58f, 3f, UITheme.StarLight);
+            CreateBannerStar(bannerArt, 0.9f, 0.78f, 3f, UITheme.StarWarm);
 
-            var overlay = CreateColorBlock("Overlay", banner, Color.black, Vector2.zero);
+            var overlay = CreateColorBlock("Overlay", bannerArt, Color.black, Vector2.zero);
             var overlayRt = overlay.rectTransform;
             overlayRt.anchorMin = Vector2.zero;
             overlayRt.anchorMax = new Vector2(0.65f, 1f);
             overlayRt.offsetMin = Vector2.zero;
             overlayRt.offsetMax = Vector2.zero;
             overlay.color = new Color(0, 0, 0, 0.65f);
+            IgnoreLayout(overlayRt);
 
-            var textArea = CreateRect("BannerText", banner);
+            var textArea = CreateRect("BannerText", bannerArt);
             AnchorStretchWidthBottom(textArea);
+            IgnoreLayout(textArea);
             var pad = textArea.gameObject.AddComponent<VerticalLayoutGroup>();
             ConfigureLayoutGroup(pad, expandWidth: true, expandHeight: false);
             pad.padding = new RectOffset(
@@ -259,13 +276,14 @@ namespace UniverIdle.Editor
             return banner;
         }
 
-        private static void CreateBannerStar(RectTransform banner, float x, float y, float size, Color color)
+        private static void CreateBannerStar(RectTransform bannerArt, float x, float y, float size, Color color)
         {
-            var star = CreateColorBlock("Star", banner, color, new Vector2(size, size));
+            var star = CreateColorBlock("Star", bannerArt, color, new Vector2(size, size));
             var rt = star.rectTransform;
             rt.anchorMin = rt.anchorMax = new Vector2(x, y);
             rt.sizeDelta = new Vector2(size, size);
             rt.anchoredPosition = Vector2.zero;
+            IgnoreLayout(rt);
         }
 
         private static void CreateTag(RectTransform parent, TMP_FontAsset font, string text)
@@ -284,13 +302,7 @@ namespace UniverIdle.Editor
         private static RectTransform CreateActionCards(RectTransform parent, TMP_FontAsset font, List<ActionCardView> list)
         {
             var row = CreateRect("ActionCards", parent);
-            var hlg = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(hlg, expandWidth: true, expandHeight: false);
-            hlg.spacing = ConceptLayout.CardGap;
-            hlg.childAlignment = TextAnchor.UpperLeft;
-            hlg.childForceExpandWidth = true;
-            hlg.childForceExpandHeight = false;
-            hlg.childControlHeight = true;
+            ConfigureActionCardsGrid(row);
 
             const int slotCount = 3;
             var previewSpots = new[] { "老王家", "老李家", "张铁匠铺" };
@@ -318,12 +330,6 @@ namespace UniverIdle.Editor
             btn.targetGraphic = bg;
             ConfigureButton(btn, UITheme.Panel, UITheme.CardHover, UITheme.PanelLight);
             var cg = rt.gameObject.AddComponent<CanvasGroup>();
-
-            var cardHeight = ConceptLayout.ActionCardHeight;
-            LockLayoutHeight(rt, cardHeight);
-            var cardLE = rt.GetComponent<LayoutElement>();
-            cardLE.flexibleWidth = 1;
-            cardLE.minWidth = 140f;
 
             var pad = Mathf.RoundToInt(ConceptLayout.CardPadding);
             var vlg = rt.gameObject.AddComponent<VerticalLayoutGroup>();
@@ -408,8 +414,9 @@ namespace UniverIdle.Editor
             heroLE.flexibleWidth = 1;
             heroLE.preferredHeight = ConceptLayout.DetailHeroHeight;
             StyleOutline(hero, UITheme.Border, new Vector2(1, -1));
-            var heroInner = CreateColorBlock("Shrimp", hero.rectTransform, UITheme.Accent, new Vector2(80, 80));
-            Center(heroInner.rectTransform, 80, 80);
+            var heroInner = CreateColorBlock("HeroThumb", hero.rectTransform, UITheme.Accent,
+                new Vector2(ConceptLayout.DetailHeroThumbWidth, ConceptLayout.DetailHeroThumbHeight));
+            Center(heroInner.rectTransform, ConceptLayout.DetailHeroThumbWidth, ConceptLayout.DetailHeroThumbHeight);
 
             title = CreateLayoutTMP("村口 · 拾荒", detail, font, ConceptLayout.DetailTitleFont, UITheme.Text,
                 TextAlignmentOptions.Left, ConceptLayout.DetailTitleHeight);
@@ -451,24 +458,34 @@ namespace UniverIdle.Editor
             StyleOutline(panelImg, UITheme.Border, new Vector2(1, -1));
 
             var vlg = panel.gameObject.AddComponent<VerticalLayoutGroup>();
-            ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: true);
+            ConfigureLayoutGroup(vlg, expandWidth: true, expandHeight: false);
             var panelPad = Mathf.RoundToInt(ConceptLayout.InvPanelPadding);
             vlg.padding = new RectOffset(panelPad, panelPad, panelPad, panelPad);
             vlg.spacing = ConceptLayout.InvPanelGap;
 
             var header = CreateRect("Header", panel);
-            AddLayout(header.gameObject, 0, ConceptLayout.InvPanelHeaderHeight);
+            LockLayoutHeight(header, ConceptLayout.InvPanelHeaderHeight);
+
             var headerHLG = header.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ConfigureLayoutGroup(headerHLG, expandWidth: true, expandHeight: true);
+            ConfigureLayoutGroup(headerHLG, expandWidth: true, expandHeight: false);
             headerHLG.childAlignment = TextAnchor.MiddleLeft;
 
+            var titleLineHeight = Mathf.RoundToInt(ConceptLayout.InvPanelTitleFont * 1.35f);
             var title = CreateLayoutTMP("背包", header, font, ConceptLayout.InvPanelTitleFont, UITheme.Cream,
-                TextAlignmentOptions.Left, ConceptLayout.InvPanelHeaderHeight);
+                TextAlignmentOptions.Left, titleLineHeight);
             title.fontStyle = FontStyles.Bold;
             title.gameObject.GetComponent<LayoutElement>().flexibleWidth = 1;
+            LockLayoutHeight(title.rectTransform, titleLineHeight);
 
             var closeRt = CreateRect("Btn_Close", header);
-            AddLayout(closeRt.gameObject, ConceptLayout.InvPanelCloseSize, ConceptLayout.InvPanelCloseSize);
+            LockLayoutHeight(closeRt, ConceptLayout.InvPanelCloseSize);
+            var closeLe = closeRt.gameObject.GetComponent<LayoutElement>();
+            if (closeLe != null)
+            {
+                closeLe.preferredWidth = ConceptLayout.InvPanelCloseSize;
+                closeLe.minWidth = ConceptLayout.InvPanelCloseSize;
+                closeLe.flexibleWidth = 0;
+            }
             var closeImg = closeRt.gameObject.AddComponent<Image>();
             closeImg.color = UITheme.PanelLight;
             StyleOutline(closeImg, UITheme.Border, new Vector2(1, -1));

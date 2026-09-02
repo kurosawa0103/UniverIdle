@@ -109,8 +109,22 @@ namespace UniverIdle.Editor
 
         private static void CaptureActionCards(Transform workView, MainUILayoutParams p)
         {
-            var cards = workView.Find("ActionCards");
+            var cards = FindWorkViewActionCards(workView);
             if (cards == null) return;
+
+            var grid = cards.GetComponent<GridLayoutGroup>();
+            if (grid != null)
+            {
+                p.cardGap = grid.spacing.x;
+                p.cardGridColumns = grid.constraintCount;
+                if (grid.cellSize.x > 0f) p.cardGridCellWidth = grid.cellSize.x;
+                if (grid.cellSize.y > 0f)
+                {
+                    p.cardGridCellHeight = grid.cellSize.y;
+                    p.actionCardsRowHeight = grid.cellSize.y;
+                    p.cardMinHeight = grid.cellSize.y;
+                }
+            }
 
             CaptureLayoutElementHeight(cards, ref p.actionCardsRowHeight);
 
@@ -157,7 +171,7 @@ namespace UniverIdle.Editor
 
         private static void CaptureBannerTagHeight(Transform workView, MainUILayoutParams p)
         {
-            var tags = workView.Find("LocationBanner/BannerText/Tags");
+            var tags = FindWorkViewBannerText(workView)?.Find("Tags");
             if (tags == null || tags.childCount == 0) return;
 
             for (var i = 0; i < tags.childCount; i++)
@@ -211,14 +225,14 @@ namespace UniverIdle.Editor
                 p.centerGap = vlg.spacing;
             }
 
-            CaptureLayoutElementHeight(workView.Find("LocationBanner"), ref p.bannerHeight);
+            CaptureLayoutElementHeight(FindWorkViewBannerArt(workView), ref p.bannerHeight);
             CaptureActionCards(workView, p);
             CaptureLayoutElementHeight(workView.Find("RunningBar"), ref p.runningBarTotalHeight);
 
-            CaptureLayoutElementHeight(workView.Find("LocationBanner/BannerText/Tags"), ref p.tagHeight);
+            CaptureLayoutElementHeight(FindWorkViewBannerText(workView)?.Find("Tags"), ref p.tagHeight);
             CaptureBannerTagHeight(workView, p);
 
-            var bannerText = workView.Find("LocationBanner/BannerText");
+            var bannerText = FindWorkViewBannerText(workView);
             var bannerVlg = bannerText != null ? bannerText.GetComponent<VerticalLayoutGroup>() : null;
             if (bannerVlg != null)
             {
@@ -263,7 +277,15 @@ namespace UniverIdle.Editor
 
             var hero = detail.Find("Hero");
             if (hero != null)
+            {
                 CaptureLayoutElementHeight(hero, ref p.detailHeroHeight);
+                var thumb = hero.Find("HeroThumb") ?? hero.Find("Shrimp");
+                if (thumb is RectTransform thumbRt)
+                {
+                    p.detailHeroThumbWidth = thumbRt.sizeDelta.x;
+                    p.detailHeroThumbHeight = thumbRt.sizeDelta.y;
+                }
+            }
 
             var textIndex = 0;
             for (var i = 0; i < detail.childCount; i++)
@@ -321,6 +343,28 @@ namespace UniverIdle.Editor
             {
                 p.invPanelPadding = vlg.padding.left;
                 p.invPanelGap = vlg.spacing;
+            }
+
+            var header = panel.Find("Header");
+            CaptureLayoutElementHeight(header, ref p.invPanelHeaderHeight);
+
+            var close = panel.Find("Header/Btn_Close");
+            if (close != null)
+            {
+                CaptureLayoutElementHeight(close, ref p.invPanelCloseSize);
+                CaptureLayoutElementWidth(close, ref p.invPanelCloseSize);
+            }
+
+            var titleTmp = header != null ? header.GetComponentInChildren<TMPro.TextMeshProUGUI>() : null;
+            if (titleTmp != null)
+                p.invPanelTitleFont = titleTmp.fontSize;
+
+            var grid = panel.Find("Body/Scroll/Viewport/Content")?.GetComponent<GridLayoutGroup>();
+            if (grid != null)
+            {
+                p.invPanelSlotWidth = grid.cellSize.x;
+                p.invPanelSlotHeight = grid.cellSize.y;
+                p.invPanelSlotGap = grid.spacing.x;
             }
         }
 
