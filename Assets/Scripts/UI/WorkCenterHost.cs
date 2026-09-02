@@ -45,7 +45,5 @@ namespace UniverIdle.UI
       Active.Refresh(host);
       return true;
     }
-
-    public bool TryGet(string workId, out WorkCenterView view) => _views.TryGetValue(workId, out view);
   }
 }

@@ -13,7 +13,8 @@ namespace UniverIdle.Editor
 {
   public static class GameDataExcelExporter
   {
-    private static readonly string[] ItemHeaders = { "id", "name", "color", "description" };
+    private static readonly string[] ItemHeaders = { "id", "name", "color", "icon", "description" };
+    private static readonly string[] ItemHeadersLegacy = { "id", "name", "color", "description" };
     private static readonly string[] WorkHeaders =
     {
       "id", "name", "locationName", "iconColor",
@@ -28,7 +29,8 @@ namespace UniverIdle.Editor
     private static readonly string[] LootHeaders = { "actionId", "itemId", "chance", "min", "max" };
     private static readonly string[] LootExcelHeaders = { "actionId", "itemId", "#itemName", "chance", "min", "max" };
 
-    private static readonly string[] ItemHeaderComments = { "道具ID", "显示名称", "颜色", "描述" };
+    private static readonly string[] ItemHeaderComments =
+      { "道具ID", "显示名称", "颜色", "图标(空=自动)", "描述" };
     private static readonly string[] WorkHeaderComments =
     {
       "工作ID", "工作名称", "地点名称", "图标颜色",
@@ -361,9 +363,9 @@ namespace UniverIdle.Editor
 
       var headerIndex = kind switch
       {
-        GameDataSheetRegistry.WorkSheetKind.Items => FindHeaderRowIndex(rows, ItemHeaders),
+        GameDataSheetRegistry.WorkSheetKind.Items => ResolveItemHeaderIndex(rows).headerIndex,
         GameDataSheetRegistry.WorkSheetKind.Works => FindHeaderRowIndex(rows, WorkHeaders),
-        GameDataSheetRegistry.WorkSheetKind.Actions => ResolveActionHeader(rows).headerIndex,
+        GameDataSheetRegistry.WorkSheetKind.Actions => ResolveActionHeaderIndex(rows),
         GameDataSheetRegistry.WorkSheetKind.Loot => FindLootHeaderRowIndex(rows),
         _ => 0,
       };
@@ -492,14 +494,61 @@ namespace UniverIdle.Editor
       }
     }
 
-    private static List<ItemRow> ReadItemSheet(List<string[]> rows) =>
-      MapRows(rows, ItemHeaders, r => new ItemRow
+    private static List<ItemRow> ReadItemSheet(List<string[]> rows)
+    {
+      if (rows == null || rows.Count == 0)
+        throw new InvalidDataException("工作表为空。");
+
+      var (headerIndex, hasIcon) = ResolveItemHeaderIndex(rows);
+      var expectedHeaders = hasIcon ? ItemHeaders : ItemHeadersLegacy;
+      ValidateHeaders(NormalizeRow(rows[headerIndex]), expectedHeaders);
+
+      var list = new List<ItemRow>();
+      for (var i = headerIndex + 1; i < rows.Count; i++)
       {
-        id = r[0],
-        name = r[1],
-        color = r[2],
-        description = r[3],
-      });
+        var raw = rows[i] ?? Array.Empty<string>();
+        if (IsCommentOrEmpty(raw)) continue;
+        if (IsHeaderEchoRow(raw, expectedHeaders)) continue;
+
+        var data = new string[expectedHeaders.Length];
+        for (var c = 0; c < expectedHeaders.Length; c++)
+          data[c] = c < raw.Length ? (raw[c] ?? string.Empty).Trim() : string.Empty;
+        list.Add(ParseItemRow(data, hasIcon));
+      }
+      return list;
+    }
+
+    private static ItemRow ParseItemRow(string[] r, bool hasIcon) =>
+      hasIcon
+        ? new ItemRow
+        {
+          id = r[0],
+          name = r[1],
+          color = r[2],
+          icon = r[3],
+          description = r[4],
+        }
+        : new ItemRow
+        {
+          id = r[0],
+          name = r[1],
+          color = r[2],
+          icon = string.Empty,
+          description = r[3],
+        };
+
+    private static (int headerIndex, bool hasIcon) ResolveItemHeaderIndex(List<string[]> rows)
+    {
+      for (var i = 0; i < rows.Count && i < 5; i++)
+      {
+        var header = NormalizeRow(rows[i]);
+        if (HeadersMatch(header, ItemHeaders))
+          return (i, true);
+        if (HeadersMatch(header, ItemHeadersLegacy))
+          return (i, false);
+      }
+      throw new InvalidDataException($"找不到有效 items 表头行（应含 {ItemHeaders[0]} 等英文字段名，含或不含 icon 列）。");
+    }
 
     private static List<WorkRow> ReadWorkSheet(List<string[]> rows) =>
       MapRows(rows, WorkHeaders, r => new WorkRow
@@ -746,7 +795,7 @@ namespace UniverIdle.Editor
       {
         rows.Add(new[]
         {
-          item.id, item.name, item.color, item.description,
+          item.id, item.name, item.color, item.icon ?? string.Empty, item.description,
         });
       }
       return rows;
@@ -844,6 +893,8 @@ namespace UniverIdle.Editor
         sb.Append("      \"id\": ").Append(Q(item.id)).Append(",\n");
         sb.Append("      \"name\": ").Append(Q(item.name)).Append(",\n");
         sb.Append("      \"color\": ").Append(Q(item.color)).Append(",\n");
+        if (!string.IsNullOrEmpty(item.icon))
+          sb.Append("      \"icon\": ").Append(Q(item.icon)).Append(",\n");
         sb.Append("      \"description\": ").Append(Q(item.description)).Append("\n");
         sb.Append("    }");
         if (i < items.Length - 1) sb.Append(",");

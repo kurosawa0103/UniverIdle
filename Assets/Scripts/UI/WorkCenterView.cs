@@ -9,8 +9,6 @@ namespace UniverIdle.UI
 
     public string WorkId => workId;
 
-    public void BindWork(string id) => workId = id;
-
     public virtual void OnActivated(MainUIController host) { }
 
     public virtual void OnDeactivated() { }

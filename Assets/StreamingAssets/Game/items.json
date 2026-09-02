@@ -17,6 +17,7 @@
       "id": "empty_bottle",
       "name": "空瓶",
       "color": "#90A098",
+      "icon": "item_empty_bottle",
       "description": "洗一洗就能装药水的玻璃瓶。"
     },
     {
@@ -101,6 +102,7 @@
       "id": "beast_fang",
       "name": "兽牙",
       "color": "#E8E0D0",
+      "icon": "item_beast_fang",
       "description": "从魔物嘴里撬下的尖牙，打磨后可做饰品或刃料。"
     },
     {

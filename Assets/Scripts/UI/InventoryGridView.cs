@@ -129,13 +129,27 @@ namespace UniverIdle.UI
     public void Show(ItemDefinition item, long count)
     {
       _root.SetActive(true);
-      _icon.color = item != null ? item.DisplayColor : UITheme.Muted;
+      ApplyIcon(item);
       _countText.text = FormatCount(count);
       if (_nameText != null)
         _nameText.text = item != null ? item.DisplayName : "";
     }
 
     public void Hide() => _root.SetActive(false);
+
+    private void ApplyIcon(ItemDefinition item)
+    {
+      var sprite = item != null ? ItemIconLoader.Get(item) : null;
+      if (sprite != null)
+      {
+        _icon.sprite = sprite;
+        _icon.color = Color.white;
+        return;
+      }
+
+      _icon.sprite = null;
+      _icon.color = item != null ? item.DisplayColor : UITheme.Muted;
+    }
 
     private static string FormatCount(long count) =>
       count >= 1000 ? (count / 1000f).ToString("0.#") + "k" : count.ToString();

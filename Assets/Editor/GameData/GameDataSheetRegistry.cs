@@ -43,7 +43,7 @@ namespace UniverIdle.Editor
     {
       new SheetInfo(
         "items", ItemsExcelKey, "items", WorkSheetKind.Items,
-        "物品 · items", "全游戏共用道具；各工作 loot / cost 引用此处 id"),
+        "物品 · items", "全游戏共用道具；icon 列填图标名（如 item_rag）或 Resources 路径，空则自动 item_{id}"),
       new SheetInfo(
         "scavenge_works", ScavengeExcelKey, "works", WorkSheetKind.Works,
         "拾荒 · works", "拾荒工作参数、经验公式"),

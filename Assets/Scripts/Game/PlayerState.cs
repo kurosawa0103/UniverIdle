@@ -27,7 +27,7 @@ namespace UniverIdle.Game
 
     public WorkProgress GetSceneProgress(string workId, string sceneId)
     {
-      var key = SceneProgressKey.Make(workId, sceneId);
+      var key = $"{workId}:{sceneId}";
       if (!_sceneProgress.TryGetValue(key, out var progress))
       {
         progress = new WorkProgress();

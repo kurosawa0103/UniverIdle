@@ -94,31 +94,22 @@ namespace UniverIdle.UI
         progressTimeText.text = FormatTime(runner.SecondsRemaining);
     }
 
-    public void OnInventoryChanged(MainUIController host)
-    {
-      _host = host;
-      RefreshActionCardBindings();
-      UpdateActionSelectionUi();
-      if (!string.IsNullOrEmpty(_activeActionId))
-      {
-        var action = GameContent.GetAction(_activeActionId);
-        if (action != null)
-          host.ShowActionDetail(action);
-      }
-    }
+    public void OnInventoryChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: false);
 
-    public void OnWorkOrSceneChanged(MainUIController host)
+    public void OnWorkOrSceneChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: true);
+
+    private void RefreshCenterState(MainUIController host, bool refreshSceneTags)
     {
       _host = host;
       RefreshActionCardBindings();
-      RefreshSceneTags();
+      if (refreshSceneTags)
+        RefreshSceneTags();
       UpdateActionSelectionUi();
-      if (!string.IsNullOrEmpty(_activeActionId))
-      {
-        var action = GameContent.GetAction(_activeActionId);
-        if (action != null)
-          host.ShowActionDetail(action);
-      }
+      if (string.IsNullOrEmpty(_activeActionId)) return;
+
+      var action = GameContent.GetAction(_activeActionId);
+      if (action != null)
+        host.ShowActionDetail(action);
     }
 
     public void OnActionStopped(WorkActionDefinition action, MainUIController host)
@@ -388,16 +379,7 @@ namespace UniverIdle.UI
     private static string FormatSpotTitle(WorkActionDefinition action)
     {
       if (action == null) return "";
-      if (!string.IsNullOrEmpty(action.SpotName)) return action.SpotName;
-
-      var name = action.DisplayName;
-      if (!string.IsNullOrEmpty(name))
-      {
-        var sep = name.IndexOf('·');
-        if (sep >= 0 && sep < name.Length - 1)
-          return name.Substring(sep + 1).Trim();
-      }
-      return name ?? action.Id;
+      return string.IsNullOrEmpty(action.SpotName) ? action.Id : action.SpotName;
     }
 
     private void UpdateLocationBannerForScene()

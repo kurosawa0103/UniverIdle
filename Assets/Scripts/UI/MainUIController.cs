@@ -46,7 +46,7 @@ namespace UniverIdle.UI
       if (_session?.Player != null)
       {
         _session.Player.OnInventoryChanged += OnInventoryChanged;
-        _session.Player.OnWorkChanged += OnWorkChanged;
+        _session.Player.OnWorkChanged += OnActiveWorkProgressChanged;
         _session.Player.OnSceneProgressChanged += OnSceneProgressChanged;
       }
       if (_session?.Runner != null)
@@ -150,7 +150,7 @@ namespace UniverIdle.UI
       if (_session?.Player != null)
       {
         _session.Player.OnInventoryChanged -= OnInventoryChanged;
-        _session.Player.OnWorkChanged -= OnWorkChanged;
+        _session.Player.OnWorkChanged -= OnActiveWorkProgressChanged;
         _session.Player.OnSceneProgressChanged -= OnSceneProgressChanged;
       }
       if (_session?.Runner != null)
@@ -224,19 +224,15 @@ namespace UniverIdle.UI
     private StandardWorkCenterView GetActiveStandardCenter() =>
       workCenterHost?.Active as StandardWorkCenterView;
 
-    private void OnWorkChanged(string workId)
+    private void OnActiveWorkProgressChanged(string workId)
     {
       RefreshWorkNav();
       if (workId != _activeWorkId) return;
       GetActiveStandardCenter()?.OnWorkOrSceneChanged(this);
     }
 
-    private void OnSceneProgressChanged(string workId, string sceneId)
-    {
-      RefreshWorkNav();
-      if (workId != _activeWorkId) return;
-      GetActiveStandardCenter()?.OnWorkOrSceneChanged(this);
-    }
+    private void OnSceneProgressChanged(string workId, string sceneId) =>
+      OnActiveWorkProgressChanged(workId);
 
     private void OnInventoryChanged()
     {

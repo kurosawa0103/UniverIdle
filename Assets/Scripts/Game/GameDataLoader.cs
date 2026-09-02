@@ -108,6 +108,7 @@ namespace UniverIdle.Game
           row.id,
           row.name,
           GameColorUtility.Parse(row.color, Color.gray),
+          row.icon,
           row.description);
       }
     }

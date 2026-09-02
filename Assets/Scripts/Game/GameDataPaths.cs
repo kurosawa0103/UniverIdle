@@ -2,6 +2,12 @@ namespace UniverIdle.Game
 {
   public static class GameDataPaths
   {
+    /// <summary>Resources.Load 用路径前缀，对应 Resources/ItemIcon/。</summary>
+    public const string ItemIconResourcesPrefix = "ItemIcon";
+
+    /// <summary>编辑器下直接读图：Assets/GameResources/ItemIcon/</summary>
+    public const string ItemIconEditorFolder = "Assets/GameResources/ItemIcon";
+
     public const string ItemsRelativePath = "Game/items.json";
     public const string ScavengeRelativePath = "Game/scavenge.json";
     public const string WoodcuttingRelativePath = "Game/woodcutting.json";
