@@ -49,7 +49,7 @@ namespace UniverIdle.Editor
         "拾荒 · works", "拾荒工作参数、经验公式"),
       new SheetInfo(
         "scavenge_actions", ScavengeExcelKey, "actions", WorkSheetKind.Actions,
-        "拾荒 · actions", "各地区动作；cost 列可留空"),
+        "拾荒 · actions", "各地区子地点；description=右侧详情文案，每条不同；cost 列可留空"),
       new SheetInfo(
         "scavenge_loot", ScavengeExcelKey, "loot", WorkSheetKind.Loot,
         "拾荒 · loot", "掉落：actionId + itemId；#itemName 列仅方便阅读，不导出"),

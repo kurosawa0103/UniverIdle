@@ -1,3 +1,4 @@
+using UniverIdle.Game;
 using UnityEngine;
 
 namespace UniverIdle.UI
@@ -18,5 +19,9 @@ namespace UniverIdle.UI
     public virtual void Refresh(MainUIController host) { }
 
     public virtual void TickProgress(MainUIController host) { }
+
+    public virtual void OnActionCompleted(MainUIController host, ActionCompleteResult result) { }
+
+    public virtual void OnRunnerActionStopped(MainUIController host, WorkActionDefinition action) { }
   }
 }

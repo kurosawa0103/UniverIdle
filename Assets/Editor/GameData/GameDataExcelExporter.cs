@@ -40,7 +40,7 @@ namespace UniverIdle.Editor
     private static readonly string[] ActionHeaderComments =
     {
       "动作ID", "所属工作", "地区ID", "地区名称", "子地点名", "卡片标题",
-      "时长(秒)", "完成经验", "解锁所需工作等级", "描述", "缩略图颜色",
+      "时长(秒)", "完成经验", "解锁所需工作等级", "详情文案(右侧)", "缩略图颜色",
       "消耗道具ID", "消耗数量",
     };
     private static readonly string[] LootExcelHeaderComments =

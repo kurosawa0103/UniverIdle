@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text;
 using TMPro;
 using UniverIdle.Game;
 using UnityEngine;
@@ -19,6 +18,7 @@ namespace UniverIdle.UI
     [SerializeField] private TextMeshProUGUI progressLabelText;
     [SerializeField] private TextMeshProUGUI progressTimeText;
     [SerializeField] private Transform sceneTagsRoot;
+    [SerializeField] private ScavengeDetailView detailPanel;
 
     private MainUIController _host;
     private string _activeActionId;
@@ -27,12 +27,16 @@ namespace UniverIdle.UI
     private readonly List<GameObject> _sceneTagObjects = new();
     private bool _wired;
 
+    public MainUIController Host => _host;
+
     private IReadOnlyList<WorkSceneGroup> SceneGroups => GameContent.GetSceneGroupsForWork(WorkId);
 
     private void Awake()
     {
       if (sceneTagsRoot == null && locationTitleText != null)
         sceneTagsRoot = locationTitleText.transform.parent?.Find("Tags");
+      if (detailPanel == null)
+        detailPanel = GetComponentInChildren<ScavengeDetailView>(true);
     }
 
     public override void OnActivated(MainUIController host)
@@ -40,6 +44,7 @@ namespace UniverIdle.UI
       _host = host;
       _activeSceneId = null;
       _activeActionId = null;
+      detailPanel?.Wire(this);
     }
 
     public override void Wire(MainUIController host)
@@ -47,6 +52,7 @@ namespace UniverIdle.UI
       if (_wired) return;
       _wired = true;
       _host = host;
+      detailPanel?.Wire(this);
 
       for (var i = 0; i < actionCards.Count; i++)
       {
@@ -74,12 +80,35 @@ namespace UniverIdle.UI
 
       if (!string.IsNullOrEmpty(_activeActionId))
         SelectAction(_activeActionId);
-      else if (_visibleActions.Count > 0)
-        host.ShowActionDetail(_visibleActions[0]);
-      host.RefreshDetailWorkButton();
+      else
+        SelectDefaultVisibleAction();
+      detailPanel?.RefreshWorkButton();
+    }
+
+    public override void OnActionCompleted(MainUIController host, ActionCompleteResult result)
+    {
+      if (result?.Action == null || result.Action.WorkId != WorkId) return;
+      _host = host;
+      detailPanel?.OnActionCompleted(result, host.Session?.Player);
+    }
+
+    public override void OnRunnerActionStopped(MainUIController host, WorkActionDefinition action)
+    {
+      OnActionStopped(action, host);
     }
 
     public override void TickProgress(MainUIController host)
+    {
+      if (detailPanel != null)
+      {
+        detailPanel.TickProgress(host.Session?.Runner, WorkId);
+        return;
+      }
+
+      TickCenterProgress(host);
+    }
+
+    private void TickCenterProgress(MainUIController host)
     {
       var runner = host.Session?.Runner;
       if (runner == null || runner.CurrentAction == null || runner.CurrentAction.WorkId != WorkId)
@@ -110,26 +139,41 @@ namespace UniverIdle.UI
 
       var action = GameContent.GetAction(_activeActionId);
       if (action != null)
-        host.ShowActionDetail(action);
-      host.RefreshDetailWorkButton();
+        ShowDetail(action);
+      detailPanel?.RefreshWorkButton();
     }
 
     public void OnActionStopped(WorkActionDefinition action, MainUIController host)
     {
       if (action == null || action.WorkId != WorkId) return;
       _activeActionId = null;
-      if (progressLabelText != null)
+      if (detailPanel != null)
+        detailPanel.ShowStopped(action, host.Session?.Player);
+      else if (progressLabelText != null)
         progressLabelText.text = "材料不足，已停止";
-      host.ShowActionStoppedDetail(action);
       RefreshActionCardBindings();
       UpdateActionSelectionUi();
-      host.RefreshDetailWorkButton();
+      detailPanel?.RefreshWorkButton();
     }
 
     private void OnActionSelected(int index)
     {
       if (_host == null || index >= _visibleActions.Count) return;
       SelectAction(_visibleActions[index].Id);
+    }
+
+    public bool IsRunningThisWork()
+    {
+      var runner = _host?.Session?.Runner;
+      return runner != null && runner.IsRunning && runner.CurrentAction?.WorkId == WorkId;
+    }
+
+    public bool TryStopCurrentAction()
+    {
+      if (!IsRunningThisWork()) return false;
+      _host.Session.Runner.Stop();
+      detailPanel?.OnManualStop();
+      return true;
     }
 
     public bool CanStartSelectedAction()
@@ -147,9 +191,11 @@ namespace UniverIdle.UI
       if (!CanStartSelectedAction()) return false;
       var action = GameContent.GetAction(_activeActionId);
       if (action == null || !_host.Session.Runner.TryStart(action)) return false;
-      if (progressLabelText != null)
+      if (detailPanel != null)
+        detailPanel.SetRunning(action);
+      else if (progressLabelText != null)
         progressLabelText.text = "进行中 · " + FormatSpotTitle(action);
-      _host.RefreshDetailWorkButton();
+      detailPanel?.RefreshWorkButton();
       return true;
     }
 
@@ -163,9 +209,9 @@ namespace UniverIdle.UI
 
       _activeActionId = actionId;
       UpdateActionSelectionUi();
-      _host.ShowActionDetail(action);
+      ShowDetail(action);
       UpdateLocationBannerForScene();
-      _host.RefreshDetailWorkButton();
+      detailPanel?.RefreshWorkButton();
     }
 
     private void EnsureActiveScene()
@@ -219,8 +265,27 @@ namespace UniverIdle.UI
 
       RefreshActionCardBindings();
       UpdateActionSelectionUi();
-      if (_visibleActions.Count > 0)
-        _host?.ShowActionDetail(_visibleActions[0]);
+      SelectDefaultVisibleAction();
+    }
+
+    private void SelectDefaultVisibleAction()
+    {
+      if (_visibleActions.Count == 0)
+      {
+        _activeActionId = null;
+        UpdateActionSelectionUi();
+        return;
+      }
+
+      var id = FindFirstUnlockedActionId();
+      if (!string.IsNullOrEmpty(id))
+        SelectAction(id);
+    }
+
+    private void ShowDetail(WorkActionDefinition action)
+    {
+      if (action == null || detailPanel == null || _host?.Session?.Player == null) return;
+      detailPanel.ShowAction(action, _host.Session.Player);
     }
 
     private WorkSceneGroup FindSceneGroup(string sceneId)
@@ -290,7 +355,6 @@ namespace UniverIdle.UI
           FormatSpotTitle(action),
           metaLeft,
           metaRight,
-          WorkActionUiFormatter.BuildDescription(action, player, work),
           !canPerform,
           action.ThumbColor);
       }
@@ -447,44 +511,6 @@ namespace UniverIdle.UI
       var m = total / 60;
       var s = total % 60;
       return m > 0 ? $"{m:00}:{s:00}" : $"00:{s:00}";
-    }
-  }
-
-  internal static class WorkActionUiFormatter
-  {
-    public static string BuildDescription(WorkActionDefinition action, PlayerState player, WorkDefinition work)
-    {
-      var sb = new StringBuilder();
-      sb.Append(action.Description);
-      var workName = work != null ? work.DisplayName : "拾荒";
-      var workLevel = player.GetWork(action.WorkId).Level;
-      var sceneLevel = player.GetSceneProgress(action.WorkId, action.SceneId).Level;
-      sb.Append($"\n\n{workName}等级：Lv.{workLevel}（升级需 {WorkProgression.XpRequiredForWorkLevel(workLevel, work)} 经验）");
-      sb.Append($"\n{action.SceneName}熟练度：Lv.{sceneLevel}（升级需 {WorkProgression.XpRequiredForSceneLevel(sceneLevel, work)} 经验）");
-      sb.Append($"\n解锁条件：{workName} Lv.{action.RequiredWorkLevel}");
-      if (action.HasCost)
-      {
-        var costItem = GameContent.GetItem(action.CostItemId);
-        var costName = costItem != null ? costItem.DisplayName : action.CostItemId;
-        var owned = player.GetItemCount(action.CostItemId);
-        sb.Append($"\n每次消耗：{costName} ×{action.CostAmount}（持有 {owned}）");
-      }
-      sb.Append("\n\n可能掉落：");
-      if (action.LootTable == null || action.LootTable.Count == 0)
-      {
-        sb.Append("无");
-        return sb.ToString();
-      }
-
-      for (var i = 0; i < action.LootTable.Count; i++)
-      {
-        if (i > 0) sb.Append("、");
-        var entry = action.LootTable[i];
-        var item = GameContent.GetItem(entry.ItemId);
-        var name = item != null ? item.DisplayName : entry.ItemId;
-        sb.Append(name).Append(" ").Append(Mathf.RoundToInt(entry.Chance * 100f)).Append("%");
-      }
-      return sb.ToString();
     }
   }
 }

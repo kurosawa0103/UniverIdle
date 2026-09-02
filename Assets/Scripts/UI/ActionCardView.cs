@@ -14,7 +14,7 @@ namespace UniverIdle.UI
         [SerializeField] private TextMeshProUGUI metaRightText;
         [SerializeField] private CanvasGroup canvasGroup;
 
-        public void Bind(string displayTitle, string metaLeft, string metaRight, string description, bool locked,
+        public void Bind(string displayTitle, string metaLeft, string metaRight, bool locked,
             Color thumbColor)
         {
             if (titleText != null) titleText.text = displayTitle;
