@@ -38,23 +38,6 @@ namespace UniverIdle.Editor
       "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
       "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbImage",
     };
-    private static readonly string[] ActionHeadersLegacyWithCostNoGoldThumbColor =
-    {
-      "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
-      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
-      "costItemId", "costAmount",
-    };
-    private static readonly string[] ActionHeadersLegacyNoCostThumbColor =
-    {
-      "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
-      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
-    };
-    private static readonly string[] ActionHeadersLegacyStandardThumbColor =
-    {
-      "id", "workId", "sceneId", "sceneName", "spotName", "displayName",
-      "durationSeconds", "xpReward", "requiredWorkLevel", "description", "thumbColor",
-      "costItemId", "costAmount", "goldChance", "goldMin", "goldMax",
-    };
     private static readonly string[] LootHeaders = { "actionId", "itemId", "chance", "min", "max" };
     private static readonly string[] LootExcelHeaders = { "actionId", "itemId", "#itemName", "chance", "min", "max" };
 
@@ -79,9 +62,6 @@ namespace UniverIdle.Editor
       Standard,
       LegacyWithCostNoGold,
       LegacyNoCost,
-      LegacyWithCostNoGoldThumbColor,
-      LegacyNoCostThumbColor,
-      LegacyStandardThumbColor,
     }
 
     public readonly struct ExportBundle
@@ -219,7 +199,6 @@ namespace UniverIdle.Editor
         : null;
 
       var oldLoot = BuildLootLookup(data.actions);
-      var oldActions = BuildActionLookup(data.actions);
 
       foreach (var action in actions)
       {
@@ -231,9 +210,6 @@ namespace UniverIdle.Editor
           action.loot = preserved;
         else
           action.loot = Array.Empty<LootRow>();
-
-        if (oldActions.TryGetValue(action.id, out var oldAction))
-          PreserveGoldIfMissing(action, oldAction);
       }
 
       data.actions = actions.ToArray();
@@ -652,10 +628,7 @@ namespace UniverIdle.Editor
         if (IsCommentOrEmpty(raw)) continue;
         if (IsHeaderEchoRow(raw, ActionHeaders) ||
             IsHeaderEchoRow(raw, ActionHeadersLegacyWithCostNoGold) ||
-            IsHeaderEchoRow(raw, ActionHeadersLegacyNoCost) ||
-            IsHeaderEchoRow(raw, ActionHeadersLegacyWithCostNoGoldThumbColor) ||
-            IsHeaderEchoRow(raw, ActionHeadersLegacyNoCostThumbColor) ||
-            IsHeaderEchoRow(raw, ActionHeadersLegacyStandardThumbColor))
+            IsHeaderEchoRow(raw, ActionHeadersLegacyNoCost))
           continue;
 
         var data = new string[ActionHeaders.Length];
@@ -712,27 +685,6 @@ namespace UniverIdle.Editor
           layout = ActionSheetLayout.LegacyNoCost;
           return true;
         }
-
-        if (HeadersMatch(header, ActionHeadersLegacyStandardThumbColor))
-        {
-          headerIndex = i;
-          layout = ActionSheetLayout.LegacyStandardThumbColor;
-          return true;
-        }
-
-        if (HeadersMatch(header, ActionHeadersLegacyWithCostNoGoldThumbColor))
-        {
-          headerIndex = i;
-          layout = ActionSheetLayout.LegacyWithCostNoGoldThumbColor;
-          return true;
-        }
-
-        if (HeadersMatch(header, ActionHeadersLegacyNoCostThumbColor))
-        {
-          headerIndex = i;
-          layout = ActionSheetLayout.LegacyNoCostThumbColor;
-          return true;
-        }
       }
 
       headerIndex = -1;
@@ -755,9 +707,6 @@ namespace UniverIdle.Editor
       {
         ActionSheetLayout.LegacyWithCostNoGold => ActionHeadersLegacyWithCostNoGold,
         ActionSheetLayout.LegacyNoCost => ActionHeadersLegacyNoCost,
-        ActionSheetLayout.LegacyWithCostNoGoldThumbColor => ActionHeadersLegacyWithCostNoGoldThumbColor,
-        ActionSheetLayout.LegacyNoCostThumbColor => ActionHeadersLegacyNoCostThumbColor,
-        ActionSheetLayout.LegacyStandardThumbColor => ActionHeadersLegacyStandardThumbColor,
         _ => ActionHeaders,
       };
 
@@ -766,27 +715,6 @@ namespace UniverIdle.Editor
       if (string.IsNullOrWhiteSpace(value)) return string.Empty;
       var trimmed = value.Trim();
       return trimmed.StartsWith("#", StringComparison.Ordinal) ? string.Empty : trimmed;
-    }
-
-    private static void PreserveGoldIfMissing(ActionRow action, ActionRow oldAction)
-    {
-      if (action == null || oldAction == null || oldAction.goldMax <= 0) return;
-      if (action.goldChance > 0f || action.goldMax > 0) return;
-      action.goldChance = oldAction.goldChance;
-      action.goldMin = oldAction.goldMin;
-      action.goldMax = oldAction.goldMax;
-    }
-
-    private static Dictionary<string, ActionRow> BuildActionLookup(ActionRow[] actions)
-    {
-      var map = new Dictionary<string, ActionRow>(StringComparer.Ordinal);
-      if (actions == null) return map;
-      foreach (var action in actions)
-      {
-        if (string.IsNullOrWhiteSpace(action?.id)) continue;
-        map[action.id] = action;
-      }
-      return map;
     }
 
     private static Dictionary<string, List<LootRow>> ReadLootSheet(List<string[]> rows)

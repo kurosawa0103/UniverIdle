@@ -26,6 +26,7 @@ namespace UniverIdle.UI
     private readonly List<WorkActionDefinition> _visibleActions = new();
     private readonly List<GameObject> _sceneTagObjects = new();
     private bool _wired;
+    private GameObject _centerRunningBarRoot;
 
     public MainUIController Host => _host;
 
@@ -37,6 +38,13 @@ namespace UniverIdle.UI
         sceneTagsRoot = locationTitleText.transform.parent?.Find("Tags");
       if (detailPanel == null)
         detailPanel = GetComponentInChildren<ScavengeDetailView>(true);
+      ResolveCenterRunningBarRoot();
+    }
+
+    public override void OnDeactivated()
+    {
+      detailPanel?.HideProgressBar();
+      HideCenterProgressBar();
     }
 
     public override void OnActivated(MainUIController host)
@@ -45,6 +53,7 @@ namespace UniverIdle.UI
       _activeSceneId = null;
       _activeActionId = null;
       detailPanel?.Wire(this);
+      SyncProgressBarVisibility(host);
     }
 
     public override void Wire(MainUIController host)
@@ -83,6 +92,7 @@ namespace UniverIdle.UI
       else
         SelectDefaultVisibleAction();
       detailPanel?.RefreshWorkButton();
+      SyncProgressBarVisibility(host);
     }
 
     public override void OnActionCompleted(MainUIController host, ActionCompleteResult result)
@@ -111,13 +121,17 @@ namespace UniverIdle.UI
     private void TickCenterProgress(MainUIController host)
     {
       var runner = host.Session?.Runner;
-      if (runner == null || runner.CurrentAction == null || runner.CurrentAction.WorkId != WorkId)
+      if (!IsShowingRunningAction() || runner?.CurrentAction == null)
       {
-        if (progressFill != null) progressFill.fillAmount = 0f;
-        if (progressTimeText != null) progressTimeText.text = "00:00";
+        HideCenterProgressBar();
         return;
       }
 
+      if (_centerRunningBarRoot != null && !_centerRunningBarRoot.activeSelf)
+        _centerRunningBarRoot.SetActive(true);
+
+      if (progressLabelText != null)
+        progressLabelText.text = "进行中 · " + FormatSpotTitle(runner.CurrentAction);
       if (progressFill != null)
         progressFill.fillAmount = runner.Progress;
       if (progressTimeText != null)
@@ -149,8 +163,8 @@ namespace UniverIdle.UI
       _activeActionId = null;
       if (detailPanel != null)
         detailPanel.ShowStopped(action, host.Session?.Player);
-      else if (progressLabelText != null)
-        progressLabelText.text = "材料不足，已停止";
+      else
+        HideCenterProgressBar();
       RefreshActionCardBindings();
       UpdateActionSelectionUi();
       detailPanel?.RefreshWorkButton();
@@ -167,6 +181,16 @@ namespace UniverIdle.UI
       var runner = _host?.Session?.Runner;
       return runner != null && runner.IsRunning && runner.CurrentAction?.WorkId == WorkId;
     }
+
+    /// <summary>当前选中的动作卡是否就是 Runner 正在执行的那条。</summary>
+    public bool IsShowingRunningAction()
+    {
+      if (!IsRunningThisWork()) return false;
+      var runner = _host.Session.Runner;
+      return !string.IsNullOrEmpty(_activeActionId) && runner.CurrentAction.Id == _activeActionId;
+    }
+
+    public string SelectedActionId => _activeActionId;
 
     public bool TryStopCurrentAction()
     {
@@ -193,8 +217,8 @@ namespace UniverIdle.UI
       if (action == null || !_host.Session.Runner.TryStart(action)) return false;
       if (detailPanel != null)
         detailPanel.SetRunning(action);
-      else if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + FormatSpotTitle(action);
+      else
+        ShowCenterProgressBar(action);
       detailPanel?.RefreshWorkButton();
       return true;
     }
@@ -511,6 +535,76 @@ namespace UniverIdle.UI
       var m = total / 60;
       var s = total % 60;
       return m > 0 ? $"{m:00}:{s:00}" : $"00:{s:00}";
+    }
+
+    private void ResolveCenterRunningBarRoot()
+    {
+      if (_centerRunningBarRoot != null) return;
+
+      if (progressFill != null)
+      {
+        var t = progressFill.transform;
+        while (t != null)
+        {
+          if (t.name == "RunningBar")
+          {
+            _centerRunningBarRoot = t.gameObject;
+            break;
+          }
+          t = t.parent;
+        }
+      }
+
+      if (_centerRunningBarRoot == null)
+      {
+        var bar = transform.Find("RunningBar");
+        if (bar != null)
+          _centerRunningBarRoot = bar.gameObject;
+      }
+
+      HideCenterProgressBar();
+    }
+
+    private void SyncProgressBarVisibility(MainUIController host)
+    {
+      if (detailPanel != null)
+      {
+        detailPanel.SyncProgressVisibility();
+        return;
+      }
+
+      if (IsShowingRunningAction())
+      {
+        var action = host?.Session?.Runner?.CurrentAction;
+        if (action != null)
+          ShowCenterProgressBar(action);
+      }
+      else
+      {
+        HideCenterProgressBar();
+      }
+    }
+
+    private void ShowCenterProgressBar(WorkActionDefinition action)
+    {
+      if (_centerRunningBarRoot != null)
+        _centerRunningBarRoot.SetActive(true);
+      if (progressLabelText != null)
+        progressLabelText.text = "进行中 · " + FormatSpotTitle(action);
+      if (progressFill != null)
+        progressFill.fillAmount = 0f;
+      if (progressTimeText != null)
+        progressTimeText.text = FormatTime(action.DurationSeconds);
+    }
+
+    private void HideCenterProgressBar()
+    {
+      if (progressFill != null)
+        progressFill.fillAmount = 0f;
+      if (progressTimeText != null)
+        progressTimeText.text = "00:00";
+      if (_centerRunningBarRoot != null)
+        _centerRunningBarRoot.SetActive(false);
     }
   }
 }

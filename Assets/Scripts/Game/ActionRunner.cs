@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace UniverIdle.Game
 {
@@ -15,36 +14,6 @@ namespace UniverIdle.Game
     public bool WorkLeveledUp { get; set; }
     public int WorkNewLevel { get; set; }
     public string SceneName { get; set; }
-
-    public string FormatLootSummary()
-    {
-      if (Loot == null || Loot.Count == 0)
-        return GoldGained <= 0 ? "这次什么也没捡到。" : "获得：金币 ×" + GoldGained;
-
-      var sb = new StringBuilder();
-      var wrote = false;
-      if (Loot != null)
-      {
-        for (var i = 0; i < Loot.Count; i++)
-        {
-          if (LootRules.IsEmpty(Loot[i].ItemId)) continue;
-          if (wrote) sb.Append("，");
-          var item = GameContent.GetItem(Loot[i].ItemId);
-          var name = item != null ? item.DisplayName : Loot[i].ItemId;
-          sb.Append(name).Append(" ×").Append(Loot[i].Amount);
-          wrote = true;
-        }
-      }
-
-      if (GoldGained > 0)
-      {
-        if (wrote) sb.Append("，");
-        sb.Append("金币 ×").Append(GoldGained);
-        wrote = true;
-      }
-
-      return wrote ? "获得：" + sb : "这次什么也没捡到。";
-    }
   }
 
   public sealed class ActionRunner

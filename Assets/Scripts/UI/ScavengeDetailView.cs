@@ -34,12 +34,7 @@ namespace UniverIdle.UI
       ResolveReferences();
       EnsureLootToast();
       EnsureProgressBarReady();
-    }
-
-    private void Update()
-    {
-      if (_center?.Host?.Session?.Runner == null) return;
-      TickProgress(_center.Host.Session.Runner, GameContent.WorkScavengeId);
+      HideProgressBar();
     }
 
     public void Wire(StandardWorkCenterView center)
@@ -70,6 +65,7 @@ namespace UniverIdle.UI
       if (bodyText != null)
         bodyText.text = BuildDetailBody(action, player, work);
       lootPreview?.Bind(action);
+      SyncProgressVisibility();
       RefreshWorkButton();
     }
 
@@ -79,17 +75,13 @@ namespace UniverIdle.UI
       var work = GameContent.GetWork(action.WorkId);
       if (bodyText != null)
         bodyText.text = BuildDetailBody(action, player, work) + "\n\n请补充道具后重新开始。";
-      SetProgressLabel("材料不足，已停止");
-      ClearProgressFill();
+      HideProgressBar();
       RefreshWorkButton();
     }
 
     public void OnManualStop()
     {
-      SetProgressLabel("已停止");
-      ClearProgressFill();
-      if (progressTimeText != null)
-        progressTimeText.text = "00:00";
+      HideProgressBar();
       RefreshWorkButton();
     }
 
@@ -119,6 +111,7 @@ namespace UniverIdle.UI
       EnsureLootToast();
       PushLootToasts(result, player);
       lootPreview?.RevealLoot(result);
+      SyncProgressVisibility();
       RefreshWorkButton();
     }
 
@@ -177,12 +170,14 @@ namespace UniverIdle.UI
 
     public void TickProgress(ActionRunner runner, string workId)
     {
-      var active = runner != null && runner.CurrentAction != null && runner.CurrentAction.WorkId == workId;
+      var showingRunning = _center != null && _center.IsShowingRunningAction();
+      var active = showingRunning
+                   && runner != null
+                   && runner.CurrentAction != null
+                   && runner.CurrentAction.WorkId == workId;
       if (!active)
       {
-        ClearProgressFill();
-        if (progressTimeText != null)
-          progressTimeText.text = "00:00";
+        HideProgressBar();
         return;
       }
 
@@ -190,10 +185,37 @@ namespace UniverIdle.UI
       if (runningBarRoot != null && !runningBarRoot.activeSelf)
         runningBarRoot.SetActive(true);
 
+      var spot = string.IsNullOrEmpty(runner.CurrentAction.SpotName)
+        ? runner.CurrentAction.DisplayName
+        : runner.CurrentAction.SpotName;
+      SetProgressLabel("进行中 · " + spot);
+
       if (progressFill != null)
         progressFill.fillAmount = runner.Progress;
       if (progressTimeText != null)
         progressTimeText.text = FormatTime(runner.SecondsRemaining);
+    }
+
+    public void HideProgressBar()
+    {
+      ClearProgressFill();
+      if (progressTimeText != null)
+        progressTimeText.text = "00:00";
+      if (runningBarRoot != null)
+        runningBarRoot.SetActive(false);
+    }
+
+    public void SyncProgressVisibility()
+    {
+      if (_center != null && _center.IsShowingRunningAction())
+      {
+        var action = _center.Host?.Session?.Runner?.CurrentAction;
+        if (action != null)
+          SetRunning(action);
+        return;
+      }
+
+      HideProgressBar();
     }
 
     public void RefreshWorkButton()
@@ -207,12 +229,7 @@ namespace UniverIdle.UI
 
     private void ClearProgress()
     {
-      SetProgressLabel("等待开始");
-      ClearProgressFill();
-      if (progressTimeText != null)
-        progressTimeText.text = "00:00";
-      if (runningBarRoot != null)
-        runningBarRoot.SetActive(true);
+      HideProgressBar();
     }
 
     private void ClearProgressFill()
