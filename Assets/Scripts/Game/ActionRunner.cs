@@ -13,6 +13,7 @@ namespace UniverIdle.Game
     public int NewLevel { get; set; }
     public bool WorkLeveledUp { get; set; }
     public int WorkNewLevel { get; set; }
+    public bool BagFull { get; set; }
     public string SceneName { get; set; }
   }
 
@@ -93,10 +94,16 @@ namespace UniverIdle.Game
       var sceneBefore = _player.GetSceneProgress(workId, sceneId).Level;
 
       var loot = LootRoller.Roll(action.LootTable, _rng);
-      foreach (var drop in loot)
+      var granted = new List<LootResult>();
+      var bagFull = false;
+      for (var i = 0; i < loot.Count; i++)
       {
+        var drop = loot[i];
         if (LootRules.IsEmpty(drop.ItemId)) continue;
-        _player.AddItem(drop.ItemId, drop.Amount);
+        if (_player.TryAddItem(drop.ItemId, drop.Amount))
+          granted.Add(drop);
+        else
+          bagFull = true;
       }
 
       var goldGained = 0;
@@ -115,13 +122,14 @@ namespace UniverIdle.Game
       OnActionCompleted?.Invoke(new ActionCompleteResult
       {
         Action = action,
-        Loot = loot,
+        Loot = granted,
         XpGained = action.XpReward,
         GoldGained = goldGained,
         LeveledUp = sceneAfter > sceneBefore,
         NewLevel = sceneAfter,
         WorkLeveledUp = workAfter > workBefore,
         WorkNewLevel = workAfter,
+        BagFull = bagFull,
         SceneName = action.SceneName,
       });
     }

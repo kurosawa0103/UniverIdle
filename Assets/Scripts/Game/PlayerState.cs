@@ -10,6 +10,8 @@ namespace UniverIdle.Game
     private readonly Dictionary<string, WorkProgress> _sceneProgress = new();
 
     private long _gold;
+    private int _unlockedPageCount;
+    private int _unlockedSlotCount;
 
     public event Action OnInventoryChanged;
     public event Action OnGoldChanged;
@@ -18,6 +20,80 @@ namespace UniverIdle.Game
 
     public IReadOnlyDictionary<string, long> Inventory => _inventory;
     public long Gold => _gold;
+    public int UnlockedPageCount => _unlockedPageCount;
+    public int UnlockedSlotCount => _unlockedSlotCount;
+    public int SlotCapacity => _unlockedSlotCount;
+
+    public PlayerState()
+    {
+      var bag = GameContent.Inventory;
+      _unlockedPageCount = 1;
+      _unlockedSlotCount = bag.FreeSlotCount;
+    }
+
+    public bool IsPageUnlocked(int pageIndex) => pageIndex >= 0 && pageIndex < _unlockedPageCount;
+
+    public int OccupiedSlotCount
+    {
+      get
+      {
+        var n = 0;
+        foreach (var kv in _inventory)
+        {
+          if (kv.Value > 0 && !LootRules.IsEmpty(kv.Key))
+            n++;
+        }
+        return n;
+      }
+    }
+
+    public bool TrySpendGold(long amount)
+    {
+      if (amount <= 0) return true;
+      if (_gold < amount) return false;
+      _gold -= amount;
+      OnGoldChanged?.Invoke();
+      return true;
+    }
+
+    public bool TryUnlockNextPage()
+    {
+      var bag = GameContent.Inventory;
+      if (_unlockedPageCount >= bag.PageCount) return false;
+      var cost = bag.PageUnlockCost(_unlockedPageCount);
+      if (!TrySpendGold(cost)) return false;
+      _unlockedPageCount++;
+      OnInventoryChanged?.Invoke();
+      return true;
+    }
+
+    public bool TryUnlockNextSlot()
+    {
+      var bag = GameContent.Inventory;
+      var cap = bag.SlotCapForPages(_unlockedPageCount);
+      if (_unlockedSlotCount >= cap) return false;
+      var cost = bag.SlotUnlockCost(_unlockedSlotCount);
+      if (!TrySpendGold(cost)) return false;
+      _unlockedSlotCount++;
+      OnInventoryChanged?.Invoke();
+      return true;
+    }
+
+    public bool TryAddItem(string itemId, long amount)
+    {
+      if (string.IsNullOrEmpty(itemId) || amount <= 0 || LootRules.IsEmpty(itemId)) return false;
+      if (_inventory.TryGetValue(itemId, out var current) && current > 0)
+      {
+        _inventory[itemId] = current + amount;
+        OnInventoryChanged?.Invoke();
+        return true;
+      }
+
+      if (OccupiedSlotCount >= _unlockedSlotCount) return false;
+      _inventory[itemId] = amount;
+      OnInventoryChanged?.Invoke();
+      return true;
+    }
 
     public WorkProgress GetWork(string workId)
     {
@@ -49,6 +125,7 @@ namespace UniverIdle.Game
     {
       if (string.IsNullOrEmpty(itemId) || amount <= 0 || LootRules.IsEmpty(itemId)) return;
       _inventory.TryGetValue(itemId, out var current);
+      if (current <= 0 && OccupiedSlotCount >= _unlockedSlotCount) return;
       _inventory[itemId] = current + amount;
       OnInventoryChanged?.Invoke();
     }

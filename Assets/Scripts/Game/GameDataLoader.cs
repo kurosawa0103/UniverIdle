@@ -12,7 +12,8 @@ namespace UniverIdle.Game
       IDictionary<string, ItemDefinition> items,
       IDictionary<string, WorkDefinition> works,
       IDictionary<string, WorkActionDefinition> actions,
-      IDictionary<string, List<WorkActionDefinition>> actionsByWork)
+      IDictionary<string, List<WorkActionDefinition>> actionsByWork,
+      out InventoryBagDefinition inventory)
     {
       items.Clear();
       works.Clear();
@@ -25,6 +26,7 @@ namespace UniverIdle.Game
       RegisterWorkContent(LoadWoodcuttingFile(), works, actions, actionsByWork, items);
       RegisterWorkContent(LoadMiningFile(), works, actions, actionsByWork, items);
       RegisterWorkContent(LoadMonsterExploreFile(), works, actions, actionsByWork, items);
+      inventory = ReadInventoryBag();
     }
 
     public static ItemsDataFile LoadItemsFile() =>
@@ -64,7 +66,23 @@ namespace UniverIdle.Game
       var works = new Dictionary<string, WorkDefinition>();
       var actions = new Dictionary<string, WorkActionDefinition>();
       var actionsByWork = new Dictionary<string, List<WorkActionDefinition>>();
-      LoadInto(items, works, actions, actionsByWork);
+      LoadInto(items, works, actions, actionsByWork, out _);
+    }
+
+    public static InventoryBagDataFile LoadInventoryFileIfPresent() =>
+      LoadJsonFileIfPresent<InventoryBagDataFile>(GameDataPaths.InventoryRelativePath);
+
+    private static InventoryBagDefinition ReadInventoryBag()
+    {
+      var data = LoadInventoryFileIfPresent();
+      if (data == null) return InventoryBagDefinition.CreateDefault();
+      return new InventoryBagDefinition(
+        data.slotsPerPage,
+        data.pageCount,
+        data.freeSlotCount,
+        data.pageUnlockGold,
+        data.slotUnlockGoldBase,
+        data.slotUnlockGoldPer);
     }
 
     private static T LoadJsonFile<T>(string relativePath) where T : class

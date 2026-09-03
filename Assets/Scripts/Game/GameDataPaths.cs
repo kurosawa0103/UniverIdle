@@ -22,5 +22,6 @@ namespace UniverIdle.Game
     public const string WoodcuttingRelativePath = "Game/woodcutting.json";
     public const string MiningRelativePath = "Game/mining.json";
     public const string MonsterExploreRelativePath = "Game/monster_explore.json";
+    public const string InventoryRelativePath = "Game/inventory.json";
   }
 }

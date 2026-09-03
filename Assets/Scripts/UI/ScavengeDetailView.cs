@@ -52,7 +52,7 @@ namespace UniverIdle.UI
 
       _wired = true;
       EnsureProgressBarReady();
-      ClearProgress();
+      HideProgressBar();
       RefreshWorkButton();
     }
 
@@ -107,17 +107,6 @@ namespace UniverIdle.UI
         _center.TryStartSelectedAction();
     }
 
-    public void SetRunning(WorkActionDefinition action)
-    {
-      if (action == null) return;
-      var spot = string.IsNullOrEmpty(action.SpotName) ? action.DisplayName : action.SpotName;
-      SetProgressLabel("进行中 · " + spot);
-      ClearProgressFill();
-      if (runningBarRoot != null)
-        runningBarRoot.SetActive(true);
-      RefreshWorkButton();
-    }
-
     public void OnActionCompleted(ActionCompleteResult result, PlayerState player)
     {
       if (result?.Action == null) return;
@@ -166,6 +155,9 @@ namespace UniverIdle.UI
         }
       }
 
+      if (result.BagFull)
+        lootToast.PushText("背包已满，装不下新道具。");
+
       if (result.WorkLeveledUp)
       {
         var work = GameContent.GetWork(result.Action.WorkId);
@@ -180,34 +172,6 @@ namespace UniverIdle.UI
       }
     }
 
-    public void TickProgress(ActionRunner runner, string workId)
-    {
-      var showingRunning = _center != null && _center.IsShowingRunningAction();
-      var active = showingRunning
-                   && runner != null
-                   && runner.CurrentAction != null
-                   && runner.CurrentAction.WorkId == workId;
-      if (!active)
-      {
-        HideProgressBar();
-        return;
-      }
-
-      EnsureProgressBarReady();
-      if (runningBarRoot != null && !runningBarRoot.activeSelf)
-        runningBarRoot.SetActive(true);
-
-      var spot = string.IsNullOrEmpty(runner.CurrentAction.SpotName)
-        ? runner.CurrentAction.DisplayName
-        : runner.CurrentAction.SpotName;
-      SetProgressLabel("进行中 · " + spot);
-
-      if (progressFill != null)
-        progressFill.fillAmount = runner.Progress;
-      if (progressTimeText != null)
-        progressTimeText.text = FormatTime(runner.SecondsRemaining);
-    }
-
     public void HideProgressBar()
     {
       ClearProgressFill();
@@ -215,19 +179,6 @@ namespace UniverIdle.UI
         progressTimeText.text = "00:00";
       if (runningBarRoot != null)
         runningBarRoot.SetActive(false);
-    }
-
-    public void SyncProgressVisibility()
-    {
-      if (_center != null && _center.IsShowingRunningAction())
-      {
-        var action = _center.Host?.Session?.Runner?.CurrentAction;
-        if (action != null)
-          SetRunning(action);
-        return;
-      }
-
-      HideProgressBar();
     }
 
     public void RefreshWorkButton()
@@ -245,21 +196,10 @@ namespace UniverIdle.UI
       return work != null && !string.IsNullOrEmpty(work.DisplayName) ? work.DisplayName : LabelStart;
     }
 
-    private void ClearProgress()
-    {
-      HideProgressBar();
-    }
-
     private void ClearProgressFill()
     {
       if (progressFill != null)
         progressFill.fillAmount = 0f;
-    }
-
-    private void SetProgressLabel(string text)
-    {
-      if (progressLabelText != null)
-        progressLabelText.text = text;
     }
 
     private void EnsureProgressBarReady()
@@ -396,14 +336,6 @@ namespace UniverIdle.UI
           }
         }
       }
-    }
-
-    private static string FormatTime(float seconds)
-    {
-      var total = Mathf.CeilToInt(seconds);
-      var m = total / 60;
-      var s = total % 60;
-      return m > 0 ? $"{m:00}:{s:00}" : $"00:{s:00}";
     }
 
     private static string BuildDetailBody(WorkActionDefinition action, PlayerState player, WorkDefinition work)

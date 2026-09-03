@@ -48,11 +48,7 @@ namespace UniverIdle.UI
       ResolveCenterRunningBarRoot();
     }
 
-    public override void OnDeactivated()
-    {
-      detailPanel?.HideProgressBar();
-      HideCenterProgressBar();
-    }
+    public override void OnDeactivated() => HideCenterProgressBar();
 
     public void BindSharedDetail(ScavengeDetailView detail)
     {
@@ -126,11 +122,6 @@ namespace UniverIdle.UI
     }
 
     public override void TickProgress(MainUIController host)
-    {
-      TickCenterProgress(host);
-    }
-
-    private void TickCenterProgress(MainUIController host)
     {
       ResolveCenterRunningBarRoot();
       var runner = host.Session?.Runner;

@@ -1,0 +1,9 @@
+{
+  "version": 3,
+  "slotsPerPage": 20,
+  "pageCount": 4,
+  "freeSlotCount": 10,
+  "pageUnlockGold": [0, 50, 150, 400],
+  "slotUnlockGoldBase": 15,
+  "slotUnlockGoldPer": 8
+}

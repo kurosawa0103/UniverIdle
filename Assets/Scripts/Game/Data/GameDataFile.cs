@@ -4,6 +4,18 @@ using UnityEngine;
 namespace UniverIdle.Game
 {
   [Serializable]
+  public class InventoryBagDataFile
+  {
+    public int version = 3;
+    public int slotsPerPage = 20;
+    public int pageCount = 4;
+    public int freeSlotCount = 10;
+    public int[] pageUnlockGold;
+    public int slotUnlockGoldBase = 15;
+    public int slotUnlockGoldPer = 8;
+  }
+
+  [Serializable]
   public class ItemsDataFile
   {
     public int version = 3;

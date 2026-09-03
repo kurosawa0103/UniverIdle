@@ -15,13 +15,23 @@ namespace UniverIdle.Game
     private static readonly Dictionary<string, WorkDefinition> Works = new();
     private static readonly Dictionary<string, WorkActionDefinition> Actions = new();
     private static readonly Dictionary<string, List<WorkActionDefinition>> ActionsByWork = new();
+    private static InventoryBagDefinition _inventory = InventoryBagDefinition.CreateDefault();
 
     private static bool _loaded;
+
+    public static InventoryBagDefinition Inventory
+    {
+      get
+      {
+        EnsureLoaded();
+        return _inventory;
+      }
+    }
 
     public static void EnsureLoaded()
     {
       if (_loaded) return;
-      GameDataLoader.LoadInto(Items, Works, Actions, ActionsByWork);
+      GameDataLoader.LoadInto(Items, Works, Actions, ActionsByWork, out _inventory);
       _loaded = true;
     }
 
@@ -102,6 +112,7 @@ namespace UniverIdle.Game
       Works.Clear();
       Actions.Clear();
       ActionsByWork.Clear();
+      _inventory = InventoryBagDefinition.CreateDefault();
       _loaded = false;
       EnsureLoaded();
     }
