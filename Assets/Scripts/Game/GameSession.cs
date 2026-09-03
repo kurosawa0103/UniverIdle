@@ -6,10 +6,16 @@ namespace UniverIdle.Game
   [DefaultExecutionOrder(-100)]
   public sealed class GameSession : MonoBehaviour
   {
+    public const float DefaultAutoSaveIntervalSeconds = 10f;
+
     public PlayerState Player { get; private set; }
     public ActionRunner Runner { get; private set; }
 
+    [SerializeField] private float autoSaveIntervalSeconds = DefaultAutoSaveIntervalSeconds;
+
     private bool _suppressSave;
+    private bool _dirty;
+    private float _autoSaveElapsed;
 
     private void Awake()
     {
@@ -26,6 +32,7 @@ namespace UniverIdle.Game
     private void Update()
     {
       Runner?.Tick(Time.deltaTime);
+      TickAutoSave(Time.deltaTime);
     }
 
     private void OnApplicationPause(bool pause)
@@ -71,29 +78,46 @@ namespace UniverIdle.Game
 
     private void WireSave()
     {
-      Player.OnInventoryChanged += SaveNow;
-      Player.OnGoldChanged += SaveNow;
-      Player.OnWorkChanged += OnWorkProgressSaved;
-      Player.OnSceneProgressChanged += OnSceneProgressSaved;
+      Player.OnInventoryChanged += MarkDirty;
+      Player.OnGoldChanged += MarkDirty;
+      Player.OnWorkChanged += MarkDirtyIgnoreArgs;
+      Player.OnSceneProgressChanged += MarkDirtyIgnoreArgs;
     }
 
     private void UnwireSave()
     {
       if (Player == null) return;
-      Player.OnInventoryChanged -= SaveNow;
-      Player.OnGoldChanged -= SaveNow;
-      Player.OnWorkChanged -= OnWorkProgressSaved;
-      Player.OnSceneProgressChanged -= OnSceneProgressSaved;
+      Player.OnInventoryChanged -= MarkDirty;
+      Player.OnGoldChanged -= MarkDirty;
+      Player.OnWorkChanged -= MarkDirtyIgnoreArgs;
+      Player.OnSceneProgressChanged -= MarkDirtyIgnoreArgs;
     }
 
-    private void OnWorkProgressSaved(string _) => SaveNow();
+    private void MarkDirtyIgnoreArgs(string _) => MarkDirty();
 
-    private void OnSceneProgressSaved(string _, string __) => SaveNow();
+    private void MarkDirtyIgnoreArgs(string _, string __) => MarkDirty();
+
+    private void MarkDirty()
+    {
+      if (_suppressSave) return;
+      _dirty = true;
+    }
+
+    private void TickAutoSave(float deltaTime)
+    {
+      if (autoSaveIntervalSeconds <= 0f || !_dirty) return;
+      _autoSaveElapsed += deltaTime;
+      if (_autoSaveElapsed < autoSaveIntervalSeconds) return;
+      _autoSaveElapsed = 0f;
+      SaveNow();
+    }
 
     private void SaveNow()
     {
       if (_suppressSave || Player == null) return;
       GameSave.Write(Player.ToSaveFile());
+      _dirty = false;
+      _autoSaveElapsed = 0f;
     }
   }
 }

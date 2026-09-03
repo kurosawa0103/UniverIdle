@@ -5,7 +5,7 @@
 ## 职责
 
 - 提供与 [02-界面](../../设计/02-界面.md) 一致的 **PC 主界面布局**（概念图仍是目标画风；工程以预制体色块为准）
-- 左栏工作导航、中栏（拾荒有地图；砍树是动作列表）、右栏详情、顶栏背包弹层
+- 左栏工作导航、中栏（拾荒有地图；砍树是动作列表）、右栏详情、顶栏金币与背包弹层
 - 运行时：切换工作、选动作挂机、各 Center 自带进度条、背包刷新
 
 ## 入口
@@ -32,6 +32,7 @@ Assets/Scripts/UI/LootPreviewView.cs
 Assets/Scripts/UI/LootDropSlotView.cs
 Assets/Scripts/UI/WorkActionDetailView.cs
 Assets/Scripts/UI/ScavengeDetailView.cs
+Assets/Scripts/UI/TopBarGoldView.cs
 Assets/Scripts/UI/UITheme.cs
 Assets/Scripts/Game/GameSession.cs
 Assets/Scripts/Game/GameContent.cs
@@ -44,7 +45,8 @@ Assets/Scripts/Game/GameContent.cs
 | 组件 | 挂哪里 | 要拖的引用 |
 |------|--------|------------|
 | `GameSession` | `App` | — |
-| `MainUIController` | `App` | `skillItems`、`workCenterHost`、背包按钮/面板 |
+| `MainUIController` | `App` | `skillItems`、`workCenterHost`、背包按钮/面板、`topBarGold`（可空则找子节点上的组件） |
+| `TopBarGoldView` | `TopBar/Currency` | **必拖** `icon` → `Icon`、`amountText` → `Text`（无按名兜底） |
 | `WorkCenterHost` | `App/Body/Center` | 各 `WorkView_*` 子物体 |
 | `ScavengeHubView` | `WorkView_scavenge`（拾荒工作根） | `detailPanel` → 拾荒 `Detail`（`ScavengeDetailView`） |
 | `StandardWorkCenterView` | **拾荒地图节点**（如 `Content/村口`）；挖矿/魔物目前挂在工作根（`sceneId` 空） | `workId`、`sceneId`（村口填 `gate`）、该节点动作卡、**本 Center 的 `RunningBar`** |
@@ -80,5 +82,5 @@ Assets/Scripts/Game/GameContent.cs
 - **进度条**：由当前 Center（`StandardWorkCenterView` / `ActionListWorkCenterView`）驱动自己的 `RunningBar`，详情不管进度
 - **获得提示**：详情上 `lootToast` 常为空，运行时仍会 `new`「获得提示区」
 - **砍树**：无地图节点；点卡即开停；详情用 `WorkActionDetailView`，与拾荒 `ScavengeDetailView` 分离
-- 顶栏图鉴/设置按钮无逻辑；背包见 [UI-背包](UI-背包.md)
-- 本地存档见 [SAVE-存档](SAVE-存档.md)；离线收益尚未做
+- **顶栏金币**：`TopBar/Currency` + `TopBarGoldView`；图鉴/设置按钮无逻辑；背包见 [UI-背包](UI-背包.md)
+- 本地存档见 [SAVE-存档](SAVE-存档.md)（默认 10 秒自动存）；离线收益尚未做

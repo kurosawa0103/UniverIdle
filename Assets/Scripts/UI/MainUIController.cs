@@ -20,6 +20,9 @@ namespace UniverIdle.UI
     [SerializeField] private InventoryPanelView inventoryPanel;
     [SerializeField] private Button inventoryButton;
 
+    [Header("顶栏")]
+    [SerializeField] private TopBarGoldView topBarGold;
+
     private GameSession _session;
     private string _activeWorkId;
     private bool _buttonsWired;
@@ -41,7 +44,6 @@ namespace UniverIdle.UI
       if (_session?.Player != null)
       {
         _session.Player.OnInventoryChanged += OnInventoryChanged;
-        _session.Player.OnGoldChanged += OnGoldChanged;
         _session.Player.OnWorkChanged += OnActiveWorkProgressChanged;
         _session.Player.OnSceneProgressChanged += OnSceneProgressChanged;
       }
@@ -51,6 +53,7 @@ namespace UniverIdle.UI
         _session.Runner.OnActionStopped += OnActionStopped;
       }
 
+      topBarGold?.Bind(_session?.Player);
       SelectWork(GetDefaultWorkId());
       RefreshInventory();
       RefreshWorkNav();
@@ -99,23 +102,25 @@ namespace UniverIdle.UI
         workCenterHost = GetComponentInChildren<WorkCenterHost>(true);
 
       var canvas = GetComponentInParent<Canvas>();
-      if (canvas != null)
-      {
-        if (inventoryPanel == null)
-          inventoryPanel = canvas.GetComponentInChildren<InventoryPanelView>(true);
+      if (canvas == null) return;
 
-        if (inventoryButton == null)
+      if (inventoryPanel == null)
+        inventoryPanel = canvas.GetComponentInChildren<InventoryPanelView>(true);
+
+      if (inventoryButton == null)
+      {
+        foreach (var btn in canvas.GetComponentsInChildren<Button>(true))
         {
-          foreach (var btn in canvas.GetComponentsInChildren<Button>(true))
+          if (btn.gameObject.name == "Btn_背包")
           {
-            if (btn.gameObject.name == "Btn_背包")
-            {
-              inventoryButton = btn;
-              break;
-            }
+            inventoryButton = btn;
+            break;
           }
         }
       }
+
+      if (topBarGold == null)
+        topBarGold = canvas.GetComponentInChildren<TopBarGoldView>(true);
     }
 
     private void OnDestroy()
@@ -123,7 +128,6 @@ namespace UniverIdle.UI
       if (_session?.Player != null)
       {
         _session.Player.OnInventoryChanged -= OnInventoryChanged;
-        _session.Player.OnGoldChanged -= OnGoldChanged;
         _session.Player.OnWorkChanged -= OnActiveWorkProgressChanged;
         _session.Player.OnSceneProgressChanged -= OnSceneProgressChanged;
       }
@@ -189,8 +193,6 @@ namespace UniverIdle.UI
     private void OnSceneProgressChanged(string workId, string sceneId) =>
       OnActiveWorkProgressChanged(workId);
 
-    private void OnGoldChanged() => RefreshInventory();
-
     private void OnInventoryChanged()
     {
       RefreshInventory();
@@ -210,7 +212,6 @@ namespace UniverIdle.UI
     private void OnActionCompleted(ActionCompleteResult result)
     {
       workCenterHost?.Active?.OnActionCompleted(this, result);
-      RefreshInventory();
       RefreshWorkNav();
     }
 

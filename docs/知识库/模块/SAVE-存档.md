@@ -14,7 +14,7 @@
 |------|-------------|
 | 存档文件 | `{Application.persistentDataPath}/save.dat` |
 | IO | `GameSave` |
-| 会话 | `GameSession`（Awake 加载；变更 / Pause / Quit / Destroy 写入） |
+| 会话 | `GameSession`（Awake 加载；脏标记后定时 / Pause / Quit / Destroy 写入） |
 | GM 重置 | **UniverIdle → GM...** →「重置存档」 |
 
 ## 文件清单
@@ -25,6 +25,14 @@ Assets/Scripts/Game/GameSession.cs
 Assets/Scripts/Game/PlayerState.cs   （ToSaveFile / LoadFrom / ResetToNewPlayer）
 Assets/Editor/Gm/GmSaveWindow.cs
 ```
+
+## 自动存档
+
+| 时机 | 行为 |
+|------|------|
+| 默认间隔 | **10 秒**（`GameSession.DefaultAutoSaveIntervalSeconds` / Inspector `autoSaveIntervalSeconds`） |
+| 触发条件 | 物品 / 金币 / 熟练度变更后标脏；到点且脏才写盘 |
+| 立刻写盘 | 开局建档、GM 重置、Pause、Quit、`OnDestroy` |
 
 ## 存档内容
 
@@ -51,19 +59,20 @@ Assets/Editor/Gm/GmSaveWindow.cs
 
 ## 依赖
 
-- `PlayerState` 事件触发自动存盘
+- `PlayerState` 事件只标脏；定时器与生命周期负责写盘
 - UI 不直接读写文件
 
 ## 扩展指南
 
 | 要做的事 | 改哪里 |
 |----------|--------|
+| 改间隔 | `GameSession.autoSaveIntervalSeconds`（≤0 关闭定时） |
 | 加字段 | `GameSaveFile` + `PlayerState.ToSaveFile/LoadFrom`，升 `version` |
 | 离线收益 | 存 `lastQuitUtc`，进游戏再结算（尚未做） |
 | 多存档槽 | 改 `GameSave.FileName` / 路径策略 |
 
 ## 已知限制
 
-- 每次物品/金币/熟练度变化都整文件写入（挂机节奏下可接受）
+- 挂机中最多延迟约一个间隔才落盘（Pause/退出仍立刻存）
 - 损坏 JSON 会警告并当无档开新号（不会自动备份）
 - 不存当前动作；重置或重进后挂机停止

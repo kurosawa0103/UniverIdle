@@ -58,7 +58,8 @@ Agent **默认不改 prefab**。在 `InventoryOverlay/Panel`：
 
 ## 依赖
 
-- `MainUIController`：`Btn_背包` → `Toggle`；金币/物品变化时 `Refresh`
+- `MainUIController`：`Btn_背包` → `Toggle`；物品变化时 `Refresh`
+- 面板自订 `OnGoldChanged`：仅打开时改 `goldText`（不整页刷格）
 - `ActionRunner`：背包满则本跳掉落跳过 + toast「背包已满…」
 
 ## 扩展指南

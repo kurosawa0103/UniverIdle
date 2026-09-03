@@ -23,6 +23,7 @@ namespace UniverIdle.UI
     private PlayerState _player;
     private readonly List<Image> _tabBackgrounds = new();
     private readonly List<TextMeshProUGUI> _tabLabels = new();
+    private bool _goldWired;
 
     public bool IsOpen => overlayRoot != null && overlayRoot.activeSelf;
 
@@ -32,6 +33,8 @@ namespace UniverIdle.UI
       WireHandlers();
       SetOpen(false);
     }
+
+    private void OnDestroy() => UnbindGold();
 
     private void ResolveReferences()
     {
@@ -118,8 +121,7 @@ namespace UniverIdle.UI
 
     public void Refresh(PlayerState player)
     {
-      if (player != null)
-        _player = player;
+      BindPlayer(player);
       if (!IsOpen || _player == null) return;
 
       var bag = GameContent.Inventory;
@@ -130,6 +132,36 @@ namespace UniverIdle.UI
 
       grid?.Refresh(_player, _pageIndex);
       RefreshChrome();
+    }
+
+    private void BindPlayer(PlayerState player)
+    {
+      if (player == null)
+      {
+        UnbindGold();
+        _player = null;
+        return;
+      }
+
+      if (_player == player && _goldWired) return;
+
+      UnbindGold();
+      _player = player;
+      _player.OnGoldChanged += OnPlayerGoldChanged;
+      _goldWired = true;
+    }
+
+    private void UnbindGold()
+    {
+      if (_player == null || !_goldWired) return;
+      _player.OnGoldChanged -= OnPlayerGoldChanged;
+      _goldWired = false;
+    }
+
+    private void OnPlayerGoldChanged()
+    {
+      if (!IsOpen || _player == null || goldText == null) return;
+      goldText.text = $"金币 {_player.Gold}";
     }
 
     private void RefreshChrome()
