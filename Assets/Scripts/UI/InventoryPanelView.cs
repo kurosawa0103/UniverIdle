@@ -41,23 +41,6 @@ namespace UniverIdle.UI
       if (grid == null)
         grid = GetComponentInChildren<InventoryGridView>(true);
 
-      if (closeButton == null)
-        closeButton = FindButton("Btn_Close");
-      if (backdropButton == null)
-      {
-        var backdrop = transform.Find("Backdrop");
-        if (backdrop != null)
-          backdropButton = backdrop.GetComponent<Button>();
-      }
-
-      if (tabRoot == null)
-      {
-        var tabs = transform.Find("Tabs");
-        if (tabs == null && overlayRoot != null)
-          tabs = overlayRoot.transform.Find("Tabs");
-        tabRoot = tabs;
-      }
-
       if (pageTabs == null)
         pageTabs = new List<Button>();
       if (pageTabs.Count == 0 && tabRoot != null)
@@ -66,11 +49,6 @@ namespace UniverIdle.UI
         for (var i = 0; i < buttons.Length; i++)
           pageTabs.Add(buttons[i]);
       }
-
-      if (pageLabelText == null)
-        pageLabelText = FindTmp("Text_页码");
-      if (goldText == null)
-        goldText = FindTmp("Text_金币");
 
       CacheTabVisuals();
     }
@@ -92,28 +70,6 @@ namespace UniverIdle.UI
         _tabBackgrounds.Add(tab.GetComponent<Image>());
         _tabLabels.Add(tab.GetComponentInChildren<TextMeshProUGUI>(true));
       }
-    }
-
-    private Button FindButton(string objectName)
-    {
-      var buttons = GetComponentsInChildren<Button>(true);
-      for (var i = 0; i < buttons.Length; i++)
-      {
-        if (buttons[i].gameObject.name == objectName)
-          return buttons[i];
-      }
-      return null;
-    }
-
-    private TextMeshProUGUI FindTmp(string objectName)
-    {
-      var texts = GetComponentsInChildren<TextMeshProUGUI>(true);
-      for (var i = 0; i < texts.Length; i++)
-      {
-        if (texts[i].gameObject.name == objectName)
-          return texts[i];
-      }
-      return null;
     }
 
     private void WireHandlers()

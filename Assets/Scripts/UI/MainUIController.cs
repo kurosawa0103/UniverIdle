@@ -31,7 +31,6 @@ namespace UniverIdle.UI
       _session = GetComponent<GameSession>();
       if (_session == null)
         _session = gameObject.AddComponent<GameSession>();
-      ResolveReferences();
     }
 
     private void Start()

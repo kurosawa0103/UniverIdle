@@ -46,20 +46,14 @@ namespace UniverIdle.UI
       }
     }
 
-    public override void OnActivated(MainUIController host)
-    {
-      _host = host;
-      ResolveRunningBarRoot();
-      BindCards();
-      UpdateCardSelection();
-      SyncProgressBar();
-    }
+    public override void OnActivated(MainUIController host) => Refresh(host);
 
     public override void OnDeactivated() => HideProgressBar();
 
     public override void Refresh(MainUIController host)
     {
       _host = host;
+      ResolveRunningBarRoot();
       BindCards();
       UpdateCardSelection();
       SyncProgressBar();

@@ -199,7 +199,7 @@ namespace UniverIdle.UI
     {
       if (!IsRunningThisWork()) return false;
       _host.Session.Runner.Stop();
-      detailPanel?.OnManualStop();
+      detailPanel?.RefreshWorkButton();
       return true;
     }
 
@@ -582,10 +582,6 @@ namespace UniverIdle.UI
         if (bar != null)
           _centerRunningBarRoot = bar.gameObject;
       }
-
-      if (progressFill == null || _centerRunningBarRoot == null)
-        detailPanel?.ShareProgressBar(
-          ref _centerRunningBarRoot, ref progressFill, ref progressLabelText, ref progressTimeText);
 
       HideCenterProgressBar();
     }

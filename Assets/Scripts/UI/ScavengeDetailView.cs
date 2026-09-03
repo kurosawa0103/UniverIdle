@@ -17,14 +17,9 @@ namespace UniverIdle.UI
     [SerializeField] private LootToastView lootToast;
     [SerializeField] private LootToastLineView lootLinePrefab;
     [SerializeField] private TextMeshProUGUI lootFloaterPrefab;
-    [SerializeField] private GameObject runningBarRoot;
-    [SerializeField] private Image progressFill;
-    [SerializeField] private TextMeshProUGUI progressLabelText;
-    [SerializeField] private TextMeshProUGUI progressTimeText;
 
     private StandardWorkCenterView _center;
     private bool _wired;
-    private static Sprite _whiteSprite;
 
     private const string LabelStart = "拾荒";
     private const string LabelStop = "停止";
@@ -33,8 +28,6 @@ namespace UniverIdle.UI
     {
       ResolveReferences();
       EnsureLootToast();
-      EnsureProgressBarReady();
-      HideProgressBar();
     }
 
     public void Wire(StandardWorkCenterView center)
@@ -51,8 +44,6 @@ namespace UniverIdle.UI
         workButtonText = workButton.GetComponentInChildren<TextMeshProUGUI>(true);
 
       _wired = true;
-      EnsureProgressBarReady();
-      HideProgressBar();
       RefreshWorkButton();
     }
 
@@ -68,33 +59,12 @@ namespace UniverIdle.UI
       RefreshWorkButton();
     }
 
-    public void ShareProgressBar(
-      ref GameObject root,
-      ref Image fill,
-      ref TextMeshProUGUI label,
-      ref TextMeshProUGUI time)
-    {
-      ResolveReferences();
-      EnsureProgressBarReady();
-      if (root == null) root = runningBarRoot;
-      if (fill == null) fill = progressFill;
-      if (label == null) label = progressLabelText;
-      if (time == null) time = progressTimeText;
-    }
-
     public void ShowStopped(WorkActionDefinition action, PlayerState player)
     {
       if (action == null) return;
       var work = GameContent.GetWork(action.WorkId);
       if (bodyText != null)
         bodyText.text = BuildDetailBody(action, player, work) + "\n\n请补充道具后重新开始。";
-      HideProgressBar();
-      RefreshWorkButton();
-    }
-
-    public void OnManualStop()
-    {
-      HideProgressBar();
       RefreshWorkButton();
     }
 
@@ -172,15 +142,6 @@ namespace UniverIdle.UI
       }
     }
 
-    public void HideProgressBar()
-    {
-      ClearProgressFill();
-      if (progressTimeText != null)
-        progressTimeText.text = "00:00";
-      if (runningBarRoot != null)
-        runningBarRoot.SetActive(false);
-    }
-
     public void RefreshWorkButton()
     {
       if (workButton == null || _center == null) return;
@@ -194,41 +155,6 @@ namespace UniverIdle.UI
     {
       var work = GameContent.GetWork(_center.WorkId);
       return work != null && !string.IsNullOrEmpty(work.DisplayName) ? work.DisplayName : LabelStart;
-    }
-
-    private void ClearProgressFill()
-    {
-      if (progressFill != null)
-        progressFill.fillAmount = 0f;
-    }
-
-    private void EnsureProgressBarReady()
-    {
-      if (progressFill == null && runningBarRoot != null)
-      {
-        var barFill = runningBarRoot.transform.Find("Mid/BarBg/BarFill");
-        if (barFill != null)
-          progressFill = barFill.GetComponent<Image>();
-      }
-
-      if (progressFill == null) return;
-
-      progressFill.type = Image.Type.Filled;
-      progressFill.fillMethod = Image.FillMethod.Horizontal;
-      progressFill.fillOrigin = (int)Image.OriginHorizontal.Left;
-      if (progressFill.sprite == null)
-        progressFill.sprite = GetWhiteSprite();
-    }
-
-    private static Sprite GetWhiteSprite()
-    {
-      if (_whiteSprite != null) return _whiteSprite;
-      _whiteSprite = Sprite.Create(
-        Texture2D.whiteTexture,
-        new Rect(0, 0, 4, 4),
-        new Vector2(0.5f, 0.5f),
-        4f);
-      return _whiteSprite;
     }
 
     private void EnsureLootToast()
@@ -290,22 +216,6 @@ namespace UniverIdle.UI
           lootToast = host.GetComponent<LootToastView>();
       }
 
-      if (runningBarRoot == null)
-      {
-        var bar = transform.Find("RunningBar");
-        if (bar != null)
-          runningBarRoot = bar.gameObject;
-      }
-
-      if (runningBarRoot != null)
-      {
-        var texts = runningBarRoot.GetComponentsInChildren<TextMeshProUGUI>(true);
-        if (progressLabelText == null && texts.Length > 0)
-          progressLabelText = texts[0];
-        if (progressTimeText == null && texts.Length > 1)
-          progressTimeText = texts[texts.Length - 1];
-      }
-
       if (titleText == null || bodyText == null || workButton == null)
       {
         TextMeshProUGUI firstText = null;
@@ -320,7 +230,6 @@ namespace UniverIdle.UI
               workButtonText = child.GetComponentInChildren<TextMeshProUGUI>(true);
             continue;
           }
-          if (child.name == "RunningBar") continue;
           if (child.name != "Text") continue;
           var tmp = child.GetComponent<TextMeshProUGUI>();
           if (tmp == null) continue;
