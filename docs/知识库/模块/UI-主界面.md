@@ -19,7 +19,6 @@
 
 ```
 Assets/Scripts/UI/MainUIController.cs
-Assets/Scripts/UI/MainUIInputBootstrap.cs
 Assets/Scripts/UI/WorkCenterHost.cs
 Assets/Scripts/UI/WorkCenterHubView.cs
 Assets/Scripts/UI/StandardWorkCenterView.cs
@@ -86,6 +85,7 @@ Assets/Scripts/Game/GameContent.cs
 
 | 日期 | 变更 |
 |------|------|
+| 2026-09-03 | 冗余：删未挂接 InputBootstrap、旧「工具/存档导出」、`AddItem`；存档不再读 json |
 | 2026-09-03 | 本地 JSON 存档；菜单 UniverIdle/GM 可重置 |
 | 2026-09-03 | 背包页签手配进预制体；砍运行时造 Tabs；详情不再接管进度条 |
 | 2026-09-03 | 砍树改 `ActionListWorkCenterView`：工作根直接摆动作卡，不走拾荒地图 |

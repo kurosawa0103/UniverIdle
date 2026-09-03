@@ -52,8 +52,7 @@ namespace UniverIdle.UI
     {
       EnsureMaps();
       BindDetails();
-      for (var i = 0; i < _maps.Length; i++)
-        _maps[i]?.OnActivated(host);
+      ActiveMap?.OnActivated(host);
     }
 
     public override void OnDeactivated()
@@ -85,19 +84,11 @@ namespace UniverIdle.UI
         _maps[i]?.OnRunnerActionStopped(host, action);
     }
 
-    public override void OnInventoryChanged(MainUIController host)
-    {
-      EnsureMaps();
-      for (var i = 0; i < _maps.Length; i++)
-        _maps[i]?.OnInventoryChanged(host);
-    }
+    public override void OnInventoryChanged(MainUIController host) =>
+      ActiveMap?.OnInventoryChanged(host);
 
-    public override void OnWorkOrSceneChanged(MainUIController host)
-    {
-      EnsureMaps();
-      for (var i = 0; i < _maps.Length; i++)
-        _maps[i]?.OnWorkOrSceneChanged(host);
-    }
+    public override void OnWorkOrSceneChanged(MainUIController host) =>
+      ActiveMap?.OnWorkOrSceneChanged(host);
 
     private void EnsureMaps()
     {

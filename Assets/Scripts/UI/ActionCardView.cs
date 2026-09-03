@@ -42,11 +42,7 @@ namespace UniverIdle.UI
             }
 
             if (canvasGroup != null)
-            {
-                canvasGroup.alpha = 1f;
                 canvasGroup.interactable = !locked;
-                canvasGroup.blocksRaycasts = true;
-            }
 
             var button = GetComponent<Button>();
             if (button != null)

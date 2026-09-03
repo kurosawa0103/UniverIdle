@@ -45,28 +45,30 @@ namespace UniverIdle.Game
   {
     public const int CurrentVersion = 1;
     public const string FileName = "save.dat";
-    private const string LegacyFileName = "save.json";
 
     public static string FilePath =>
       Path.Combine(Application.persistentDataPath, FileName);
 
-    private static string LegacyFilePath =>
-      Path.Combine(Application.persistentDataPath, LegacyFileName);
-
-    public static bool Exists => File.Exists(FilePath) || File.Exists(LegacyFilePath);
+    public static bool Exists => File.Exists(FilePath);
 
     public static bool TryLoad(out GameSaveFile data)
     {
       data = null;
-      if (TryRead(FilePath, out data))
-        return true;
+      var path = FilePath;
+      if (!File.Exists(path)) return false;
 
-      if (!TryRead(LegacyFilePath, out data))
+      try
+      {
+        var json = File.ReadAllText(path);
+        if (string.IsNullOrWhiteSpace(json)) return false;
+        data = JsonUtility.FromJson<GameSaveFile>(json);
+        return data != null;
+      }
+      catch (Exception e)
+      {
+        Debug.LogWarning($"读取存档失败：{e.Message}");
         return false;
-
-      Write(data);
-      TryDeletePath(LegacyFilePath);
-      return true;
+      }
     }
 
     public static void Write(GameSaveFile data)
@@ -85,32 +87,7 @@ namespace UniverIdle.Game
 
     public static bool Delete()
     {
-      var ok = TryDeletePath(FilePath);
-      ok &= TryDeletePath(LegacyFilePath);
-      return ok;
-    }
-
-    private static bool TryRead(string path, out GameSaveFile data)
-    {
-      data = null;
-      if (!File.Exists(path)) return false;
-
-      try
-      {
-        var json = File.ReadAllText(path);
-        if (string.IsNullOrWhiteSpace(json)) return false;
-        data = JsonUtility.FromJson<GameSaveFile>(json);
-        return data != null;
-      }
-      catch (Exception e)
-      {
-        Debug.LogWarning($"读取存档失败：{e.Message}");
-        return false;
-      }
-    }
-
-    private static bool TryDeletePath(string path)
-    {
+      var path = FilePath;
       if (!File.Exists(path)) return true;
       try
       {

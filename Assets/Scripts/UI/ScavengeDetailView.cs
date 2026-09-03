@@ -26,7 +26,8 @@ namespace UniverIdle.UI
 
     private void Awake()
     {
-      ResolveReferences();
+      if (lootPreview == null)
+        lootPreview = GetComponentInChildren<LootPreviewView>(true);
       EnsureLootToast();
     }
 
@@ -202,49 +203,6 @@ namespace UniverIdle.UI
       floatRt.offsetMax = Vector2.zero;
 
       return go.GetComponent<LootToastView>();
-    }
-
-    private void ResolveReferences()
-    {
-      if (lootPreview == null)
-        lootPreview = GetComponentInChildren<LootPreviewView>(true);
-
-      if (lootToast == null)
-      {
-        var host = transform.Find("获得提示区");
-        if (host != null)
-          lootToast = host.GetComponent<LootToastView>();
-      }
-
-      if (titleText == null || bodyText == null || workButton == null)
-      {
-        TextMeshProUGUI firstText = null;
-        for (var i = 0; i < transform.childCount; i++)
-        {
-          var child = transform.GetChild(i);
-          if (child.name == "Btn_工作")
-          {
-            if (workButton == null)
-              workButton = child.GetComponent<Button>();
-            if (workButtonText == null)
-              workButtonText = child.GetComponentInChildren<TextMeshProUGUI>(true);
-            continue;
-          }
-          if (child.name != "Text") continue;
-          var tmp = child.GetComponent<TextMeshProUGUI>();
-          if (tmp == null) continue;
-          if (firstText == null)
-          {
-            firstText = tmp;
-            if (titleText == null) titleText = tmp;
-          }
-          else if (bodyText == null)
-          {
-            bodyText = tmp;
-            break;
-          }
-        }
-      }
     }
 
     private static string BuildDetailBody(WorkActionDefinition action, PlayerState player, WorkDefinition work)

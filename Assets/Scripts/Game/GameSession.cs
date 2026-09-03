@@ -65,8 +65,8 @@ namespace UniverIdle.Game
 
     private void GiveStarterItems()
     {
-      Player.AddItem("small_trap", 8);
-      Player.AddItem("large_trap", 3);
+      Player.TryAddItem("small_trap", 8);
+      Player.TryAddItem("large_trap", 3);
     }
 
     private void WireSave()

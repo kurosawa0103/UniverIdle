@@ -116,15 +116,6 @@ namespace UniverIdle.Game
       return _inventory.TryGetValue(itemId, out var count) ? count : 0;
     }
 
-    public void AddItem(string itemId, long amount)
-    {
-      if (string.IsNullOrEmpty(itemId) || amount <= 0 || LootRules.IsEmpty(itemId)) return;
-      _inventory.TryGetValue(itemId, out var current);
-      if (current <= 0 && OccupiedSlotCount >= _unlockedSlotCount) return;
-      _inventory[itemId] = current + amount;
-      OnInventoryChanged?.Invoke();
-    }
-
     public void AddGold(long amount)
     {
       if (amount <= 0) return;

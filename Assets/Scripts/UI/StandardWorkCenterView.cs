@@ -104,8 +104,11 @@ namespace UniverIdle.UI
       if (!string.IsNullOrEmpty(_activeActionId))
         SelectAction(_activeActionId);
       else
-        SelectDefaultVisibleAction();
-      detailPanel?.RefreshWorkButton();
+      {
+        UpdateActionSelectionUi();
+        detailPanel?.RefreshWorkButton();
+      }
+
       SyncProgressBarVisibility(host);
     }
 
@@ -118,7 +121,15 @@ namespace UniverIdle.UI
 
     public override void OnRunnerActionStopped(MainUIController host, WorkActionDefinition action)
     {
-      OnActionStopped(action, host);
+      if (action == null || action.WorkId != WorkId) return;
+      _host = host;
+      _activeActionId = null;
+      HideCenterProgressBar();
+      if (detailPanel != null)
+        detailPanel.ShowStopped(action, host.Session?.Player);
+      RefreshActionCardBindings();
+      UpdateActionSelectionUi();
+      detailPanel?.RefreshWorkButton();
     }
 
     public override void TickProgress(MainUIController host)
@@ -158,18 +169,6 @@ namespace UniverIdle.UI
       var action = GameContent.GetAction(_activeActionId);
       if (action != null)
         ShowDetail(action);
-      detailPanel?.RefreshWorkButton();
-    }
-
-    public void OnActionStopped(WorkActionDefinition action, MainUIController host)
-    {
-      if (action == null || action.WorkId != WorkId) return;
-      _activeActionId = null;
-      HideCenterProgressBar();
-      if (detailPanel != null)
-        detailPanel.ShowStopped(action, host.Session?.Player);
-      RefreshActionCardBindings();
-      UpdateActionSelectionUi();
       detailPanel?.RefreshWorkButton();
     }
 
