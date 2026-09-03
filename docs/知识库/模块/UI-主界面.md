@@ -20,7 +20,7 @@
 ```
 Assets/Scripts/UI/MainUIController.cs
 Assets/Scripts/UI/WorkCenterHost.cs
-Assets/Scripts/UI/WorkCenterHubView.cs
+Assets/Scripts/UI/ScavengeHubView.cs
 Assets/Scripts/UI/StandardWorkCenterView.cs
 Assets/Scripts/UI/ActionListWorkCenterView.cs
 Assets/Scripts/UI/SkillNavItemView.cs
@@ -30,6 +30,7 @@ Assets/Scripts/UI/InventoryGridView.cs
 Assets/GameResources/Prefab/UniverIdle_MainUI.prefab
 Assets/Scripts/UI/LootPreviewView.cs
 Assets/Scripts/UI/LootDropSlotView.cs
+Assets/Scripts/UI/WorkActionDetailView.cs
 Assets/Scripts/UI/ScavengeDetailView.cs
 Assets/Scripts/UI/UITheme.cs
 Assets/Scripts/Game/GameSession.cs
@@ -45,10 +46,11 @@ Assets/Scripts/Game/GameContent.cs
 | `GameSession` | `App` | — |
 | `MainUIController` | `App` | `skillItems`、`workCenterHost`、背包按钮/面板 |
 | `WorkCenterHost` | `App/Body/Center` | 各 `WorkView_*` 子物体 |
-| `WorkCenterHubView` | `WorkView_scavenge`（工作根） | `detailPanel` → `Detail` |
+| `ScavengeHubView` | `WorkView_scavenge`（拾荒工作根） | `detailPanel` → 拾荒 `Detail`（`ScavengeDetailView`） |
 | `StandardWorkCenterView` | **拾荒地图节点**（如 `Content/村口`）；挖矿/魔物目前挂在工作根（`sceneId` 空） | `workId`、`sceneId`（村口填 `gate`）、该节点动作卡、**本 Center 的 `RunningBar`** |
-| `ActionListWorkCenterView` | `WorkView_woodcutting` 工作根 | `workId=woodcutting`、动作卡、中栏进度条；点卡开始/停止 |
-| `ScavengeDetailView` | `WorkView_scavenge/Detail`（砍树详情也可复用 toast/预览） | 标题、正文、拾荒 `Btn_工作`、`LootPreviewView`；**不管进度条** |
+| `ActionListWorkCenterView` | `WorkView_woodcutting` 工作根 | `workId=woodcutting`、动作卡、中栏进度条、`detailPanel` → 砍树 `Detail`（`WorkActionDetailView`）；点卡开始/停止 |
+| `ScavengeDetailView` | **仅** `WorkView_scavenge/Detail` | 标题、正文、拾荒 `Btn_工作`、`LootPreviewView`；**不管进度条**；不挂到砍树 |
+| `WorkActionDetailView` | `WorkView_woodcutting/Detail`（及其它动作列表工作） | 标题、正文、掉落预览、获得提示；**无**开始按钮 |
 | `SkillNavItemView` | 左栏每项 | `workId`、高亮状态 |
 | `ActionCardView` | 动作卡预制/实例 | 标题、元信息、Thumb |
 | `InventoryPanelView` | `InventoryOverlay` | 见 [UI-背包](UI-背包.md) |
@@ -75,8 +77,8 @@ Assets/Scripts/Game/GameContent.cs
 
 ## 已知限制
 
-- **进度条**：由当前 Center（`StandardWorkCenterView` / `ActionListWorkCenterView`）驱动自己的 `RunningBar`，详情不再 Share/Hide 进度
-- **获得提示**：`ScavengeDetailView` 的 `lootToast` 预制体常为空，运行时仍会 `new`「获得提示区」
-- **砍树**：无地图节点切换；点卡即开停；需手配满表内动作卡（现 5 棵树）
+- **进度条**：由当前 Center（`StandardWorkCenterView` / `ActionListWorkCenterView`）驱动自己的 `RunningBar`，详情不管进度
+- **获得提示**：详情上 `lootToast` 常为空，运行时仍会 `new`「获得提示区」
+- **砍树**：无地图节点；点卡即开停；详情用 `WorkActionDetailView`，与拾荒 `ScavengeDetailView` 分离
 - 顶栏图鉴/设置按钮无逻辑；背包见 [UI-背包](UI-背包.md)
 - 本地存档见 [SAVE-存档](SAVE-存档.md)；离线收益尚未做

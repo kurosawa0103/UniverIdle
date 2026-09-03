@@ -7,10 +7,9 @@ using UnityEngine.UI;
 namespace UniverIdle.UI
 {
   /// <summary>
-  /// 拾荒地图节点：横幅 + 该地图的动作卡。
-  /// 挂在地图节点上（如 Content/村口），<see cref="sceneId"/> 填 gate。
-  /// 工作根上另挂 <see cref="WorkCenterHubView"/> 向 Host 注册。
-  /// 砍树用 <see cref="ActionListWorkCenterView"/>，不走本组件。
+  /// 横幅 + 动作卡的工作 Center。
+  /// 拾荒：挂地图节点（sceneId 如 gate），工作根另挂 <see cref="ScavengeHubView"/> 注入 <see cref="ScavengeDetailView"/>。
+  /// 挖矿/魔物：可挂工作根（sceneId 空）。砍树用 <see cref="ActionListWorkCenterView"/>。
   /// </summary>
   public sealed class StandardWorkCenterView : WorkCenterView
   {
@@ -50,7 +49,8 @@ namespace UniverIdle.UI
 
     public override void OnDeactivated() => HideCenterProgressBar();
 
-    public void BindSharedDetail(ScavengeDetailView detail)
+    /// <summary>仅由 <see cref="ScavengeHubView"/> 注入拾荒详情，勿给其它工作复用。</summary>
+    public void BindScavengeDetail(ScavengeDetailView detail)
     {
       if (detail != null)
         detailPanel = detail;

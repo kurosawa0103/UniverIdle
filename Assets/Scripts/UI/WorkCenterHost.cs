@@ -17,8 +17,8 @@ namespace UniverIdle.UI
     {
       if (view == null || string.IsNullOrEmpty(view.WorkId)) return;
       if (!ShouldRegister(view)) return;
-      if (_views.TryGetValue(view.WorkId, out var existing) && existing is WorkCenterHubView &&
-          !(view is WorkCenterHubView))
+      if (_views.TryGetValue(view.WorkId, out var existing) && existing is ScavengeHubView &&
+          !(view is ScavengeHubView))
         return;
 
       _views[view.WorkId] = view;
@@ -26,7 +26,7 @@ namespace UniverIdle.UI
     }
 
     /// <summary>
-    /// 只注册工作根。地图节点上的 StandardWorkCenterView 由 Hub 转发，不单独占 workId。
+    /// 只注册工作根。地图节点上的 StandardWorkCenterView 由 ScavengeHubView 转发，不单独占 workId。
     /// </summary>
     private static bool ShouldRegister(WorkCenterView view)
     {

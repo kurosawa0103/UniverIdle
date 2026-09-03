@@ -15,7 +15,7 @@ namespace UniverIdle.UI
     [SerializeField] private Image progressFill;
     [SerializeField] private TextMeshProUGUI progressLabelText;
     [SerializeField] private TextMeshProUGUI progressTimeText;
-    [SerializeField] private ScavengeDetailView detailPanel;
+    [SerializeField] private WorkActionDetailView detailPanel;
 
     private MainUIController _host;
     private readonly List<WorkActionDefinition> _actions = new();
@@ -32,7 +32,7 @@ namespace UniverIdle.UI
       _host = host;
       ResolveRunningBarRoot();
       if (detailPanel == null)
-        detailPanel = GetComponentInChildren<ScavengeDetailView>(true);
+        detailPanel = GetComponentInChildren<WorkActionDetailView>(true);
 
       for (var i = 0; i < actionCards.Count; i++)
       {
