@@ -1,8 +1,8 @@
 {
     "projectName": "宇宙无敌放置",
     "buildTarget": "StandaloneWindows64",
-    "buildTime": "2026-09-02 14:19:59",
-    "totalSize": "132.86 MB",
+    "buildTime": "2026-09-03 14:04:41",
+    "totalSize": "136.26 MB",
     "scenes": [
         "Assets/Scenes/Demo.unity"
     ],
@@ -950,7 +950,7 @@
         },
         {
             "path": "Assets/Scripts/Game/GameDataLoader.cs",
-            "size": "8.3 KB",
+            "size": "8.8 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -1675,7 +1675,7 @@
         },
         {
             "path": "Assets/Scripts/Game/GameDataPaths.cs",
-            "size": "0.4 KB",
+            "size": "1.2 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -3025,7 +3025,7 @@
         },
         {
             "path": "Assets/Scripts/UI/InventoryGridView.cs",
-            "size": "4.9 KB",
+            "size": "5.2 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -3290,7 +3290,7 @@
         },
         {
             "path": "Assets/Scripts/Game/LootRoller.cs",
-            "size": "0.9 KB",
+            "size": "2.1 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -5055,7 +5055,7 @@
         },
         {
             "path": "Assets/Scripts/UI/ActionCardView.cs",
-            "size": "1.7 KB",
+            "size": "1.8 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -5275,7 +5275,7 @@
         },
         {
             "path": "Assets/Scripts/Game/Data/WorkActionDefinition.cs",
-            "size": "1.2 KB",
+            "size": "2.4 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -5415,7 +5415,7 @@
         },
         {
             "path": "Assets/Scripts/Game/PlayerState.cs",
-            "size": "2.6 KB",
+            "size": "2.8 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -6174,6 +6174,11 @@
             "type": "UnityEditor.MonoScript"
         },
         {
+            "path": "Assets/Scripts/Game/ItemIconLoader.cs",
+            "size": "1.2 KB",
+            "type": "UnityEditor.MonoScript"
+        },
+        {
             "path": "Packages/com.unity.timeline/Runtime/Evaluation/RuntimeClipBase.cs",
             "size": "0.5 KB",
             "type": "UnityEditor.MonoScript"
@@ -6335,7 +6340,7 @@
         },
         {
             "path": "Assets/Scripts/UI/WorkCenterView.cs",
-            "size": "0.6 KB",
+            "size": "0.8 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -6515,7 +6520,7 @@
         },
         {
             "path": "Assets/Scripts/UI/StandardWorkCenterView.cs",
-            "size": "15.8 KB",
+            "size": "19.0 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -6945,7 +6950,7 @@
         },
         {
             "path": "Assets/Scripts/Game/Data/GameDataFile.cs",
-            "size": "1.5 KB",
+            "size": "2.1 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -7206,6 +7211,11 @@
         {
             "path": "Assets/Plugins/Fungus/Scripts/Commands/PlayAmbianceSound.cs",
             "size": "1.8 KB",
+            "type": "UnityEditor.MonoScript"
+        },
+        {
+            "path": "Assets/Scripts/Game/GoldIconLoader.cs",
+            "size": "0.5 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -8804,6 +8814,11 @@
             "type": "UnityEditor.MonoScript"
         },
         {
+            "path": "Assets/Scripts/UI/ScavengeDetailView.cs",
+            "size": "13.4 KB",
+            "type": "UnityEditor.MonoScript"
+        },
+        {
             "path": "Assets/Plugins/Fungus/Scripts/Commands/PlayUsfxrSound.cs",
             "size": "3.7 KB",
             "type": "UnityEditor.MonoScript"
@@ -9909,6 +9924,11 @@
             "type": "UnityEditor.MonoScript"
         },
         {
+            "path": "Assets/Scripts/UI/LootToastView.cs",
+            "size": "12.3 KB",
+            "type": "UnityEditor.MonoScript"
+        },
+        {
             "path": "Packages/com.unity.visualscripting/Runtime/VisualScripting.Core/Reflection/Operators/MultiplicationHandler.cs",
             "size": "6.3 KB",
             "type": "UnityEditor.MonoScript"
@@ -9956,6 +9976,11 @@
         {
             "path": "Assets/Plugins/Fungus/Scripts/EventHandlers/ToggleChanged.cs",
             "size": "1.8 KB",
+            "type": "UnityEditor.MonoScript"
+        },
+        {
+            "path": "Assets/Scripts/UI/LootDropSlotView.cs",
+            "size": "3.2 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -10904,6 +10929,11 @@
             "type": "UnityEditor.MonoScript"
         },
         {
+            "path": "Assets/Scripts/UI/LootToastLineView.cs",
+            "size": "7.3 KB",
+            "type": "UnityEditor.MonoScript"
+        },
+        {
             "path": "Assets/Plugins/Behavior Designer/Runtime/Tasks/Unity/SharedVariables/CompareSharedColor.cs",
             "size": "0.8 KB",
             "type": "UnityEditor.MonoScript"
@@ -10995,7 +11025,7 @@
         },
         {
             "path": "Assets/Scripts/UI/MainUIController.cs",
-            "size": "8.6 KB",
+            "size": "6.7 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -11369,6 +11399,11 @@
             "type": "UnityEditor.MonoScript"
         },
         {
+            "path": "Assets/Scripts/Game/ActionImageLoader.cs",
+            "size": "1.4 KB",
+            "type": "UnityEditor.MonoScript"
+        },
+        {
             "path": "Assets/Plugins/Fungus/Thirdparty/FungusLua/Thirdparty/MoonSharp/Interpreter/Tree/Fast_Interface/Loader_Fast.cs",
             "size": "3.2 KB",
             "type": "UnityEditor.MonoScript"
@@ -11505,7 +11540,7 @@
         },
         {
             "path": "Assets/Scripts/Game/Data/LootEntry.cs",
-            "size": "0.4 KB",
+            "size": "0.6 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -11761,6 +11796,11 @@
         {
             "path": "Packages/com.unity.visualscripting/Runtime/VisualScripting.Core/EditorBinding/EditorBindingUtility.cs",
             "size": "0.2 KB",
+            "type": "UnityEditor.MonoScript"
+        },
+        {
+            "path": "Assets/Scripts/Game/LootRules.cs",
+            "size": "0.4 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -12290,7 +12330,7 @@
         },
         {
             "path": "Assets/Scripts/Game/ActionRunner.cs",
-            "size": "3.9 KB",
+            "size": "3.8 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -12770,7 +12810,7 @@
         },
         {
             "path": "Assets/Scripts/UI/UITheme.cs",
-            "size": "1.4 KB",
+            "size": "1.5 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -12940,7 +12980,7 @@
         },
         {
             "path": "Assets/Scripts/Game/Data/ItemDefinition.cs",
-            "size": "0.5 KB",
+            "size": "1.2 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -13206,6 +13246,11 @@
         {
             "path": "Assets/Plugins/Behavior Designer/Runtime/Tasks/Unity/ParticleSystem/SetEnableEmission.cs",
             "size": "1.4 KB",
+            "type": "UnityEditor.MonoScript"
+        },
+        {
+            "path": "Assets/Scripts/UI/LootPreviewView.cs",
+            "size": "3.6 KB",
             "type": "UnityEditor.MonoScript"
         },
         {
@@ -13889,18 +13934,18 @@
             "type": "UnityEngine.Texture2D"
         },
         {
-            "path": "Resources/unity_builtin_extra",
-            "size": "0.0 KB",
-            "type": "UnityEngine.Texture2D"
-        },
-        {
-            "path": "Resources/unity_builtin_extra",
-            "size": "0.0 KB",
-            "type": "UnityEngine.Texture2D"
-        },
-        {
             "path": "Assets/Plugins/I2/Localization/Examples/Resources/References/Sprites/L_ES.png",
             "size": "8.1 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_copper_nail.png",
+            "size": "84.1 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_worn_coin.png",
+            "size": "226.1 KB",
             "type": "UnityEngine.Texture2D"
         },
         {
@@ -13949,6 +13994,11 @@
             "type": "UnityEngine.Texture2D"
         },
         {
+            "path": "Assets/Resources/ItemIcon/item_beast_fang.png",
+            "size": "109.2 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
             "path": "Assets/Plugins/Fungus/Textures/rewind.png",
             "size": "3.3 KB",
             "type": "UnityEngine.Texture2D"
@@ -13994,6 +14044,36 @@
             "type": "UnityEngine.Texture2D"
         },
         {
+            "path": "Assets/Resources/ItemIcon/item_rag.png",
+            "size": "167.9 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_wood_scrap.png",
+            "size": "110.6 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_gold.png",
+            "size": "93.4 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_empty_bottle.png",
+            "size": "88.3 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_walnut_log.png",
+            "size": "134.8 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_pine_log.png",
+            "size": "148.7 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
             "path": "Assets/Resources/Editor/IconRight.png",
             "size": "32.7 KB",
             "type": "UnityEngine.Texture2D"
@@ -14011,6 +14091,16 @@
         {
             "path": "Assets/Plugins/Fungus/Textures/OptionButton.png",
             "size": "1.1 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_oak_log.png",
+            "size": "154.3 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_worn_hat.png",
+            "size": "122.1 KB",
             "type": "UnityEngine.Texture2D"
         },
         {
@@ -14294,18 +14384,13 @@
             "type": "UnityEngine.Sprite"
         },
         {
-            "path": "Resources/unity_builtin_extra",
-            "size": "0.0 KB",
-            "type": "UnityEngine.Sprite"
-        },
-        {
-            "path": "Resources/unity_builtin_extra",
-            "size": "0.0 KB",
-            "type": "UnityEngine.Sprite"
-        },
-        {
             "path": "Assets/Plugins/I2/Localization/Examples/Resources/References/Sprites/L_ES.png",
             "size": "8.1 KB",
+            "type": "UnityEngine.Sprite"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_copper_nail.png",
+            "size": "84.1 KB",
             "type": "UnityEngine.Sprite"
         },
         {
@@ -14339,6 +14424,11 @@
             "type": "UnityEngine.Sprite"
         },
         {
+            "path": "Assets/Resources/ItemIcon/item_beast_fang.png",
+            "size": "109.2 KB",
+            "type": "UnityEngine.Sprite"
+        },
+        {
             "path": "Assets/Plugins/Fungus/Textures/rewind.png",
             "size": "3.3 KB",
             "type": "UnityEngine.Sprite"
@@ -14361,6 +14451,26 @@
         {
             "path": "Assets/Plugins/Fungus/Textures/GreyButton.png",
             "size": "0.4 KB",
+            "type": "UnityEngine.Sprite"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_rag.png",
+            "size": "167.9 KB",
+            "type": "UnityEngine.Sprite"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_wood_scrap.png",
+            "size": "110.6 KB",
+            "type": "UnityEngine.Sprite"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_gold.png",
+            "size": "93.4 KB",
+            "type": "UnityEngine.Sprite"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_empty_bottle.png",
+            "size": "88.3 KB",
             "type": "UnityEngine.Sprite"
         },
         {
@@ -17134,8 +17244,23 @@
             "type": "UnityEngine.Material"
         },
         {
+            "path": "Resources/unity_builtin_extra",
+            "size": "0.0 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Resources/unity_builtin_extra",
+            "size": "0.0 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
             "path": "Assets/Res/fonts/unifont-15.0.06.ttf",
             "size": "12160.4 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/GameResources/BannerImage/banner_gate.png",
+            "size": "355.7 KB",
             "type": "UnityEngine.Texture2D"
         },
         {
@@ -17164,8 +17289,183 @@
             "type": "UnityEngine.Font"
         },
         {
+            "path": "Resources/unity_builtin_extra",
+            "size": "0.0 KB",
+            "type": "UnityEngine.Sprite"
+        },
+        {
+            "path": "Resources/unity_builtin_extra",
+            "size": "0.0 KB",
+            "type": "UnityEngine.Sprite"
+        },
+        {
+            "path": "Assets/GameResources/BannerImage/banner_gate.png",
+            "size": "355.7 KB",
+            "type": "UnityEngine.Sprite"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/掉落slot.prefab",
+            "size": "2.6 KB",
+            "type": "UnityEngine.GameObject"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.GameObject"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.GameObject"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.GameObject"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.GameObject"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.GameObject"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.GameObject"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示飘字.prefab",
+            "size": "3.7 KB",
+            "type": "UnityEngine.GameObject"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.CanvasRenderer"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.CanvasRenderer"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/掉落slot.prefab",
+            "size": "2.6 KB",
+            "type": "UnityEngine.CanvasRenderer"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.CanvasRenderer"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示飘字.prefab",
+            "size": "3.7 KB",
+            "type": "UnityEngine.CanvasRenderer"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.CanvasRenderer"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.CanvasRenderer"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/掉落slot.prefab",
+            "size": "2.6 KB",
+            "type": "UnityEngine.RectTransform"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.RectTransform"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.RectTransform"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.RectTransform"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.RectTransform"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.RectTransform"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.RectTransform"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示飘字.prefab",
+            "size": "3.7 KB",
+            "type": "UnityEngine.RectTransform"
+        },
+        {
             "path": "Assets/Res/fonts/unifont-15.asset",
             "size": "68430.8 KB",
+            "type": "UnityEngine.MonoBehaviour"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/掉落slot.prefab",
+            "size": "2.6 KB",
+            "type": "UnityEngine.MonoBehaviour"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/掉落slot.prefab",
+            "size": "2.6 KB",
+            "type": "UnityEngine.MonoBehaviour"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.MonoBehaviour"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.MonoBehaviour"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.MonoBehaviour"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.MonoBehaviour"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.MonoBehaviour"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示.prefab",
+            "size": "17.5 KB",
+            "type": "UnityEngine.MonoBehaviour"
+        },
+        {
+            "path": "Assets/GameResources/Prefab/获得提示飘字.prefab",
+            "size": "3.7 KB",
             "type": "UnityEngine.MonoBehaviour"
         },
         {
@@ -17184,18 +17484,18 @@
             "type": "UnityEngine.Texture2D"
         },
         {
-            "path": "Resources/unity_builtin_extra",
-            "size": "0.0 KB",
-            "type": "UnityEngine.Texture2D"
-        },
-        {
-            "path": "Resources/unity_builtin_extra",
-            "size": "0.0 KB",
-            "type": "UnityEngine.Texture2D"
-        },
-        {
             "path": "Assets/Plugins/I2/Localization/Examples/Resources/References/Sprites/L_ES.png",
             "size": "8.1 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_copper_nail.png",
+            "size": "84.1 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_worn_coin.png",
+            "size": "226.1 KB",
             "type": "UnityEngine.Texture2D"
         },
         {
@@ -17226,6 +17526,11 @@
         {
             "path": "Assets/Plugins/Fungus/Textures/OptionButtonDisabled.png",
             "size": "1.0 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_beast_fang.png",
+            "size": "109.2 KB",
             "type": "UnityEngine.Texture2D"
         },
         {
@@ -17264,6 +17569,36 @@
             "type": "UnityEngine.Texture2D"
         },
         {
+            "path": "Assets/Resources/ItemIcon/item_rag.png",
+            "size": "167.9 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_wood_scrap.png",
+            "size": "110.6 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_gold.png",
+            "size": "93.4 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_empty_bottle.png",
+            "size": "88.3 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_walnut_log.png",
+            "size": "134.8 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_pine_log.png",
+            "size": "148.7 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
             "path": "Assets/Resources/Editor/IconRight.png",
             "size": "32.7 KB",
             "type": "UnityEngine.Texture2D"
@@ -17276,6 +17611,16 @@
         {
             "path": "Assets/Plugins/Fungus/Textures/OptionButton.png",
             "size": "1.1 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_oak_log.png",
+            "size": "154.3 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/Resources/ItemIcon/item_worn_hat.png",
+            "size": "122.1 KB",
             "type": "UnityEngine.Texture2D"
         },
         {
@@ -17347,6 +17692,21 @@
             "path": "Assets/Plugins/Fungus/Audio/MidVoice.wav",
             "size": "14.3 KB",
             "type": "UnityEngine.AudioClip"
+        },
+        {
+            "path": "Resources/unity_builtin_extra",
+            "size": "0.0 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Resources/unity_builtin_extra",
+            "size": "0.0 KB",
+            "type": "UnityEngine.Texture2D"
+        },
+        {
+            "path": "Assets/GameResources/BannerImage/banner_gate.png",
+            "size": "355.7 KB",
+            "type": "UnityEngine.Texture2D"
         }
     ]
 }

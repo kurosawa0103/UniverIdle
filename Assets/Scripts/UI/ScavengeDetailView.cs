@@ -88,7 +88,7 @@ namespace UniverIdle.UI
     private void OnWorkButtonClicked()
     {
       if (_center == null) return;
-      if (_center.IsRunningThisWork())
+      if (_center.IsShowingRunningAction())
         _center.TryStopCurrentAction();
       else
         _center.TryStartSelectedAction();
@@ -221,10 +221,16 @@ namespace UniverIdle.UI
     public void RefreshWorkButton()
     {
       if (workButton == null || _center == null) return;
-      var running = _center.IsRunningThisWork();
+      var showingRunning = _center.IsShowingRunningAction();
       if (workButtonText != null)
-        workButtonText.text = running ? LabelStop : LabelStart;
-      workButton.interactable = running || _center.CanStartSelectedAction();
+        workButtonText.text = showingRunning ? LabelStop : GetStartLabel();
+      workButton.interactable = showingRunning || _center.CanStartSelectedAction();
+    }
+
+    private string GetStartLabel()
+    {
+      var work = GameContent.GetWork(_center.WorkId);
+      return work != null && !string.IsNullOrEmpty(work.DisplayName) ? work.DisplayName : LabelStart;
     }
 
     private void ClearProgress()
@@ -398,7 +404,7 @@ namespace UniverIdle.UI
       else
         sb.Append("暂无描述。");
 
-      var workName = work != null ? work.DisplayName : "工作";
+      var workName = work != null ? work.DisplayName : "拾荒";
       if (player != null && !SceneProgressRules.IsRegionUnlocked(player, action))
       {
         sb.Append("\n\n").Append(SceneProgressRules.FormatUnlockHint(action, workName));

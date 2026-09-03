@@ -16,7 +16,7 @@
     {
       "id": "wood_scraps",
       "name": "木头废料",
-      "icon": "item_wood_scraps",
+      "icon": "item_wood_scrap",
       "description": "从废料里捡出的木块，只能去生火了。"
     },
     {
@@ -64,7 +64,7 @@
     {
       "id": "pine_log",
       "name": "松木",
-      "icon": "item_rag",
+      "icon": "item_pine_log",
       "description": "短松上砍下的原木，纹理直、易加工，生火铺底都合适。"
     },
     {
@@ -76,8 +76,14 @@
     {
       "id": "oak_log",
       "name": "橡木",
-      "icon": "item_rag",
+      "icon": "item_oak_log",
       "description": "橡树硬木，沉实耐腐，做梁做柄都趁手。"
+    },
+    {
+      "id": "walnut_log",
+      "name": "胡桃木",
+      "icon": "item_walnut_log",
+      "description": "深褐带香的硬木，纹理细密，做柄做箱都体面。"
     },
     {
       "id": "ironwood_log",

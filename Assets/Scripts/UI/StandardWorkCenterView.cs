@@ -203,8 +203,7 @@ namespace UniverIdle.UI
     public bool CanStartSelectedAction()
     {
       if (_host == null || string.IsNullOrEmpty(_activeActionId)) return false;
-      var runner = _host.Session?.Runner;
-      if (runner != null && runner.IsRunning) return false;
+      if (IsShowingRunningAction()) return false;
       var action = GameContent.GetAction(_activeActionId);
       return action != null && action.WorkId == WorkId &&
              SceneProgressRules.CanPerform(_host.Session.Player, action);

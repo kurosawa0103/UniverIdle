@@ -61,6 +61,21 @@
       ]
     },
     {
+      "id": "woodcut_walnut",
+      "workId": "woodcutting",
+      "sceneId": "walnut",
+      "sceneName": "胡桃",
+      "spotName": "",
+      "displayName": "胡桃 · 伐木",
+      "durationSeconds": 8,
+      "xpReward": 18,
+      "requiredWorkLevel": 8,
+      "description": "谷内少见的胡桃树，木质深褐带香，比橡木更沉，专出胡桃木。",
+      "loot": [
+        { "itemId": "walnut_log", "chance": 1 }
+      ]
+    },
+    {
       "id": "woodcut_ironwood",
       "workId": "woodcutting",
       "sceneId": "ironwood",
