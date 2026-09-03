@@ -17,6 +17,10 @@ namespace UniverIdle.UI
     {
       if (view == null || string.IsNullOrEmpty(view.WorkId)) return;
       if (!ShouldRegister(view)) return;
+      if (_views.TryGetValue(view.WorkId, out var existing) && existing is WorkCenterHubView &&
+          !(view is WorkCenterHubView))
+        return;
+
       _views[view.WorkId] = view;
       view.gameObject.SetActive(false);
     }
@@ -26,9 +30,12 @@ namespace UniverIdle.UI
     /// </summary>
     private static bool ShouldRegister(WorkCenterView view)
     {
+      if (view is StandardWorkCenterView map && !string.IsNullOrEmpty(map.BoundSceneId))
+        return false;
+
       var parent = view.transform.parent;
       if (parent == null) return true;
-      return parent.GetComponentInParent<WorkCenterView>() == null;
+      return parent.GetComponentInParent<WorkCenterView>(true) == null;
     }
 
     public void WireAll(MainUIController host)
@@ -58,10 +65,20 @@ namespace UniverIdle.UI
       }
 
       Active = next;
-      Active.gameObject.SetActive(true);
+      ActivateChain(Active.transform);
       Active.OnActivated(host);
       Active.Refresh(host);
       return true;
+    }
+
+    private void ActivateChain(Transform target)
+    {
+      var stop = transform;
+      var stack = new List<Transform>();
+      for (var t = target; t != null && t != stop; t = t.parent)
+        stack.Add(t);
+      for (var i = stack.Count - 1; i >= 0; i--)
+        stack[i].gameObject.SetActive(true);
     }
   }
 }

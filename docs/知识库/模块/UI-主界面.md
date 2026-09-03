@@ -1,6 +1,6 @@
 # UI-01 主界面（UGUI）
 
-> 状态：**已接拾荒挂机** · 更新：2026-09-02
+> 状态：**已接拾荒挂机** · 更新：2026-09-03
 
 ## 职责
 
@@ -21,7 +21,9 @@
 Assets/Scripts/UI/MainUIController.cs
 Assets/Scripts/UI/MainUIInputBootstrap.cs
 Assets/Scripts/UI/WorkCenterHost.cs
+Assets/Scripts/UI/WorkCenterHubView.cs
 Assets/Scripts/UI/StandardWorkCenterView.cs
+Assets/Scripts/UI/ActionListWorkCenterView.cs
 Assets/Scripts/UI/SkillNavItemView.cs
 Assets/Scripts/UI/ActionCardView.cs
 Assets/Scripts/UI/InventoryPanelView.cs
@@ -44,7 +46,8 @@ Assets/Scripts/Game/GameContent.cs
 | `MainUIController` | `App` | `skillItems`、`workCenterHost`、背包按钮/面板 |
 | `WorkCenterHost` | `App/Body/Center` | 各 `WorkView_*` 子物体 |
 | `WorkCenterHubView` | `WorkView_scavenge`（工作根） | `detailPanel` → `Detail` |
-| `StandardWorkCenterView` | **地图节点**（如 `Content/村口`）；砍树等仍可挂工作根 | `workId`、`sceneId`（村口填 `gate`）、该地图的 ActionCards |
+| `StandardWorkCenterView` | **拾荒地图节点**（如 `Content/村口`） | `workId`、`sceneId`（村口填 `gate`）、该地图的 ActionCards |
+| `ActionListWorkCenterView` | `WorkView_woodcutting` 工作根 | `workId=woodcutting`、动作卡、中栏进度条；点卡开始/停止 |
 | `ScavengeDetailView` | `WorkView_scavenge/Detail` | 标题、正文、`Btn_工作`、`RunningBar`、`LootPreviewView` |
 | `SkillNavItemView` | 左栏每项 | `workId`、高亮状态 |
 | `ActionCardView` | 动作卡预制/实例 | 标题、元信息、Thumb |
@@ -73,12 +76,14 @@ Assets/Scripts/Game/GameContent.cs
 ## 已知限制
 
 - **右侧详情**：仅拾荒 `WorkView_scavenge` 含 `Detail`（含进度条 `RunningBar`）；由 `ScavengeDetailView` 驱动
+- **砍树**：无地图 Tags / 无权重掉落预览；换组件后需手配满表内动作卡（现 5 棵树）
 - 顶栏图鉴/背包/设置部分按钮无逻辑
 
 ## 变更记录
 
 | 日期 | 变更 |
 |------|------|
+| 2026-09-03 | 砍树改 `ActionListWorkCenterView`：工作根直接摆动作卡，不走拾荒地图 |
 | 2026-09-02 | 拾荒进度条迁入 `Detail/RunningBar`，由 `ScavengeDetailView` 驱动 |
 | 2026-09-02 | 右侧详情从 `MainUIController` 迁至 `WorkView_scavenge/ScavengeDetailView` |
 | 2026-09-02 | 约定 UI 以预制体手配为准；掉落预览 + `掉落slot` 预制体 |

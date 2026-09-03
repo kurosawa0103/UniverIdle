@@ -65,9 +65,7 @@ namespace UniverIdle.UI
 
     public override void Refresh(MainUIController host)
     {
-      EnsureMaps();
-      for (var i = 0; i < _maps.Length; i++)
-        _maps[i]?.Refresh(host);
+      ActiveMap?.Refresh(host);
     }
 
     public override void TickProgress(MainUIController host)

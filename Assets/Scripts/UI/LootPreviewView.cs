@@ -22,12 +22,14 @@ namespace UniverIdle.UI
 
     private void Awake()
     {
-      _rect = (RectTransform)transform;
-      if (slotRoot == null) slotRoot = transform;
+      _rect = transform as RectTransform;
+      slotRoot = ResolveSlotRoot();
     }
 
     public void Bind(WorkActionDefinition action)
     {
+      var root = ResolveSlotRoot();
+      slotRoot = root;
       var table = action?.LootTable;
       var hasLoot = table != null && table.Count > 0;
       gameObject.SetActive(hasLoot);
@@ -48,8 +50,9 @@ namespace UniverIdle.UI
 
       var slotCount = Mathf.Min(table.Count, MaxPreviewSlots);
       EnsureSlotCount(slotCount);
-      for (var i = 0; i < slotCount; i++)
+      for (var i = 0; i < slotCount && i < _slots.Count; i++)
       {
+        if (_slots[i] == null) continue;
         var entry = table[i];
         var item = GameContent.GetItem(entry.ItemId);
         _slots[i].Bind(entry.ItemId, item, revealed.Contains(entry.ItemId));
@@ -76,38 +79,52 @@ namespace UniverIdle.UI
         Bind(result.Action);
     }
 
+    private Transform ResolveSlotRoot()
+    {
+      return slotRoot ? slotRoot : transform;
+    }
+
     private void ClearEditorSlotsOnce()
     {
       if (_clearedEditorSlots) return;
       _clearedEditorSlots = true;
-      for (var i = slotRoot.childCount - 1; i >= 0; i--)
-        Destroy(slotRoot.GetChild(i).gameObject);
+      var root = ResolveSlotRoot();
+      slotRoot = root;
+      for (var i = root.childCount - 1; i >= 0; i--)
+        Destroy(root.GetChild(i).gameObject);
       _slots.Clear();
     }
 
     private void EnsureSlotCount(int count)
     {
-      if (slotPrefab == null)
+      if (!slotPrefab)
       {
         Debug.LogWarning("[UniverIdle] LootPreviewView 未绑定掉落slot预制体。");
         return;
       }
 
+      var root = ResolveSlotRoot();
       while (_slots.Count < count)
       {
-        var instance = Instantiate(slotPrefab, slotRoot);
+        var instance = Instantiate(slotPrefab, root);
         instance.name = $"掉落slot ({_slots.Count + 1})";
         _slots.Add(instance);
       }
 
       for (var i = 0; i < _slots.Count; i++)
-        _slots[i].gameObject.SetActive(i < count);
+      {
+        if (_slots[i] != null)
+          _slots[i].gameObject.SetActive(i < count);
+      }
     }
 
     private void HideAllSlots()
     {
       for (var i = 0; i < _slots.Count; i++)
-        _slots[i].gameObject.SetActive(false);
+      {
+        if (_slots[i] != null)
+          _slots[i].gameObject.SetActive(false);
+      }
       RebuildLayout();
     }
 

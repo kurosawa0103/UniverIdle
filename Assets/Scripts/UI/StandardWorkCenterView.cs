@@ -7,10 +7,10 @@ using UnityEngine.UI;
 namespace UniverIdle.UI
 {
   /// <summary>
-  /// 一张地图的 Center：横幅 + 该地图的动作卡。
+  /// 拾荒地图节点：横幅 + 该地图的动作卡。
   /// 挂在地图节点上（如 Content/村口），<see cref="sceneId"/> 填 gate。
   /// 工作根上另挂 <see cref="WorkCenterHubView"/> 向 Host 注册。
-  /// sceneId 为空时仍表示整份工作（砍树等未拆地图）。
+  /// 砍树用 <see cref="ActionListWorkCenterView"/>，不走本组件。
   /// </summary>
   public sealed class StandardWorkCenterView : WorkCenterView
   {
@@ -375,9 +375,11 @@ namespace UniverIdle.UI
       var player = _host.Session.Player;
       for (var i = 0; i < actionCards.Count; i++)
       {
+        var card = actionCards[i];
+        if (card == null) continue;
         if (i >= _visibleActions.Count)
         {
-          actionCards[i].gameObject.SetActive(false);
+          card.gameObject.SetActive(false);
           continue;
         }
 
@@ -398,13 +400,16 @@ namespace UniverIdle.UI
           metaRight = FormatYieldHint(action);
         }
 
+        var mastery = player.GetSceneProgress(action.WorkId, action.SceneId).Level;
         actionCards[i].gameObject.SetActive(true);
         actionCards[i].Bind(
           FormatSpotTitle(action),
           metaLeft,
           metaRight,
           !canPerform,
-          ActionImageLoader.Get(action));
+          ActionImageLoader.Get(action),
+          mastery,
+          ActionCardView.ResolveMasteryIcon(action));
       }
     }
 
