@@ -107,6 +107,8 @@ namespace UniverIdle.UI
 
       var action = _actions[index];
       if (action == null) return;
+      if (!SceneProgressRules.IsRegionUnlocked(_host.Session.Player, action))
+        return;
 
       ShowDetail(action);
       if (!SceneProgressRules.CanPerform(_host.Session.Player, action))
@@ -158,7 +160,6 @@ namespace UniverIdle.UI
 
         var action = _actions[i];
         var unlocked = SceneProgressRules.IsRegionUnlocked(player, action);
-        var canPerform = SceneProgressRules.CanPerform(player, action);
 
         string metaLeft;
         string metaRight;
@@ -179,7 +180,7 @@ namespace UniverIdle.UI
           FormatTitle(action),
           metaLeft,
           metaRight,
-          !canPerform,
+          !unlocked,
           ActionImageLoader.Get(action),
           mastery,
           ActionCardView.ResolveMasteryIcon(action));

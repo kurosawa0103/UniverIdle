@@ -176,7 +176,10 @@ namespace UniverIdle.UI
     private void OnActionSelected(int index)
     {
       if (_host == null || index >= _visibleActions.Count) return;
-      SelectAction(_visibleActions[index].Id);
+      var action = _visibleActions[index];
+      if (action == null || !SceneProgressRules.IsRegionUnlocked(_host.Session.Player, action))
+        return;
+      SelectAction(action.Id);
     }
 
     public bool IsRunningThisWork()
@@ -369,7 +372,6 @@ namespace UniverIdle.UI
 
         var action = _visibleActions[i];
         var unlocked = SceneProgressRules.IsRegionUnlocked(player, action);
-        var canPerform = SceneProgressRules.CanPerform(player, action);
 
         string metaLeft;
         string metaRight;
@@ -390,7 +392,7 @@ namespace UniverIdle.UI
           FormatSpotTitle(action),
           metaLeft,
           metaRight,
-          !canPerform,
+          !unlocked,
           ActionImageLoader.Get(action),
           mastery,
           ActionCardView.ResolveMasteryIcon(action));

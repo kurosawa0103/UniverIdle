@@ -31,22 +31,26 @@ namespace UniverIdle.UI
                 if (thumbSprite != null)
                 {
                     thumb.sprite = thumbSprite;
-                    thumb.color = Color.white;
+                    thumb.color = locked ? Color.black : Color.white;
                     thumb.preserveAspect = true;
                 }
                 else
                 {
                     thumb.sprite = null;
-                    thumb.color = UITheme.PanelLight;
+                    thumb.color = locked ? Color.black : UITheme.PanelLight;
                 }
             }
 
             if (canvasGroup != null)
             {
-                canvasGroup.alpha = locked ? 0.45f : 1f;
-                canvasGroup.interactable = true;
+                canvasGroup.alpha = 1f;
+                canvasGroup.interactable = !locked;
                 canvasGroup.blocksRaycasts = true;
             }
+
+            var button = GetComponent<Button>();
+            if (button != null)
+                button.interactable = !locked;
 
             BindMastery(masteryLevel, masterySprite);
         }

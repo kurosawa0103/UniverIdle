@@ -28,9 +28,9 @@ namespace UniverIdle.Game
 
     public static string FormatUnlockHint(WorkActionDefinition action, string workDisplayName = null)
     {
-      if (action == null) return "🔒";
-      var workName = string.IsNullOrEmpty(workDisplayName) ? "拾荒" : workDisplayName;
-      return $"需{workName} Lv.{action.RequiredWorkLevel}";
+      if (action == null) return "未解锁";
+      var workName = string.IsNullOrEmpty(workDisplayName) ? "工作" : workDisplayName;
+      return $"{workName}等级达到{action.RequiredWorkLevel}解锁";
     }
   }
 }
