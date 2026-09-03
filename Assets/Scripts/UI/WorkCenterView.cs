@@ -23,5 +23,9 @@ namespace UniverIdle.UI
     public virtual void OnActionCompleted(MainUIController host, ActionCompleteResult result) { }
 
     public virtual void OnRunnerActionStopped(MainUIController host, WorkActionDefinition action) { }
+
+    public virtual void OnInventoryChanged(MainUIController host) { }
+
+    public virtual void OnWorkOrSceneChanged(MainUIController host) { }
   }
 }

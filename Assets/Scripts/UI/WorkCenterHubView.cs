@@ -77,9 +77,7 @@ namespace UniverIdle.UI
 
     public override void OnActionCompleted(MainUIController host, Game.ActionCompleteResult result)
     {
-      EnsureMaps();
-      for (var i = 0; i < _maps.Length; i++)
-        _maps[i]?.OnActionCompleted(host, result);
+      ActiveMap?.OnActionCompleted(host, result);
     }
 
     public override void OnRunnerActionStopped(MainUIController host, Game.WorkActionDefinition action)
@@ -89,14 +87,14 @@ namespace UniverIdle.UI
         _maps[i]?.OnRunnerActionStopped(host, action);
     }
 
-    public void OnInventoryChanged(MainUIController host)
+    public override void OnInventoryChanged(MainUIController host)
     {
       EnsureMaps();
       for (var i = 0; i < _maps.Length; i++)
         _maps[i]?.OnInventoryChanged(host);
     }
 
-    public void OnWorkOrSceneChanged(MainUIController host)
+    public override void OnWorkOrSceneChanged(MainUIController host)
     {
       EnsureMaps();
       for (var i = 0; i < _maps.Length; i++)

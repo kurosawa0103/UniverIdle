@@ -26,14 +26,16 @@ namespace UniverIdle.UI
     /// </summary>
     private static bool ShouldRegister(WorkCenterView view)
     {
-      if (view is WorkCenterHubView) return true;
-      if (view is StandardWorkCenterView && view.GetComponent<WorkCenterHubView>() != null)
-        return false;
-
       var parent = view.transform.parent;
       if (parent == null) return true;
-      return parent.GetComponentInParent<WorkCenterHubView>() == null
-             && parent.GetComponentInParent<WorkCenterView>() == null;
+      return parent.GetComponentInParent<WorkCenterView>() == null;
+    }
+
+    public void WireAll(MainUIController host)
+    {
+      EnsureRegistered();
+      foreach (var view in _views.Values)
+        view.Wire(host);
     }
 
     public void EnsureRegistered()

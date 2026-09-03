@@ -154,9 +154,9 @@ namespace UniverIdle.UI
         progressTimeText.text = FormatTime(runner.SecondsRemaining);
     }
 
-    public void OnInventoryChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: false);
+    public override void OnInventoryChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: false);
 
-    public void OnWorkOrSceneChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: true);
+    public override void OnWorkOrSceneChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: true);
 
     private void RefreshCenterState(MainUIController host, bool refreshSceneTags)
     {
