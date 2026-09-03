@@ -77,21 +77,6 @@ Assets/Scripts/Game/GameContent.cs
 
 - **进度条**：由当前 Center（`StandardWorkCenterView` / `ActionListWorkCenterView`）驱动自己的 `RunningBar`，详情不再 Share/Hide 进度
 - **获得提示**：`ScavengeDetailView` 的 `lootToast` 预制体常为空，运行时仍会 `new`「获得提示区」
-- **砍树**：无地图 Tags；点卡即开停；需手配满表内动作卡（现 5 棵树）
+- **砍树**：无地图节点切换；点卡即开停；需手配满表内动作卡（现 5 棵树）
 - 顶栏图鉴/设置按钮无逻辑；背包见 [UI-背包](UI-背包.md)
 - 本地存档见 [SAVE-存档](SAVE-存档.md)；离线收益尚未做
-
-## 变更记录
-
-| 日期 | 变更 |
-|------|------|
-| 2026-09-03 | 冗余：删未挂接 InputBootstrap、旧「工具/存档导出」、`AddItem`；存档不再读 json |
-| 2026-09-03 | 本地 JSON 存档；菜单 UniverIdle/GM 可重置 |
-| 2026-09-03 | 背包页签手配进预制体；砍运行时造 Tabs；详情不再接管进度条 |
-| 2026-09-03 | 砍树改 `ActionListWorkCenterView`：工作根直接摆动作卡，不走拾荒地图 |
-| 2026-09-02 | 拾荒进度条曾迁入 `Detail/RunningBar`（已改回 Center 自管） |
-| 2026-09-02 | 右侧详情从 `MainUIController` 迁至 `WorkView_scavenge/ScavengeDetailView` |
-| 2026-09-02 | 约定 UI 以预制体手配为准；掉落预览 + `掉落slot` 预制体 |
-| 2026-09-02 | 冗余清理：删生成器接线 API、UITheme 死色、GetSceneGroup、场景分组缓存等 |
-| 2026-09-02 | 移除 Editor 一键重建 / 布局调参；改场景手配 |
-| 2026-09-01 | 接拾荒挂机；底栏改动态背包；左栏收窄为拾荒 |
