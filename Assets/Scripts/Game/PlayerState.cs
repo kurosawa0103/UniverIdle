@@ -24,12 +24,7 @@ namespace UniverIdle.Game
     public int UnlockedSlotCount => _unlockedSlotCount;
     public int SlotCapacity => _unlockedSlotCount;
 
-    public PlayerState()
-    {
-      var bag = GameContent.Inventory;
-      _unlockedPageCount = 1;
-      _unlockedSlotCount = bag.FreeSlotCount;
-    }
+    public PlayerState() => ApplyBagDefaults();
 
     public bool IsPageUnlocked(int pageIndex) => pageIndex >= 0 && pageIndex < _unlockedPageCount;
 
@@ -166,6 +161,148 @@ namespace UniverIdle.Game
       if (work == null || !work.GrantSceneXp) return;
       GetSceneProgress(workId, sceneId).AddXp(xp, work, forScene: true);
       OnSceneProgressChanged?.Invoke(workId, sceneId);
+    }
+
+    public void ResetToNewPlayer()
+    {
+      _inventory.Clear();
+      _works.Clear();
+      _sceneProgress.Clear();
+      _gold = 0;
+      ApplyBagDefaults();
+    }
+
+    public GameSaveFile ToSaveFile()
+    {
+      var items = new SaveItemRow[_inventory.Count];
+      var i = 0;
+      foreach (var kv in _inventory)
+      {
+        items[i] = new SaveItemRow { id = kv.Key, count = kv.Value };
+        i++;
+      }
+
+      var works = new SaveWorkRow[_works.Count];
+      i = 0;
+      foreach (var kv in _works)
+      {
+        works[i] = new SaveWorkRow { id = kv.Key, level = kv.Value.Level, xp = kv.Value.Xp };
+        i++;
+      }
+
+      var scenes = new SaveSceneRow[_sceneProgress.Count];
+      i = 0;
+      foreach (var kv in _sceneProgress)
+      {
+        SplitSceneKey(kv.Key, out var workId, out var sceneId);
+        scenes[i] = new SaveSceneRow
+        {
+          workId = workId,
+          sceneId = sceneId,
+          level = kv.Value.Level,
+          xp = kv.Value.Xp,
+        };
+        i++;
+      }
+
+      return new GameSaveFile
+      {
+        version = GameSave.CurrentVersion,
+        gold = _gold,
+        unlockedPageCount = _unlockedPageCount,
+        unlockedSlotCount = _unlockedSlotCount,
+        items = items,
+        works = works,
+        scenes = scenes,
+      };
+    }
+
+    public void LoadFrom(GameSaveFile file)
+    {
+      ResetToNewPlayer();
+      if (file == null) return;
+
+      _gold = file.gold < 0 ? 0 : file.gold;
+      ClampBagUnlocks(file.unlockedPageCount, file.unlockedSlotCount);
+
+      if (file.items != null)
+      {
+        for (var i = 0; i < file.items.Length; i++)
+        {
+          var row = file.items[i];
+          if (row == null || string.IsNullOrEmpty(row.id) || row.count <= 0 || LootRules.IsEmpty(row.id))
+            continue;
+          _inventory[row.id] = row.count;
+        }
+      }
+
+      if (file.works != null)
+      {
+        for (var i = 0; i < file.works.Length; i++)
+        {
+          var row = file.works[i];
+          if (row == null || string.IsNullOrEmpty(row.id)) continue;
+          _works[row.id] = new WorkProgress
+          {
+            Level = row.level < 1 ? 1 : row.level,
+            Xp = row.xp < 0 ? 0 : row.xp,
+          };
+        }
+      }
+
+      if (file.scenes != null)
+      {
+        for (var i = 0; i < file.scenes.Length; i++)
+        {
+          var row = file.scenes[i];
+          if (row == null || string.IsNullOrEmpty(row.workId) || string.IsNullOrEmpty(row.sceneId))
+            continue;
+          _sceneProgress[$"{row.workId}:{row.sceneId}"] = new WorkProgress
+          {
+            Level = row.level < 1 ? 1 : row.level,
+            Xp = row.xp < 0 ? 0 : row.xp,
+          };
+        }
+      }
+    }
+
+    public void NotifyStateReplaced()
+    {
+      OnGoldChanged?.Invoke();
+      OnInventoryChanged?.Invoke();
+      OnWorkChanged?.Invoke("");
+      OnSceneProgressChanged?.Invoke("", "");
+    }
+
+    private void ApplyBagDefaults()
+    {
+      var bag = GameContent.Inventory;
+      _unlockedPageCount = 1;
+      _unlockedSlotCount = bag.FreeSlotCount;
+    }
+
+    private void ClampBagUnlocks(int pages, int slots)
+    {
+      var bag = GameContent.Inventory;
+      if (pages < 1) pages = 1;
+      if (pages > bag.PageCount) pages = bag.PageCount;
+      _unlockedPageCount = pages;
+
+      var cap = bag.SlotCapForPages(_unlockedPageCount);
+      if (slots < bag.FreeSlotCount) slots = bag.FreeSlotCount;
+      if (slots > cap) slots = cap;
+      _unlockedSlotCount = slots;
+    }
+
+    private static void SplitSceneKey(string key, out string workId, out string sceneId)
+    {
+      workId = key;
+      sceneId = "";
+      if (string.IsNullOrEmpty(key)) return;
+      var colon = key.IndexOf(':');
+      if (colon <= 0 || colon >= key.Length - 1) return;
+      workId = key.Substring(0, colon);
+      sceneId = key.Substring(colon + 1);
     }
   }
 }

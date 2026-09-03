@@ -80,12 +80,13 @@ Assets/Scripts/Game/GameContent.cs
 - **获得提示**：`ScavengeDetailView` 的 `lootToast` 预制体常为空，运行时仍会 `new`「获得提示区」
 - **砍树**：无地图 Tags；点卡即开停；需手配满表内动作卡（现 5 棵树）
 - 顶栏图鉴/设置按钮无逻辑；背包见 [UI-背包](UI-背包.md)
-- 无本地存档（`GameSession` 每次 `new PlayerState()`）
+- 本地存档见 [SAVE-存档](SAVE-存档.md)；离线收益尚未做
 
 ## 变更记录
 
 | 日期 | 变更 |
 |------|------|
+| 2026-09-03 | 本地 JSON 存档；菜单 UniverIdle/GM 可重置 |
 | 2026-09-03 | 背包页签手配进预制体；砍运行时造 Tabs；详情不再接管进度条 |
 | 2026-09-03 | 砍树改 `ActionListWorkCenterView`：工作根直接摆动作卡，不走拾荒地图 |
 | 2026-09-02 | 拾荒进度条曾迁入 `Detail/RunningBar`（已改回 Center 自管） |
