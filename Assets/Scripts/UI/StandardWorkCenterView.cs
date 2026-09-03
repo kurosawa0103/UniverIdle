@@ -7,11 +7,14 @@ using UnityEngine.UI;
 namespace UniverIdle.UI
 {
   /// <summary>
-  /// 横幅 + 动作卡 + 进度条的标准工作 Center。
-  /// LocationBanner 表示一个场景块：BannerArt（场景名/Tags）+ ActionCards（子地点卡）。
+  /// 一张地图的 Center：横幅 + 该地图的动作卡。
+  /// 挂在地图节点上（如 Content/村口），<see cref="sceneId"/> 填 gate。
+  /// 工作根上另挂 <see cref="WorkCenterHubView"/> 向 Host 注册。
+  /// sceneId 为空时仍表示整份工作（砍树等未拆地图）。
   /// </summary>
   public sealed class StandardWorkCenterView : WorkCenterView
   {
+    [SerializeField] private string sceneId;
     [SerializeField] private TextMeshProUGUI locationTitleText;
     [SerializeField] private List<ActionCardView> actionCards = new();
     [SerializeField] private Image progressFill;
@@ -30,13 +33,17 @@ namespace UniverIdle.UI
 
     public MainUIController Host => _host;
 
+    public string BoundSceneId => sceneId;
+
+    private bool BoundToMap => !string.IsNullOrEmpty(sceneId);
+
     private IReadOnlyList<WorkSceneGroup> SceneGroups => GameContent.GetSceneGroupsForWork(WorkId);
 
     private void Awake()
     {
       if (sceneTagsRoot == null && locationTitleText != null)
         sceneTagsRoot = locationTitleText.transform.parent?.Find("Tags");
-      if (detailPanel == null)
+      if (detailPanel == null && !BoundToMap)
         detailPanel = GetComponentInChildren<ScavengeDetailView>(true);
       ResolveCenterRunningBarRoot();
     }
@@ -47,10 +54,19 @@ namespace UniverIdle.UI
       HideCenterProgressBar();
     }
 
+    public void BindSharedDetail(ScavengeDetailView detail)
+    {
+      if (detail != null)
+        detailPanel = detail;
+    }
+
     public override void OnActivated(MainUIController host)
     {
       _host = host;
-      _activeSceneId = null;
+      if (BoundToMap)
+        _activeSceneId = sceneId;
+      else
+        _activeSceneId = null;
       _activeActionId = null;
       detailPanel?.Wire(this);
       SyncProgressBarVisibility(host);
@@ -228,7 +244,11 @@ namespace UniverIdle.UI
       if (action == null || action.WorkId != WorkId || _host == null) return;
 
       if (!string.IsNullOrEmpty(action.SceneId) && action.SceneId != _activeSceneId)
+      {
+        if (BoundToMap)
+          return;
         SetActiveScene(action.SceneId, refreshCards: false);
+      }
 
       _activeActionId = actionId;
       UpdateActionSelectionUi();
@@ -239,6 +259,11 @@ namespace UniverIdle.UI
 
     private void EnsureActiveScene()
     {
+      if (BoundToMap)
+      {
+        _activeSceneId = sceneId;
+        return;
+      }
       var groups = SceneGroups;
       if (groups.Count == 0)
       {
@@ -385,7 +410,7 @@ namespace UniverIdle.UI
 
     private void RefreshSceneTags()
     {
-      if (sceneTagsRoot == null) return;
+      if (BoundToMap || sceneTagsRoot == null) return;
 
       ClearSceneTags();
       var groups = SceneGroups;

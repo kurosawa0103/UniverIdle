@@ -23,6 +23,8 @@ namespace UniverIdle.Game
   {
     public string id;
     public string name;
+    /// <summary>分类：junk / wood / ore / monster / herb / tool / relic / system。</summary>
+    public string category;
     /// <summary>图标文件名或 Resources 路径（无扩展名）；空=ItemIcon/item_{id}；-=无图标。</summary>
     public string icon;
     public string description;

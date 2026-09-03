@@ -107,6 +107,7 @@ namespace UniverIdle.Game
         items[row.id] = new ItemDefinition(
           row.id,
           row.name,
+          row.category,
           row.icon,
           row.description);
       }

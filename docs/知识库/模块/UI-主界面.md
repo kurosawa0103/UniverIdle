@@ -43,7 +43,8 @@ Assets/Scripts/Game/GameContent.cs
 | `GameSession` | `App` | — |
 | `MainUIController` | `App` | `skillItems`、`workCenterHost`、背包按钮/面板 |
 | `WorkCenterHost` | `App/Body/Center` | 各 `WorkView_*` 子物体 |
-| `StandardWorkCenterView` | 各 `WorkView_*` | Banner、ActionCards、RunningBar 等 |
+| `WorkCenterHubView` | `WorkView_scavenge`（工作根） | `detailPanel` → `Detail` |
+| `StandardWorkCenterView` | **地图节点**（如 `Content/村口`）；砍树等仍可挂工作根 | `workId`、`sceneId`（村口填 `gate`）、该地图的 ActionCards |
 | `ScavengeDetailView` | `WorkView_scavenge/Detail` | 标题、正文、`Btn_工作`、`RunningBar`、`LootPreviewView` |
 | `SkillNavItemView` | 左栏每项 | `workId`、高亮状态 |
 | `ActionCardView` | 动作卡预制/实例 | 标题、元信息、Thumb |
@@ -66,7 +67,7 @@ Assets/Scripts/Game/GameContent.cs
 | 要做的事 | 改哪里 |
 |----------|--------|
 | 加工作项 | 场景左栏加 `SkillNavItemView` + `GameContent` 注册 |
-| 加动作卡 | 在 `ActionCards` 下复制卡片并绑 `ActionCardView` |
+| 加动作卡 | 在对应地图节点下复制卡片并绑 `ActionCardView` |
 | 接新工作逻辑 | `GameContent` 注册表；`MainUIController` 已通用 |
 
 ## 已知限制

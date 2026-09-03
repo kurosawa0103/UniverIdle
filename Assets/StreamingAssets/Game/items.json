@@ -4,156 +4,203 @@
     {
       "id": "_empty",
       "name": "（无）",
+      "category": "system",
       "icon": "-",
       "description": "掉落表占位：本次未获得道具。"
     },
     {
       "id": "rag",
       "name": "破布",
+      "category": "junk",
       "icon": "item_rag",
       "description": "脏兮兮的布条，也许还能缝点什么。"
     },
     {
       "id": "wood_scraps",
       "name": "木头废料",
+      "category": "junk",
       "icon": "item_wood_scrap",
       "description": "从废料里捡出的木块，只能去生火了。"
     },
     {
       "id": "empty_bottle",
       "name": "空瓶",
+      "category": "junk",
       "icon": "item_empty_bottle",
       "description": "洗一洗就能装药水的玻璃瓶。"
     },
     {
       "id": "copper_nail",
       "name": "锈钉子",
+      "category": "junk",
       "icon": "item_copper_nail",
       "description": "生锈但还能用的钉子，锻造常缺这个。"
     },
     {
       "id": "worn_coin",
       "name": "褪色铜币",
+      "category": "junk",
       "icon": "item_rag",
       "description": "磨损的零钱，村里认，也能熔了当铜料。"
     },
     {
+      "id": "dry_branch",
+      "name": "枯枝",
+      "category": "junk",
+      "icon": "item_dry_branch",
+      "description": "干透的细枝，点火、编篱笆都能凑合。"
+    },
+    {
+      "id": "hemp_rope",
+      "name": "麻绳",
+      "category": "junk",
+      "icon": "item_hemp_rope",
+      "description": "粗糙的麻绳卷，捆柴、做套都能用。"
+    },
+    {
+      "id": "ergou_marble",
+      "name": "二狗的弹珠",
+      "category": "junk",
+      "icon": "item_ergou_marble",
+      "description": "二狗院子里滚出来的玻璃珠，村里小孩当宝贝。"
+    },
+    {
       "id": "herb_sprout",
       "name": "药草芽",
+      "category": "herb",
       "icon": "item_rag",
       "description": "沾着泥土的嫩芽，炼药学徒的最爱。"
     },
     {
       "id": "slag",
       "name": "炉渣",
+      "category": "junk",
       "icon": "item_rag",
       "description": "铁匠炉底捡出的渣块，锻打时偶尔用得着。"
     },
     {
       "id": "stardust_shard",
       "name": "星尘碎屑",
+      "category": "relic",
       "icon": "item_rag",
       "description": "坠星谷特有的微光颗粒，极其少见。"
     },
     {
       "id": "old_charm",
       "name": "旧护符",
+      "category": "relic",
       "icon": "item_rag",
       "description": "不知谁丢的护身符，似乎还留着一点暖意。"
     },
     {
       "id": "pine_log",
       "name": "松木",
+      "category": "wood",
       "icon": "item_pine_log",
       "description": "短松上砍下的原木，纹理直、易加工，生火铺底都合适。"
     },
     {
       "id": "birch_log",
       "name": "桦木",
+      "category": "wood",
       "icon": "item_rag",
       "description": "白桦的浅色木段，皮剥后露出细腻木纹。"
     },
     {
       "id": "oak_log",
       "name": "橡木",
+      "category": "wood",
       "icon": "item_oak_log",
       "description": "橡树硬木，沉实耐腐，做梁做柄都趁手。"
     },
     {
       "id": "walnut_log",
       "name": "胡桃木",
+      "category": "wood",
       "icon": "item_walnut_log",
       "description": "深褐带香的硬木，纹理细密，做柄做箱都体面。"
     },
     {
       "id": "ironwood_log",
       "name": "铁木",
+      "category": "wood",
       "icon": "item_rag",
       "description": "黑松林深处的铁木，砍起来费劲，木质却密实如铁。"
     },
     {
       "id": "small_trap",
       "name": "小陷阱",
+      "category": "tool",
       "icon": "item_rag",
       "description": "简易绳套与木刺，魔物探索时布置在林缘与溪谷。"
     },
     {
       "id": "large_trap",
       "name": "大陷阱",
+      "category": "tool",
       "icon": "item_rag",
       "description": "铁夹与粗绳编成，能困住更强壮的魔物，用于危险地带。"
     },
     {
       "id": "slime_gel",
       "name": "史莱姆凝胶",
+      "category": "monster",
       "icon": "item_rag",
       "description": "半透明黏液，炼药常用来调和性状。"
     },
     {
       "id": "beast_fang",
       "name": "兽牙",
+      "category": "monster",
       "icon": "item_beast_fang",
       "description": "从魔物嘴里撬下的尖牙，打磨后可做饰品或刃料。"
     },
     {
       "id": "tattered_pelt",
       "name": "破烂兽皮",
+      "category": "monster",
       "icon": "item_rag",
       "description": "带着爪痕的皮毛，缝补防具勉强能用。"
     },
     {
       "id": "monster_pa",
       "name": "奇怪的内裤",
+      "category": "monster",
       "icon": "item_rag",
       "description": "一条奇怪的内裤。"
     },
     {
       "id": "cracked_core",
       "name": "裂纹魔核",
+      "category": "monster",
       "icon": "item_rag",
       "description": "魔物核心碎裂后的结晶，仍残留微弱魔力。"
     },
     {
       "id": "copper_ore",
       "name": "铜矿石",
+      "category": "ore",
       "icon": "item_rag",
       "description": "洞口红土剥出的铜矿，熔炼后可铸钉铸器。"
     },
     {
       "id": "tin_ore",
       "name": "锡矿石",
+      "category": "ore",
       "icon": "item_rag",
       "description": "侧巷锡矿脉的矿石，灰白脆亮，常与铜矿混炼。"
     },
     {
       "id": "iron_ore",
       "name": "铁矿石",
+      "category": "ore",
       "icon": "item_rag",
       "description": "深层铁矿层的粗矿，沉实耐锻，铁匠常备料。"
     },
     {
       "id": "meteor_ore",
       "name": "陨铁矿石",
+      "category": "ore",
       "icon": "item_rag",
       "description": "坠星矿洞尽头的陨铁原矿，脉动微光，稀有而坚硬。"
     }

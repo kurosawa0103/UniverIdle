@@ -182,14 +182,41 @@ namespace UniverIdle.UI
       }
     }
 
-    private StandardWorkCenterView GetActiveStandardCenter() =>
-      workCenterHost?.Active as StandardWorkCenterView;
+    private StandardWorkCenterView GetActiveStandardCenter()
+    {
+      var active = workCenterHost?.Active;
+      if (active is WorkCenterHubView hub)
+        return hub.ActiveMap;
+      return active as StandardWorkCenterView;
+    }
+
+    private void NotifyActiveCenterInventory()
+    {
+      if (workCenterHost?.Active is WorkCenterHubView hub)
+      {
+        hub.OnInventoryChanged(this);
+        return;
+      }
+
+      GetActiveStandardCenter()?.OnInventoryChanged(this);
+    }
+
+    private void NotifyActiveCenterProgress()
+    {
+      if (workCenterHost?.Active is WorkCenterHubView hub)
+      {
+        hub.OnWorkOrSceneChanged(this);
+        return;
+      }
+
+      GetActiveStandardCenter()?.OnWorkOrSceneChanged(this);
+    }
 
     private void OnActiveWorkProgressChanged(string workId)
     {
       RefreshWorkNav();
       if (workId != _activeWorkId) return;
-      GetActiveStandardCenter()?.OnWorkOrSceneChanged(this);
+      NotifyActiveCenterProgress();
     }
 
     private void OnSceneProgressChanged(string workId, string sceneId) =>
@@ -202,7 +229,7 @@ namespace UniverIdle.UI
           !SceneProgressRules.CanAffordCost(_session.Player, _session.Runner.CurrentAction))
         _session.Runner.Stop();
 
-      GetActiveStandardCenter()?.OnInventoryChanged(this);
+      NotifyActiveCenterInventory();
     }
 
     private void OnActionStopped(WorkActionDefinition action)

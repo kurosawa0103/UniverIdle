@@ -13,7 +13,8 @@ namespace UniverIdle.Editor
 {
   public static class GameDataExcelExporter
   {
-    private static readonly string[] ItemHeaders = { "id", "name", "icon", "description" };
+    private static readonly string[] ItemHeaders = { "id", "name", "category", "icon", "description" };
+    private static readonly string[] ItemHeadersWithoutCategory = { "id", "name", "icon", "description" };
     private static readonly string[] ItemHeadersLegacyColorIcon = { "id", "name", "color", "icon", "description" };
     private static readonly string[] ItemHeadersLegacyColorNoIcon = { "id", "name", "color", "description" };
     private static readonly string[] WorkHeaders =
@@ -42,7 +43,7 @@ namespace UniverIdle.Editor
     private static readonly string[] LootExcelHeaders = { "actionId", "itemId", "#itemName", "chance", "min", "max" };
 
     private static readonly string[] ItemHeaderComments =
-      { "道具ID", "显示名称", "图标(空=自动)", "描述" };
+      { "道具ID", "显示名称", "分类(junk/wood/ore/monster/herb/tool/relic/system)", "图标(空=自动)", "描述" };
     private static readonly string[] WorkHeaderComments =
     {
       "工作ID", "工作名称", "地点名称", "图标颜色",
@@ -519,6 +520,7 @@ namespace UniverIdle.Editor
     private enum ItemSheetLayout
     {
       Standard,
+      WithoutCategory,
       LegacyWithColorIcon,
       LegacyWithColorNoIcon,
     }
@@ -554,6 +556,15 @@ namespace UniverIdle.Editor
         {
           id = r[0],
           name = r[1],
+          category = r[2],
+          icon = r[3],
+          description = r[4],
+        },
+        ItemSheetLayout.WithoutCategory => new ItemRow
+        {
+          id = r[0],
+          name = r[1],
+          category = string.Empty,
           icon = r[2],
           description = r[3],
         },
@@ -578,6 +589,7 @@ namespace UniverIdle.Editor
       layout switch
       {
         ItemSheetLayout.Standard => ItemHeaders,
+        ItemSheetLayout.WithoutCategory => ItemHeadersWithoutCategory,
         ItemSheetLayout.LegacyWithColorIcon => ItemHeadersLegacyColorIcon,
         ItemSheetLayout.LegacyWithColorNoIcon => ItemHeadersLegacyColorNoIcon,
         _ => ItemHeaders,
@@ -590,6 +602,8 @@ namespace UniverIdle.Editor
         var header = NormalizeRow(rows[i]);
         if (HeadersMatch(header, ItemHeaders))
           return (i, ItemSheetLayout.Standard);
+        if (HeadersMatch(header, ItemHeadersWithoutCategory))
+          return (i, ItemSheetLayout.WithoutCategory);
         if (HeadersMatch(header, ItemHeadersLegacyColorIcon))
           return (i, ItemSheetLayout.LegacyWithColorIcon);
         if (HeadersMatch(header, ItemHeadersLegacyColorNoIcon))
@@ -895,7 +909,7 @@ namespace UniverIdle.Editor
       {
         rows.Add(new[]
         {
-          item.id, item.name, item.icon ?? string.Empty, item.description,
+          item.id, item.name, item.category ?? string.Empty, item.icon ?? string.Empty, item.description,
         });
       }
       return rows;
@@ -995,6 +1009,8 @@ namespace UniverIdle.Editor
         sb.Append("    {\n");
         sb.Append("      \"id\": ").Append(Q(item.id)).Append(",\n");
         sb.Append("      \"name\": ").Append(Q(item.name)).Append(",\n");
+        if (!string.IsNullOrEmpty(item.category))
+          sb.Append("      \"category\": ").Append(Q(item.category)).Append(",\n");
         if (!string.IsNullOrEmpty(item.icon))
           sb.Append("      \"icon\": ").Append(Q(item.icon)).Append(",\n");
         sb.Append("      \"description\": ").Append(Q(item.description)).Append("\n");

@@ -16,8 +16,24 @@ namespace UniverIdle.UI
     public void Register(WorkCenterView view)
     {
       if (view == null || string.IsNullOrEmpty(view.WorkId)) return;
+      if (!ShouldRegister(view)) return;
       _views[view.WorkId] = view;
       view.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// 只注册工作根。地图节点上的 StandardWorkCenterView 由 Hub 转发，不单独占 workId。
+    /// </summary>
+    private static bool ShouldRegister(WorkCenterView view)
+    {
+      if (view is WorkCenterHubView) return true;
+      if (view is StandardWorkCenterView && view.GetComponent<WorkCenterHubView>() != null)
+        return false;
+
+      var parent = view.transform.parent;
+      if (parent == null) return true;
+      return parent.GetComponentInParent<WorkCenterHubView>() == null
+             && parent.GetComponentInParent<WorkCenterView>() == null;
     }
 
     public void EnsureRegistered()
