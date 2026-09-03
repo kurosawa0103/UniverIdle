@@ -26,7 +26,7 @@ namespace UniverIdle.UI
       slotRoot = ResolveSlotRoot();
     }
 
-    public void Bind(WorkActionDefinition action)
+    public void Bind(WorkActionDefinition action, bool revealGuaranteed = false)
     {
       var root = ResolveSlotRoot();
       slotRoot = root;
@@ -55,7 +55,9 @@ namespace UniverIdle.UI
         if (_slots[i] == null) continue;
         var entry = table[i];
         var item = GameContent.GetItem(entry.ItemId);
-        _slots[i].Bind(entry.ItemId, item, revealed.Contains(entry.ItemId));
+        var known = revealed.Contains(entry.ItemId) ||
+                    (revealGuaranteed && Mathf.Approximately(entry.Chance, 1f));
+        _slots[i].Bind(entry.ItemId, item, known);
       }
 
       RebuildLayout();

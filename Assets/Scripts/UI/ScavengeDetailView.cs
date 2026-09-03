@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace UniverIdle.UI
 {
-  /// <summary>拾荒页右侧详情：标题、正文、工作按钮、进度条、掉落预览。</summary>
+  /// <summary>工作页右侧详情：标题、正文、掉落预览；拾荒另有工作按钮。进度条由对应 Center 驱动。</summary>
   public sealed class ScavengeDetailView : MonoBehaviour
   {
     [SerializeField] private TextMeshProUGUI titleText;
@@ -56,7 +56,7 @@ namespace UniverIdle.UI
       RefreshWorkButton();
     }
 
-    public void ShowAction(WorkActionDefinition action, PlayerState player)
+    public void ShowAction(WorkActionDefinition action, PlayerState player, bool revealGuaranteedLoot = false)
     {
       if (action == null) return;
       var work = GameContent.GetWork(action.WorkId);
@@ -64,9 +64,22 @@ namespace UniverIdle.UI
         titleText.text = action.DisplayName;
       if (bodyText != null)
         bodyText.text = BuildDetailBody(action, player, work);
-      lootPreview?.Bind(action);
-      SyncProgressVisibility();
+      lootPreview?.Bind(action, revealGuaranteedLoot);
       RefreshWorkButton();
+    }
+
+    public void ShareProgressBar(
+      ref GameObject root,
+      ref Image fill,
+      ref TextMeshProUGUI label,
+      ref TextMeshProUGUI time)
+    {
+      ResolveReferences();
+      EnsureProgressBarReady();
+      if (root == null) root = runningBarRoot;
+      if (fill == null) fill = progressFill;
+      if (label == null) label = progressLabelText;
+      if (time == null) time = progressTimeText;
     }
 
     public void ShowStopped(WorkActionDefinition action, PlayerState player)
@@ -111,7 +124,6 @@ namespace UniverIdle.UI
       EnsureLootToast();
       PushLootToasts(result, player);
       lootPreview?.RevealLoot(result);
-      SyncProgressVisibility();
       RefreshWorkButton();
     }
 
@@ -132,7 +144,7 @@ namespace UniverIdle.UI
       var hasGold = result.GoldGained > 0;
       if (!hasLoot && !hasGold)
       {
-        lootToast.PushText("这次什么也没捡到。");
+        lootToast.PushText(EmptyLootLine(result.Action.WorkId));
       }
       else
       {
@@ -421,7 +433,40 @@ namespace UniverIdle.UI
           sb.Append("\n").Append(SceneProgressRules.FormatCostHint(action));
       }
 
+      AppendGuaranteedLoot(sb, action);
+
       return sb.ToString();
+    }
+
+    private static void AppendGuaranteedLoot(StringBuilder sb, WorkActionDefinition action)
+    {
+      if (action?.LootTable == null || action.LootTable.Count == 0) return;
+
+      var first = true;
+      for (var i = 0; i < action.LootTable.Count; i++)
+      {
+        var entry = action.LootTable[i];
+        if (LootRules.IsEmpty(entry.ItemId) || !Mathf.Approximately(entry.Chance, 1f))
+          continue;
+        var item = GameContent.GetItem(entry.ItemId);
+        var name = item != null ? item.DisplayName : entry.ItemId;
+        var amount = entry.MinAmount == entry.MaxAmount
+          ? $"×{entry.MinAmount}"
+          : $"×{entry.MinAmount}-{entry.MaxAmount}";
+        if (first)
+        {
+          sb.Append("\n\n必定获得：");
+          first = false;
+        }
+        else
+          sb.Append("、");
+        sb.Append(name).Append(amount);
+      }
+    }
+
+    private static string EmptyLootLine(string workId)
+    {
+      return workId == "woodcutting" ? "这次没砍下原木。" : "这次什么也没捡到。";
     }
   }
 }

@@ -58,6 +58,7 @@ namespace UniverIdle.UI
     {
       if (detail != null)
         detailPanel = detail;
+      ResolveCenterRunningBarRoot();
     }
 
     public override void OnActivated(MainUIController host)
@@ -69,6 +70,7 @@ namespace UniverIdle.UI
         _activeSceneId = null;
       _activeActionId = null;
       detailPanel?.Wire(this);
+      ResolveCenterRunningBarRoot();
       SyncProgressBarVisibility(host);
     }
 
@@ -125,19 +127,14 @@ namespace UniverIdle.UI
 
     public override void TickProgress(MainUIController host)
     {
-      if (detailPanel != null)
-      {
-        detailPanel.TickProgress(host.Session?.Runner, WorkId);
-        return;
-      }
-
       TickCenterProgress(host);
     }
 
     private void TickCenterProgress(MainUIController host)
     {
+      ResolveCenterRunningBarRoot();
       var runner = host.Session?.Runner;
-      if (!IsShowingRunningAction() || runner?.CurrentAction == null)
+      if (!IsRunningThisWork() || runner?.CurrentAction == null)
       {
         HideCenterProgressBar();
         return;
@@ -147,7 +144,7 @@ namespace UniverIdle.UI
         _centerRunningBarRoot.SetActive(true);
 
       if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + FormatSpotTitle(runner.CurrentAction);
+        progressLabelText.text = "进行中 · " + FormatActionTitle(runner.CurrentAction);
       if (progressFill != null)
         progressFill.fillAmount = runner.Progress;
       if (progressTimeText != null)
@@ -177,10 +174,9 @@ namespace UniverIdle.UI
     {
       if (action == null || action.WorkId != WorkId) return;
       _activeActionId = null;
+      HideCenterProgressBar();
       if (detailPanel != null)
         detailPanel.ShowStopped(action, host.Session?.Player);
-      else
-        HideCenterProgressBar();
       RefreshActionCardBindings();
       UpdateActionSelectionUi();
       detailPanel?.RefreshWorkButton();
@@ -230,10 +226,7 @@ namespace UniverIdle.UI
       if (!CanStartSelectedAction()) return false;
       var action = GameContent.GetAction(_activeActionId);
       if (action == null || !_host.Session.Runner.TryStart(action)) return false;
-      if (detailPanel != null)
-        detailPanel.SetRunning(action);
-      else
-        ShowCenterProgressBar(action);
+      ShowCenterProgressBar(action);
       detailPanel?.RefreshWorkButton();
       return true;
     }
@@ -520,6 +513,14 @@ namespace UniverIdle.UI
       return string.IsNullOrEmpty(action.SpotName) ? action.Id : action.SpotName;
     }
 
+    private static string FormatActionTitle(WorkActionDefinition action)
+    {
+      if (action == null) return "";
+      if (!string.IsNullOrEmpty(action.DisplayName)) return action.DisplayName;
+      if (!string.IsNullOrEmpty(action.SpotName)) return action.SpotName;
+      return action.Id;
+    }
+
     private void UpdateLocationBannerForScene()
     {
       if (locationTitleText == null) return;
@@ -591,35 +592,36 @@ namespace UniverIdle.UI
           _centerRunningBarRoot = bar.gameObject;
       }
 
+      if (progressFill == null || _centerRunningBarRoot == null)
+        detailPanel?.ShareProgressBar(
+          ref _centerRunningBarRoot, ref progressFill, ref progressLabelText, ref progressTimeText);
+
       HideCenterProgressBar();
     }
 
     private void SyncProgressBarVisibility(MainUIController host)
     {
-      if (detailPanel != null)
-      {
-        detailPanel.SyncProgressVisibility();
-        return;
-      }
-
-      if (IsShowingRunningAction())
+      ResolveCenterRunningBarRoot();
+      if (IsRunningThisWork())
       {
         var action = host?.Session?.Runner?.CurrentAction;
         if (action != null)
           ShowCenterProgressBar(action);
+        else
+          HideCenterProgressBar();
       }
       else
-      {
         HideCenterProgressBar();
-      }
     }
 
     private void ShowCenterProgressBar(WorkActionDefinition action)
     {
+      if (action == null) return;
+      ResolveCenterRunningBarRoot();
       if (_centerRunningBarRoot != null)
         _centerRunningBarRoot.SetActive(true);
       if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + FormatSpotTitle(action);
+        progressLabelText.text = "进行中 · " + FormatActionTitle(action);
       if (progressFill != null)
         progressFill.fillAmount = 0f;
       if (progressTimeText != null)

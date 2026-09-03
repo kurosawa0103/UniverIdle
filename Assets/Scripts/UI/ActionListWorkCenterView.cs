@@ -15,9 +15,11 @@ namespace UniverIdle.UI
     [SerializeField] private Image progressFill;
     [SerializeField] private TextMeshProUGUI progressLabelText;
     [SerializeField] private TextMeshProUGUI progressTimeText;
+    [SerializeField] private ScavengeDetailView detailPanel;
 
     private MainUIController _host;
     private readonly List<WorkActionDefinition> _actions = new();
+    private string _detailActionId;
     private bool _wired;
     private GameObject _runningBarRoot;
 
@@ -29,6 +31,8 @@ namespace UniverIdle.UI
       _wired = true;
       _host = host;
       ResolveRunningBarRoot();
+      if (detailPanel == null)
+        detailPanel = GetComponentInChildren<ScavengeDetailView>(true);
 
       for (var i = 0; i < actionCards.Count; i++)
       {
@@ -71,6 +75,7 @@ namespace UniverIdle.UI
       _host = host;
       BindCards();
       UpdateCardSelection();
+      detailPanel?.OnActionCompleted(result, host.Session?.Player);
     }
 
     public override void OnRunnerActionStopped(MainUIController host, WorkActionDefinition action)
@@ -107,7 +112,10 @@ namespace UniverIdle.UI
       if (_host == null || index < 0 || index >= _actions.Count) return;
 
       var action = _actions[index];
-      if (action == null || !SceneProgressRules.CanPerform(_host.Session.Player, action))
+      if (action == null) return;
+
+      ShowDetail(action);
+      if (!SceneProgressRules.CanPerform(_host.Session.Player, action))
         return;
 
       var runner = _host.Session.Runner;
@@ -182,6 +190,28 @@ namespace UniverIdle.UI
           mastery,
           ActionCardView.ResolveMasteryIcon(action));
       }
+
+      RefreshDetail();
+    }
+
+    private void RefreshDetail()
+    {
+      if (_host == null) return;
+      WorkActionDefinition action = null;
+      if (IsRunningThisWork())
+        action = _host.Session.Runner.CurrentAction;
+      else if (!string.IsNullOrEmpty(_detailActionId))
+        action = GameContent.GetAction(_detailActionId);
+      if (action == null && _actions.Count > 0)
+        action = _actions[0];
+      ShowDetail(action);
+    }
+
+    private void ShowDetail(WorkActionDefinition action)
+    {
+      if (action == null || detailPanel == null || _host?.Session?.Player == null) return;
+      _detailActionId = action.Id;
+      detailPanel.ShowAction(action, _host.Session.Player, revealGuaranteedLoot: true);
     }
 
     private void UpdateCardSelection()
