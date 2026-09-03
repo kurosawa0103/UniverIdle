@@ -7703,7 +7703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slotContainer: {fileID: 1111897111348493933}
-  font: {fileID: 11400000, guid: e44310e041181fe43ac196d3acb9d58f, type: 2}
+  slotPrefab: {fileID: 9100000000000000301, guid: e7f8091a2b3c4d5e6f708192a3b4c5d6, type: 3}
 --- !u!1 &3705994342590101476
 GameObject:
   m_ObjectHideFlags: 0

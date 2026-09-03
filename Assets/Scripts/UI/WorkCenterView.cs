@@ -1,5 +1,6 @@
 using UniverIdle.Game;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UniverIdle.UI
 {
@@ -27,5 +28,24 @@ namespace UniverIdle.UI
     public virtual void OnInventoryChanged(MainUIController host) { }
 
     public virtual void OnWorkOrSceneChanged(MainUIController host) { }
+
+    /// <summary>沿 progressFill 或本节点下找名为 RunningBar 的根。</summary>
+    protected static GameObject FindRunningBarRoot(Transform self, Image progressFill)
+    {
+      if (progressFill != null)
+      {
+        var t = progressFill.transform;
+        while (t != null)
+        {
+          if (t.name == "RunningBar")
+            return t.gameObject;
+          t = t.parent;
+        }
+      }
+
+      if (self == null) return null;
+      var bar = self.Find("RunningBar");
+      return bar != null ? bar.gameObject : null;
+    }
   }
 }

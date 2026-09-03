@@ -28,13 +28,19 @@ alwaysApply: true
 | 预制体 | 用途 |
 |--------|------|
 | `UniverIdle_MainUI.prefab` | 主界面根；`MainUIController`、`掉落预览` 等 |
-| `掉落slot.prefab` | 掉落预览单格；`LootDropSlotView` |
+| `掉落slot.prefab` | 掉落预览单格；`LootDropSlotView`（含 Icon / Unknown） |
+| `背包slot.prefab` | 背包单格；`InventorySlotView` |
 
 ## 掉落预览（当前）
 
 - `Detail/掉落预览` → `LootPreviewView`：`slotPrefab` 拖 `掉落slot.prefab`
 - `MainUIController` → `lootPreview` 拖上面的 `LootPreviewView`
 - 槽位数量、? / 揭示：代码按动作 `loot` 表生成，**不用**在预览下手动摆 slot
+
+## 背包格（当前）
+
+- `InventoryGridView.slotPrefab` 拖 `背包slot.prefab`
+- 每页按表 `SlotsPerPage` `Instantiate`，**不用**在 Body 下手动摆满格
 
 ## 禁止
 

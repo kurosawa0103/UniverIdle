@@ -42,8 +42,6 @@ namespace UniverIdle.UI
     {
       if (sceneTagsRoot == null && locationTitleText != null)
         sceneTagsRoot = locationTitleText.transform.parent?.Find("Tags");
-      if (detailPanel == null && !BoundToMap)
-        detailPanel = GetComponentInChildren<ScavengeDetailView>(true);
       ResolveCenterRunningBarRoot();
     }
 
@@ -134,7 +132,6 @@ namespace UniverIdle.UI
 
     public override void TickProgress(MainUIController host)
     {
-      ResolveCenterRunningBarRoot();
       var runner = host.Session?.Runner;
       if (!IsRunningThisWork() || runner?.CurrentAction == null)
       {
@@ -150,7 +147,7 @@ namespace UniverIdle.UI
       if (progressFill != null)
         progressFill.fillAmount = runner.Progress;
       if (progressTimeText != null)
-        progressTimeText.text = FormatTime(runner.SecondsRemaining);
+        progressTimeText.text = SceneProgressRules.FormatRemainingTime(runner.SecondsRemaining);
     }
 
     public override void OnInventoryChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: false);
@@ -381,8 +378,8 @@ namespace UniverIdle.UI
         }
         else
         {
-          metaLeft = FormatDuration(action.DurationSeconds);
-          metaRight = FormatYieldHint(action);
+          metaLeft = SceneProgressRules.FormatDurationSeconds(action.DurationSeconds);
+          metaRight = SceneProgressRules.FormatYieldHint(action);
         }
 
         var mastery = player.GetSceneProgress(action.WorkId, action.SceneId).Level;
@@ -528,62 +525,10 @@ namespace UniverIdle.UI
         locationTitleText.text = work.LocationName;
     }
 
-    private static string FormatDuration(float seconds) => $"{seconds:0.#}s";
-
-    private static string FormatYieldHint(WorkActionDefinition action)
-    {
-      if (action.LootTable == null || action.LootTable.Count == 0)
-        return action.HasCost ? SceneProgressRules.FormatCostHint(action) : "—";
-
-      var best = action.LootTable[0];
-      for (var i = 1; i < action.LootTable.Count; i++)
-      {
-        if (action.LootTable[i].Chance > best.Chance)
-          best = action.LootTable[i];
-      }
-
-      var item = GameContent.GetItem(best.ItemId);
-      var name = item != null ? item.DisplayName : best.ItemId;
-      if (Mathf.Approximately(best.Chance, 1f) && best.MinAmount == best.MaxAmount)
-        return $"+{best.MinAmount} {name}";
-      if (Mathf.Approximately(best.Chance, 1f))
-        return $"+{best.MinAmount}-{best.MaxAmount} {name}";
-      return $"{Mathf.RoundToInt(best.Chance * 100f)}% {name}";
-    }
-
-    private static string FormatTime(float seconds)
-    {
-      var total = Mathf.CeilToInt(seconds);
-      var m = total / 60;
-      var s = total % 60;
-      return m > 0 ? $"{m:00}:{s:00}" : $"00:{s:00}";
-    }
-
     private void ResolveCenterRunningBarRoot()
     {
       if (_centerRunningBarRoot != null) return;
-
-      if (progressFill != null)
-      {
-        var t = progressFill.transform;
-        while (t != null)
-        {
-          if (t.name == "RunningBar")
-          {
-            _centerRunningBarRoot = t.gameObject;
-            break;
-          }
-          t = t.parent;
-        }
-      }
-
-      if (_centerRunningBarRoot == null)
-      {
-        var bar = transform.Find("RunningBar");
-        if (bar != null)
-          _centerRunningBarRoot = bar.gameObject;
-      }
-
+      _centerRunningBarRoot = FindRunningBarRoot(transform, progressFill);
       HideCenterProgressBar();
     }
 
@@ -613,7 +558,7 @@ namespace UniverIdle.UI
       if (progressFill != null)
         progressFill.fillAmount = 0f;
       if (progressTimeText != null)
-        progressTimeText.text = FormatTime(action.DurationSeconds);
+        progressTimeText.text = SceneProgressRules.FormatRemainingTime(action.DurationSeconds);
     }
 
     private void HideCenterProgressBar()

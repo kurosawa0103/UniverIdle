@@ -33,7 +33,7 @@ namespace UniverIdle.UI
     {
       _session = GetComponent<GameSession>();
       if (_session == null)
-        _session = gameObject.AddComponent<GameSession>();
+        Debug.LogError("[MainUI] App 上缺少 GameSession，请手配。", this);
     }
 
     private void Start()

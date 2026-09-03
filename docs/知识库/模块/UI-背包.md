@@ -11,7 +11,8 @@
 
 | 类型 | 路径 |
 |------|------|
-| 预制体 | `Assets/GameResources/Prefab/UniverIdle_MainUI.prefab` → `InventoryOverlay` |
+| 预制体 | `Assets/Resources/Prefab/UniverIdle_MainUI.prefab` → `InventoryOverlay` |
+| 格子预制体 | `Assets/Resources/Prefab/背包slot.prefab`（`InventorySlotView`） |
 | 面板脚本 | `InventoryPanelView`（挂在 Overlay 上） |
 | 格子脚本 | `InventoryGridView`（Body 内） |
 | 容量表 | `Assets/StreamingAssets/Game/inventory.json` |
@@ -22,6 +23,8 @@
 ```
 Assets/Scripts/UI/InventoryPanelView.cs
 Assets/Scripts/UI/InventoryGridView.cs
+Assets/Scripts/UI/InventorySlotView.cs
+Assets/Resources/Prefab/背包slot.prefab
 Assets/Scripts/Game/Data/InventoryBagDefinition.cs
 Assets/Scripts/Game/Data/GameDataFile.cs   （InventoryBagDataFile）
 Assets/StreamingAssets/Game/inventory.json
@@ -44,15 +47,13 @@ Assets/StreamingAssets/Game/inventory.json
 
 ## 场景手配要点
 
-Agent **默认不改 prefab**。在 `InventoryOverlay/Panel`：
-
 | 节点 | 组件 / 引用 |
 |------|-------------|
-| Overlay 根 | `InventoryPanelView`：`overlayRoot`、`grid`、`closeButton`、`backdropButton`、`tabRoot`、`pageTabs`（Tab_1～4 的 Button）、`pageLabelText`（`Text_页码`）、`goldText`（`Text_金币`） |
+| Overlay 根 | `InventoryPanelView`：`overlayRoot`、`grid`、`closeButton`、`backdropButton`、`tabRoot`、`pageTabs`（Tab_1～4）、`pageLabelText`、`goldText` |
 | `Panel/Tabs` | `Tab_1`～`Tab_4`、金币与格数 TMP |
-| Body | `InventoryGridView`：`slotContainer`、`font` |
+| Body | `InventoryGridView`：`slotContainer`、`slotPrefab` → `背包slot.prefab` |
 
-格子由 `InventorySlotView.Create` **运行时生成**（不手配 20 个 slot；与掉落预览的 `掉落slot.prefab` 不是同一套）。
+格子由 `Instantiate(背包slot)` 按页生成（与掉落预览的 `掉落slot.prefab` 不是同一套）。
 
 代码**不**按节点名补造页签；漏拖引用则页签/关闭键无效。
 
@@ -68,7 +69,7 @@ Agent **默认不改 prefab**。在 `InventoryOverlay/Panel`：
 |----------|--------|
 | 改页数/价格 | `inventory.json`（同步改 `CreateDefault` 以免无文件时漂移） |
 | 改页签外观 | 预制体 `Tabs` |
-| 改单格外观 | `InventoryGridView` 内 `InventorySlotView.Create` |
+| 改单格外观 | `背包slot.prefab` |
 
 ## 已知限制
 

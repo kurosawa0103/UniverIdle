@@ -98,7 +98,7 @@ namespace UniverIdle.UI
       if (progressFill != null)
         progressFill.fillAmount = runner.Progress;
       if (progressTimeText != null)
-        progressTimeText.text = FormatTime(runner.SecondsRemaining);
+        progressTimeText.text = SceneProgressRules.FormatRemainingTime(runner.SecondsRemaining);
     }
 
     private void OnCardClicked(int index)
@@ -170,8 +170,8 @@ namespace UniverIdle.UI
         }
         else
         {
-          metaLeft = $"{action.DurationSeconds:0.#}s";
-          metaRight = FormatYieldHint(action);
+          metaLeft = SceneProgressRules.FormatDurationSeconds(action.DurationSeconds);
+          metaRight = SceneProgressRules.FormatYieldHint(action);
         }
 
         var mastery = player.GetSceneProgress(action.WorkId, action.SceneId).Level;
@@ -243,7 +243,7 @@ namespace UniverIdle.UI
       if (progressFill != null)
         progressFill.fillAmount = 0f;
       if (progressTimeText != null)
-        progressTimeText.text = FormatTime(action.DurationSeconds);
+        progressTimeText.text = SceneProgressRules.FormatRemainingTime(action.DurationSeconds);
     }
 
     private void HideProgressBar()
@@ -259,28 +259,7 @@ namespace UniverIdle.UI
     private void ResolveRunningBarRoot()
     {
       if (_runningBarRoot != null) return;
-
-      if (progressFill != null)
-      {
-        var t = progressFill.transform;
-        while (t != null)
-        {
-          if (t.name == "RunningBar")
-          {
-            _runningBarRoot = t.gameObject;
-            break;
-          }
-          t = t.parent;
-        }
-      }
-
-      if (_runningBarRoot == null)
-      {
-        var bar = transform.Find("RunningBar");
-        if (bar != null)
-          _runningBarRoot = bar.gameObject;
-      }
-
+      _runningBarRoot = FindRunningBarRoot(transform, progressFill);
       HideProgressBar();
     }
 
@@ -290,35 +269,6 @@ namespace UniverIdle.UI
       if (!string.IsNullOrEmpty(action.DisplayName)) return action.DisplayName;
       if (!string.IsNullOrEmpty(action.SceneName)) return action.SceneName;
       return action.Id;
-    }
-
-    private static string FormatYieldHint(WorkActionDefinition action)
-    {
-      if (action.LootTable == null || action.LootTable.Count == 0)
-        return action.HasCost ? SceneProgressRules.FormatCostHint(action) : "—";
-
-      var best = action.LootTable[0];
-      for (var i = 1; i < action.LootTable.Count; i++)
-      {
-        if (action.LootTable[i].Chance > best.Chance)
-          best = action.LootTable[i];
-      }
-
-      var item = GameContent.GetItem(best.ItemId);
-      var name = item != null ? item.DisplayName : best.ItemId;
-      if (Mathf.Approximately(best.Chance, 1f) && best.MinAmount == best.MaxAmount)
-        return $"+{best.MinAmount} {name}";
-      if (Mathf.Approximately(best.Chance, 1f))
-        return $"+{best.MinAmount}-{best.MaxAmount} {name}";
-      return $"{Mathf.RoundToInt(best.Chance * 100f)}% {name}";
-    }
-
-    private static string FormatTime(float seconds)
-    {
-      var total = Mathf.CeilToInt(seconds);
-      var m = total / 60;
-      var s = total % 60;
-      return m > 0 ? $"{m:00}:{s:00}" : $"00:{s:00}";
     }
   }
 }

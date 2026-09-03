@@ -27,7 +27,10 @@ Assets/Scripts/UI/SkillNavItemView.cs
 Assets/Scripts/UI/ActionCardView.cs
 Assets/Scripts/UI/InventoryPanelView.cs
 Assets/Scripts/UI/InventoryGridView.cs
+Assets/Scripts/UI/InventorySlotView.cs
 Assets/GameResources/Prefab/UniverIdle_MainUI.prefab
+Assets/Resources/Prefab/背包slot.prefab
+Assets/Resources/Prefab/掉落slot.prefab
 Assets/Scripts/UI/LootPreviewView.cs
 Assets/Scripts/UI/LootDropSlotView.cs
 Assets/Scripts/UI/WorkActionDetailView.cs
@@ -36,6 +39,7 @@ Assets/Scripts/UI/TopBarGoldView.cs
 Assets/Scripts/UI/UITheme.cs
 Assets/Scripts/Game/GameSession.cs
 Assets/Scripts/Game/GameContent.cs
+Assets/Scripts/Game/SceneProgressRules.cs
 ```
 
 ## 场景手配要点
@@ -56,7 +60,8 @@ Assets/Scripts/Game/GameContent.cs
 | `SkillNavItemView` | 左栏每项 | `workId`、高亮状态 |
 | `ActionCardView` | 动作卡预制/实例 | 标题、元信息、Thumb |
 | `InventoryPanelView` | `InventoryOverlay` | 见 [UI-背包](UI-背包.md) |
-| `LootPreviewView` | `Detail/掉落预览` | `slotPrefab` → `GameResources/Prefab/掉落slot.prefab` |
+| `LootPreviewView` | `Detail/掉落预览` | `slotPrefab` → `Resources/Prefab/掉落slot.prefab`（含 Icon / Unknown） |
+| `InventoryGridView` | 背包 Body | `slotPrefab` → `Resources/Prefab/背包slot.prefab` |
 
 布局（Grid Cell、Banner 高度、栏宽等）**以预制体/场景为准**，在 Inspector / RectTransform 里手调；Agent **默认只改脚本**，预制体由你改（见 `.cursor/rules/UI-手配预制体.mdc`）。
 
