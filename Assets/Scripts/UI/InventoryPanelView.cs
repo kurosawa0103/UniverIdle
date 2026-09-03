@@ -41,17 +41,8 @@ namespace UniverIdle.UI
       if (overlayRoot == null)
         overlayRoot = gameObject;
 
-      if (grid == null)
-        grid = GetComponentInChildren<InventoryGridView>(true);
-
       if (pageTabs == null)
         pageTabs = new List<Button>();
-      if (pageTabs.Count == 0 && tabRoot != null)
-      {
-        var buttons = tabRoot.GetComponentsInChildren<Button>(true);
-        for (var i = 0; i < buttons.Length; i++)
-          pageTabs.Add(buttons[i]);
-      }
 
       CacheTabVisuals();
     }

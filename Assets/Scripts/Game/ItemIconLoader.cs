@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace UniverIdle.Game
 {
-  /// <summary>按道具表 icon 字段加载 Sprite；找不到时由 UI 使用占位色。</summary>
+  /// <summary>按 Resources 路径加载道具/金币图标；找不到时由 UI 使用占位色。</summary>
   internal static class ItemIconLoader
   {
     private static readonly Dictionary<string, Sprite> Cache = new();
@@ -16,15 +16,32 @@ namespace UniverIdle.Game
     public static Sprite Get(ItemDefinition item)
     {
       if (item == null) return null;
-      var path = item.IconResourcePath;
-      if (string.IsNullOrEmpty(path)) return null;
+      return GetByResourcePath(item.IconResourcePath);
+    }
 
-      if (Cache.TryGetValue(path, out var cached))
+    public static Sprite GetGold() => GetByResourcePath(GameDataPaths.GoldIconResourcePath);
+
+    /// <summary>按地区熟练度等级取分档图标：1–30 铜、31–70 银、71+ 金。</summary>
+    public static Sprite GetMastery(int level)
+    {
+      var path = level >= GameDataPaths.MasteryIconTier3MinLevel
+        ? GameDataPaths.MasteryIconTier3Path
+        : level >= GameDataPaths.MasteryIconTier2MinLevel
+          ? GameDataPaths.MasteryIconTier2Path
+          : GameDataPaths.MasteryIconTier1Path;
+      return GetByResourcePath(path);
+    }
+
+    public static Sprite GetByResourcePath(string resourcePath)
+    {
+      if (string.IsNullOrEmpty(resourcePath)) return null;
+
+      if (Cache.TryGetValue(resourcePath, out var cached))
         return cached;
 
-      var sprite = LoadSprite(path);
+      var sprite = LoadSprite(resourcePath);
       if (sprite != null)
-        Cache[path] = sprite;
+        Cache[resourcePath] = sprite;
       return sprite;
     }
 

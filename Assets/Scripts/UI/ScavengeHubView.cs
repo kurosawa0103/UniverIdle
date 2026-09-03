@@ -33,12 +33,7 @@ namespace UniverIdle.UI
       }
     }
 
-    private void Awake()
-    {
-      if (detailPanel == null)
-        detailPanel = GetComponentInChildren<ScavengeDetailView>(true);
-      EnsureMaps();
-    }
+    private void Awake() => EnsureMaps();
 
     public override void Wire(MainUIController host)
     {

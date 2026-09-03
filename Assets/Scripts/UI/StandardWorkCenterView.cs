@@ -391,7 +391,7 @@ namespace UniverIdle.UI
           !unlocked,
           ActionImageLoader.Get(action),
           mastery,
-          ActionCardView.ResolveMasteryIcon(action));
+          ActionCardView.ResolveMasteryIcon(mastery));
       }
     }
 

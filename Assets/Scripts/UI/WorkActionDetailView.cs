@@ -18,12 +18,7 @@ namespace UniverIdle.UI
     [SerializeField] private LootToastLineView lootLinePrefab;
     [SerializeField] private TextMeshProUGUI lootFloaterPrefab;
 
-    protected virtual void Awake()
-    {
-      if (lootPreview == null)
-        lootPreview = GetComponentInChildren<LootPreviewView>(true);
-      EnsureLootToast();
-    }
+    protected virtual void Awake() => BindLootToastPrefabs();
 
     public virtual void ShowAction(WorkActionDefinition action, PlayerState player, bool revealGuaranteedLoot = false)
     {
@@ -47,7 +42,7 @@ namespace UniverIdle.UI
     public virtual void OnActionCompleted(ActionCompleteResult result, PlayerState player)
     {
       if (result?.Action == null) return;
-      EnsureLootToast();
+      BindLootToastPrefabs();
       PushLootToasts(result, player);
       lootPreview?.RevealLoot(result);
     }
@@ -106,52 +101,8 @@ namespace UniverIdle.UI
       }
     }
 
-    protected void EnsureLootToast()
-    {
-      if (lootToast == null)
-      {
-        var host = transform.Find("获得提示区");
-        if (host != null)
-          lootToast = host.GetComponent<LootToastView>();
-      }
-
-      if (lootToast == null)
-        lootToast = CreateLootToastHost();
-
+    private void BindLootToastPrefabs() =>
       lootToast?.BindPrefabs(lootLinePrefab, lootFloaterPrefab);
-    }
-
-    private LootToastView CreateLootToastHost()
-    {
-      var go = new GameObject("获得提示区", typeof(RectTransform), typeof(LootToastView));
-      go.transform.SetParent(transform, false);
-      go.transform.SetAsLastSibling();
-
-      var rt = (RectTransform)go.transform;
-      rt.anchorMin = new Vector2(0f, 0f);
-      rt.anchorMax = new Vector2(1f, 0f);
-      rt.pivot = new Vector2(0.5f, 0f);
-      rt.anchoredPosition = new Vector2(0f, 12f);
-      rt.sizeDelta = new Vector2(-24f, 108f);
-
-      var lines = new GameObject("Lines", typeof(RectTransform));
-      lines.transform.SetParent(go.transform, false);
-      var linesRt = (RectTransform)lines.transform;
-      linesRt.anchorMin = Vector2.zero;
-      linesRt.anchorMax = Vector2.one;
-      linesRt.offsetMin = Vector2.zero;
-      linesRt.offsetMax = Vector2.zero;
-
-      var floatLayer = new GameObject("FloatLayer", typeof(RectTransform));
-      floatLayer.transform.SetParent(go.transform, false);
-      var floatRt = (RectTransform)floatLayer.transform;
-      floatRt.anchorMin = Vector2.zero;
-      floatRt.anchorMax = Vector2.one;
-      floatRt.offsetMin = Vector2.zero;
-      floatRt.offsetMax = Vector2.zero;
-
-      return go.GetComponent<LootToastView>();
-    }
 
     protected static string BuildDetailBody(WorkActionDefinition action, PlayerState player, WorkDefinition work)
     {

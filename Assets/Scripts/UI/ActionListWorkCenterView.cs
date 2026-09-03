@@ -31,8 +31,6 @@ namespace UniverIdle.UI
       _wired = true;
       _host = host;
       ResolveRunningBarRoot();
-      if (detailPanel == null)
-        detailPanel = GetComponentInChildren<WorkActionDetailView>(true);
 
       for (var i = 0; i < actionCards.Count; i++)
       {
@@ -183,7 +181,7 @@ namespace UniverIdle.UI
           !unlocked,
           ActionImageLoader.Get(action),
           mastery,
-          ActionCardView.ResolveMasteryIcon(action));
+          ActionCardView.ResolveMasteryIcon(mastery));
       }
 
       RefreshDetail();

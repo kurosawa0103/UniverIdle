@@ -397,7 +397,7 @@ namespace UniverIdle.UI
       if (view.Icon != null)
       {
         view.Icon.gameObject.SetActive(true);
-        var sprite = GoldIconLoader.Get();
+        var sprite = ItemIconLoader.GetGold();
         if (sprite != null)
         {
           view.Icon.sprite = sprite;

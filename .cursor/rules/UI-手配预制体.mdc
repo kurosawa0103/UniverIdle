@@ -18,9 +18,9 @@ alwaysApply: true
 
 ## Agent 加 UI 功能时
 
-1. 脚本加字段 + 必要时 `ResolveReferences` 按节点名兜底（如 `Detail`、`Btn_工作`）。
-2. 在对话里写清 **挂哪、拖什么**（一条清单即可），由你在 Inspector 里拖引用。
-3. **不要**再建 `MainUISetup`、一键布局生成器、Editor 自动改 prefab 菜单（除非你要）。
+1. 脚本加字段；**运行时不要**按节点名扫 / `AddComponent` / `new GameObject` 补引用（手配或编辑器绑定为准）。
+2. 在对话里写清 **挂哪、拖什么**；或让你用菜单 **UniverIdle → 一键绑定主界面引用** 补 SerializeField。
+3. **不要**再建 `MainUISetup`、一键**布局坐标**生成器；允许维护已有的「一键绑定引用」Editor（`Assets/Editor/UI/MainUIBindMenu.cs`）。
 4. 需要重复用的格子 → 单独 **slot 预制体** + 运行时 `Instantiate`（如 `掉落slot.prefab`），容器本身仍手配。
 
 ## 常用预制体
@@ -42,7 +42,14 @@ alwaysApply: true
 - `InventoryGridView.slotPrefab` 拖 `背包slot.prefab`
 - 每页按表 `SlotsPerPage` `Instantiate`，**不用**在 Body 下手动摆满格
 
+## 一键绑定（Editor）
+
+- 菜单：`UniverIdle/一键绑定主界面引用`
+- 默认目标：选中的 MainUI / App，否则 `Assets/Resources/Prefab/UniverIdle_MainUI.prefab`
+- 会按节点名补引用；缺「获得提示区」或卡上 `MasteryIcon`/`MasteryLevel` 时在**编辑器**创建并绑好
+- 跑完后你在 Unity 里 **保存预制体/场景**
+
 ## 禁止
 
 - 为「少拖一次引用」去改 prefab 里大量坐标/LayoutGroup（除非你要求）
-- 用 Editor 脚本偷偷改场景布局替代你的手配
+- 用 Editor 脚本偷偷改场景布局替代你的手配（绑定引用除外）

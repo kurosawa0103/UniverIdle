@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using TMPro;
 using UniverIdle.Game;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,7 +37,6 @@ namespace UniverIdle.UI
 
     private void Start()
     {
-      ResolveReferences();
       WireButtons();
 
       if (_session?.Player != null)
@@ -91,36 +89,6 @@ namespace UniverIdle.UI
         inventoryButton.onClick.RemoveAllListeners();
         inventoryButton.onClick.AddListener(ToggleInventoryPanel);
       }
-    }
-
-    private void ResolveReferences()
-    {
-      if (skillItems == null || skillItems.Count == 0)
-        skillItems = new List<SkillNavItemView>(GetComponentsInChildren<SkillNavItemView>(true));
-
-      if (workCenterHost == null)
-        workCenterHost = GetComponentInChildren<WorkCenterHost>(true);
-
-      var canvas = GetComponentInParent<Canvas>();
-      if (canvas == null) return;
-
-      if (inventoryPanel == null)
-        inventoryPanel = canvas.GetComponentInChildren<InventoryPanelView>(true);
-
-      if (inventoryButton == null)
-      {
-        foreach (var btn in canvas.GetComponentsInChildren<Button>(true))
-        {
-          if (btn.gameObject.name == "Btn_背包")
-          {
-            inventoryButton = btn;
-            break;
-          }
-        }
-      }
-
-      if (topBarGold == null)
-        topBarGold = canvas.GetComponentInChildren<TopBarGoldView>(true);
     }
 
     private void OnDestroy()

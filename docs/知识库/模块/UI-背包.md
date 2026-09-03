@@ -55,7 +55,7 @@ Assets/StreamingAssets/Game/inventory.json
 
 格子由 `Instantiate(背包slot)` 按页生成（与掉落预览的 `掉落slot.prefab` 不是同一套）。
 
-代码**不**按节点名补造页签；漏拖引用则页签/关闭键无效。
+代码**不**按节点名补造页签，也**不**在 `pageTabs` 空时扫 `tabRoot` 按钮；漏拖引用则页签/关闭键无效。可用菜单 `UniverIdle/一键绑定主界面引用` 在编辑器里补绑。
 
 ## 依赖
 
