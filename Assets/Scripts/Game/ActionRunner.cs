@@ -44,9 +44,12 @@ namespace UniverIdle.Game
 
     public void Stop()
     {
+      var action = CurrentAction;
       CurrentAction = null;
       Progress = 0f;
       SecondsRemaining = 0f;
+      if (action != null)
+        OnActionStopped?.Invoke(action);
     }
 
     public void Tick(float deltaTime)
@@ -62,7 +65,7 @@ namespace UniverIdle.Game
       CompleteCurrentAction();
       if (CurrentAction == null) return;
       if (!BeginCycle())
-        StopDueToCost(CurrentAction);
+        Stop();
     }
 
     private bool BeginCycle()
@@ -75,14 +78,6 @@ namespace UniverIdle.Game
       Progress = 0f;
       SecondsRemaining = CurrentAction.DurationSeconds;
       return true;
-    }
-
-    private void StopDueToCost(WorkActionDefinition action)
-    {
-      CurrentAction = null;
-      Progress = 0f;
-      SecondsRemaining = 0f;
-      OnActionStopped?.Invoke(action);
     }
 
     private void CompleteCurrentAction()

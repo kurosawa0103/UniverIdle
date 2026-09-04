@@ -5,6 +5,8 @@ using System.Collections.Generic;
 [InitializeOnLoad]
 public static class HierarchyIconManager
 {
+    private const string DefaultAssetPath = "Assets/Editor/HierarchyIconConfig.asset";
+
     private static HierarchyIconConfig config;
     private static Dictionary<string, Texture2D> map = new();
 
@@ -23,24 +25,51 @@ public static class HierarchyIconManager
         var guids = AssetDatabase.FindAssets("t:HierarchyIconConfig");
         if (guids.Length == 0)
         {
-            Debug.LogWarning("找不到 HierarchyIconConfig");
+            config = EnsureDefaultAsset();
             return;
         }
 
         var path = AssetDatabase.GUIDToAssetPath(guids[0]);
         config = AssetDatabase.LoadAssetAtPath<HierarchyIconConfig>(path);
-
         if (config == null)
+            config = EnsureDefaultAsset();
+
+        RebuildMap();
+    }
+
+    private static HierarchyIconConfig EnsureDefaultAsset()
+    {
+        var existing = AssetDatabase.LoadAssetAtPath<HierarchyIconConfig>(DefaultAssetPath);
+        if (existing != null)
         {
-            Debug.LogWarning("配置文件加载失败");
-            return;
+            RebuildMapFrom(existing);
+            return existing;
         }
 
-        foreach (var entry in config.entries)
-        {
-            if (string.IsNullOrEmpty(entry.scriptName)) continue;
-            if (entry.icon == null) continue;
+        if (!AssetDatabase.IsValidFolder("Assets/Editor"))
+            AssetDatabase.CreateFolder("Assets", "Editor");
 
+        var created = ScriptableObject.CreateInstance<HierarchyIconConfig>();
+        AssetDatabase.CreateAsset(created, DefaultAssetPath);
+        AssetDatabase.SaveAssets();
+        RebuildMapFrom(created);
+        return created;
+    }
+
+    private static void RebuildMap()
+    {
+        if (config == null) return;
+        RebuildMapFrom(config);
+    }
+
+    private static void RebuildMapFrom(HierarchyIconConfig source)
+    {
+        map.Clear();
+        if (source?.entries == null) return;
+
+        foreach (var entry in source.entries)
+        {
+            if (string.IsNullOrEmpty(entry.scriptName) || entry.icon == null) continue;
             map[entry.scriptName] = entry.icon;
         }
     }

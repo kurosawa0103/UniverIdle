@@ -63,8 +63,7 @@ namespace UniverIdle.UI
     {
       if (result?.Action == null || result.Action.WorkId != WorkId) return;
       _host = host;
-      BindCards();
-      UpdateCardSelection();
+      // 卡表由 OnInventoryChanged / OnWorkOrMasteryChanged → Refresh 刷新，避免每轮结算双绑
       detailPanel?.OnActionCompleted(result, host.Session?.Player);
     }
 
@@ -114,10 +113,7 @@ namespace UniverIdle.UI
       var runner = _host.Session.Runner;
       if (runner.IsRunning && runner.CurrentAction?.Id == action.Id)
       {
-        runner.Stop();
-        BindCards();
-        UpdateCardSelection();
-        HideProgressBar();
+        runner.Stop(); // OnRunnerActionStopped 收口卡选中与进度条
         return;
       }
 
@@ -247,7 +243,7 @@ namespace UniverIdle.UI
         runningBarRoot.SetActive(false);
     }
 
-    /// <summary>预制体 fill 常无 sprite；Filled + 白图才能看得见滚动。</summary>
+    /// <summary>Filled 必须有 sprite；预制体应已绑 ui_progress_fill，此处仅兜底 Resources。</summary>
     private void EnsureProgressBarReady()
     {
       if (progressFill == null) return;
@@ -255,20 +251,7 @@ namespace UniverIdle.UI
       progressFill.fillMethod = Image.FillMethod.Horizontal;
       progressFill.fillOrigin = (int)Image.OriginHorizontal.Left;
       if (progressFill.sprite == null)
-        progressFill.sprite = GetWhiteSprite();
-    }
-
-    private static Sprite _whiteSprite;
-
-    private static Sprite GetWhiteSprite()
-    {
-      if (_whiteSprite != null) return _whiteSprite;
-      _whiteSprite = Sprite.Create(
-        Texture2D.whiteTexture,
-        new Rect(0, 0, 4, 4),
-        new Vector2(0.5f, 0.5f),
-        4f);
-      return _whiteSprite;
+        progressFill.sprite = ItemIconLoader.GetProgressFill();
     }
   }
 }

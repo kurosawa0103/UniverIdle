@@ -24,7 +24,6 @@ namespace UniverIdle.UI
     {
       public LootToastLineView View;
       public string ItemId;
-      public string ProgressLabel;
       public int Gained;
       public long Total;
       public float Remaining;
@@ -49,6 +48,8 @@ namespace UniverIdle.UI
     private readonly Stack<Floater> _floaterPool = new();
     private LootToastLineView[] _lineSlots;
     private bool _wired;
+    /// <summary>本轮挂机累计经验；停机后清零。</summary>
+    private long _sessionXpGained;
 
     private void Awake() => WireLines();
 
@@ -82,7 +83,7 @@ namespace UniverIdle.UI
         existing.Total = totalOwned;
         existing.Remaining = defaultDuration;
         existing.View.Root.SetActive(true);
-        RefreshItemLine(existing);
+        RefreshGainLine(existing);
         SpawnGainFloater(existing, gained);
         return;
       }
@@ -92,13 +93,12 @@ namespace UniverIdle.UI
       line.IsGold = false;
       line.IsXp = false;
       line.ItemId = itemId;
-      line.ProgressLabel = null;
       line.Gained = gained;
       line.Total = totalOwned;
       line.Remaining = defaultDuration;
       line.Active = true;
       line.View.Root.SetActive(true);
-      RefreshItemLine(line);
+      RefreshGainLine(line);
       SpawnGainFloater(line, gained);
     }
 
@@ -115,7 +115,7 @@ namespace UniverIdle.UI
         existing.Total = totalOwned;
         existing.Remaining = defaultDuration;
         existing.View.Root.SetActive(true);
-        RefreshGoldLine(existing);
+        RefreshGainLine(existing);
         SpawnGainFloater(existing, gained);
         return;
       }
@@ -125,30 +125,32 @@ namespace UniverIdle.UI
       line.IsGold = true;
       line.IsXp = false;
       line.ItemId = null;
-      line.ProgressLabel = null;
       line.Gained = gained;
       line.Total = totalOwned;
       line.Remaining = defaultDuration;
       line.Active = true;
       line.View.Root.SetActive(true);
-      RefreshGoldLine(line);
+      RefreshGainLine(line);
       SpawnGainFloater(line, gained);
     }
 
-    public void PushXp(int gained, string progressLabel)
+    /// <summary>经验行：左侧 +本次叠加入账；右侧为本轮挂机累计（停机清零）。</summary>
+    public void PushXp(int gained)
     {
       if (gained <= 0) return;
       if (!_wired) WireLines();
       if (!_wired) return;
 
+      _sessionXpGained += gained;
+
       var existing = FindActiveXpLine();
       if (existing != null)
       {
         existing.Gained += gained;
-        existing.ProgressLabel = progressLabel;
+        existing.Total = _sessionXpGained;
         existing.Remaining = defaultDuration;
         existing.View.Root.SetActive(true);
-        RefreshXpLine(existing);
+        RefreshGainLine(existing);
         SpawnGainFloater(existing, gained);
         return;
       }
@@ -158,15 +160,17 @@ namespace UniverIdle.UI
       line.IsGold = false;
       line.IsXp = true;
       line.ItemId = null;
-      line.ProgressLabel = progressLabel;
       line.Gained = gained;
-      line.Total = 0;
+      line.Total = _sessionXpGained;
       line.Remaining = defaultDuration;
       line.Active = true;
       line.View.Root.SetActive(true);
-      RefreshXpLine(line);
+      RefreshGainLine(line);
       SpawnGainFloater(line, gained);
     }
+
+    /// <summary>停机后重置本轮经验累计，下次开工右侧从 0 再累加。</summary>
+    public void ResetSessionXp() => _sessionXpGained = 0;
 
     public void PushText(string message)
     {
@@ -179,7 +183,6 @@ namespace UniverIdle.UI
       line.IsGold = false;
       line.IsXp = false;
       line.ItemId = null;
-      line.ProgressLabel = null;
       line.Gained = 0;
       line.Total = 0;
       line.Remaining = defaultDuration;
@@ -231,12 +234,7 @@ namespace UniverIdle.UI
       {
         var work = GameContent.GetWork(result.Action.WorkId);
         if (work != null && work.GrantWorkXp)
-        {
-          var progress = player.GetWork(result.Action.WorkId);
-          var need = progress.XpToNextLevel(work, forActionMastery: false);
-          var label = need > 0 ? $"{progress.Xp}/{need}" : "MAX";
-          PushXp(result.XpGained, label);
-        }
+          PushXp(result.XpGained);
       }
 
       if (result.BagFull)
@@ -451,21 +449,19 @@ namespace UniverIdle.UI
       line.IsGold = false;
       line.IsXp = false;
       line.ItemId = null;
-      line.ProgressLabel = null;
       line.Gained = 0;
       line.Total = 0;
       line.Remaining = 0f;
       line.View.Root.SetActive(false);
     }
 
-    private void RefreshItemLine(LineState line)
+    private void RefreshGainLine(LineState line)
     {
       var view = line.View;
+      ResolveGainIcon(line, out var sprite, out var fallbackColor);
       if (view.Icon != null)
       {
         view.Icon.gameObject.SetActive(true);
-        var item = GameContent.GetItem(line.ItemId);
-        var sprite = ItemIconLoader.Get(item);
         if (sprite != null)
         {
           view.Icon.sprite = sprite;
@@ -474,7 +470,7 @@ namespace UniverIdle.UI
         else
         {
           view.Icon.sprite = null;
-          view.Icon.color = UITheme.Muted;
+          view.Icon.color = fallbackColor;
         }
       }
 
@@ -497,80 +493,25 @@ namespace UniverIdle.UI
       view.PunchGainNumbers();
     }
 
-    private void RefreshGoldLine(LineState line)
+    private static void ResolveGainIcon(LineState line, out Sprite sprite, out Color fallbackColor)
     {
-      var view = line.View;
-      if (view.Icon != null)
+      if (line.IsGold)
       {
-        view.Icon.gameObject.SetActive(true);
-        var sprite = ItemIconLoader.GetGold();
-        if (sprite != null)
-        {
-          view.Icon.sprite = sprite;
-          view.Icon.color = Color.white;
-        }
-        else
-        {
-          view.Icon.sprite = null;
-          view.Icon.color = UITheme.Gold;
-        }
+        sprite = ItemIconLoader.GetGold();
+        fallbackColor = UITheme.Gold;
+        return;
       }
 
-      if (view.GainText != null)
+      if (line.IsXp)
       {
-        view.GainText.gameObject.SetActive(true);
-        view.GainText.text = $"+{line.Gained}";
+        sprite = ItemIconLoader.GetXp();
+        fallbackColor = UITheme.TealBright;
+        return;
       }
 
-      if (view.TotalText != null)
-      {
-        view.TotalText.gameObject.SetActive(true);
-        view.TotalText.text = line.Total.ToString();
-      }
-
-      if (view.MessageText != null)
-        view.MessageText.gameObject.SetActive(false);
-
-      view.RefreshLayout();
-      view.PunchGainNumbers();
-    }
-
-    private void RefreshXpLine(LineState line)
-    {
-      var view = line.View;
-      if (view.Icon != null)
-      {
-        view.Icon.gameObject.SetActive(true);
-        var sprite = ItemIconLoader.GetXp();
-        if (sprite != null)
-        {
-          view.Icon.sprite = sprite;
-          view.Icon.color = Color.white;
-        }
-        else
-        {
-          view.Icon.sprite = null;
-          view.Icon.color = UITheme.TealBright;
-        }
-      }
-
-      if (view.GainText != null)
-      {
-        view.GainText.gameObject.SetActive(true);
-        view.GainText.text = $"+{line.Gained}";
-      }
-
-      if (view.TotalText != null)
-      {
-        view.TotalText.gameObject.SetActive(true);
-        view.TotalText.text = string.IsNullOrEmpty(line.ProgressLabel) ? "" : line.ProgressLabel;
-      }
-
-      if (view.MessageText != null)
-        view.MessageText.gameObject.SetActive(false);
-
-      view.RefreshLayout();
-      view.PunchGainNumbers();
+      var item = GameContent.GetItem(line.ItemId);
+      sprite = ItemIconLoader.Get(item);
+      fallbackColor = UITheme.Muted;
     }
 
     private void RefreshTextLine(LineState line, string message)

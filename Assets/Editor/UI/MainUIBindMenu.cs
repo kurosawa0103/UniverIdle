@@ -298,45 +298,82 @@ namespace UniverIdle.Editor
 
     private static void BindRunningBars(Transform root, StringBuilder log)
     {
-      foreach (var center in root.GetComponentsInChildren<StandardWorkCenterView>(true))
-      {
-        var so = new SerializedObject(center);
-        if (so.FindProperty("runningBarRoot")?.objectReferenceValue == null)
-        {
-          var named = FindNamed(center.transform, "RunningBar");
-          if (named == null)
-          {
-            var detail = so.FindProperty("detailPanel")?.objectReferenceValue as ScavengeDetailView;
-            if (detail != null)
-              named = FindNamed(detail.transform, "RunningBar");
-          }
-          if (named != null)
-          {
-            so.FindProperty("runningBarRoot").objectReferenceValue = named.gameObject;
-            log.AppendLine($"· {center.name}.runningBarRoot ← RunningBar");
-          }
-        }
+      var fillSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Resources/ItemIcon/ui_progress_fill.png");
+      var trackSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Resources/ItemIcon/ui_progress_track.png");
 
-        so.ApplyModifiedPropertiesWithoutUndo();
-        EditorUtility.SetDirty(center);
-      }
+      foreach (var center in root.GetComponentsInChildren<StandardWorkCenterView>(true))
+        BindRunningBarOn(center, fillSprite, trackSprite, log);
 
       foreach (var list in root.GetComponentsInChildren<ActionListWorkCenterView>(true))
-      {
-        var so = new SerializedObject(list);
-        if (so.FindProperty("runningBarRoot")?.objectReferenceValue == null)
-        {
-          var named = FindNamed(list.transform, "RunningBar");
-          if (named != null)
-          {
-            so.FindProperty("runningBarRoot").objectReferenceValue = named.gameObject;
-            log.AppendLine($"· {list.name}.runningBarRoot ← RunningBar");
-          }
-        }
+        BindRunningBarOn(list, fillSprite, trackSprite, log);
+    }
 
-        so.ApplyModifiedPropertiesWithoutUndo();
-        EditorUtility.SetDirty(list);
+    private static void BindRunningBarOn(
+      Component center,
+      Sprite fillSprite,
+      Sprite trackSprite,
+      StringBuilder log)
+    {
+      var so = new SerializedObject(center);
+      var barProp = so.FindProperty("runningBarRoot");
+      Transform bar = null;
+      if (barProp?.objectReferenceValue is GameObject go)
+        bar = go.transform;
+      if (bar == null)
+      {
+        bar = FindNamed(center.transform, "RunningBar");
+        if (bar == null)
+        {
+          var detail = so.FindProperty("detailPanel")?.objectReferenceValue as ScavengeDetailView;
+          if (detail != null)
+            bar = FindNamed(detail.transform, "RunningBar");
+        }
       }
+
+      if (bar == null) return;
+
+      if (barProp != null && barProp.objectReferenceValue == null)
+      {
+        barProp.objectReferenceValue = bar.gameObject;
+        log.AppendLine($"· {center.name}.runningBarRoot ← RunningBar");
+      }
+
+      var fill = FindNamed(bar, "BarFill")?.GetComponent<Image>();
+      var fillProp = so.FindProperty("progressFill");
+      if (fillProp != null && fill != null && fillProp.objectReferenceValue == null)
+      {
+        fillProp.objectReferenceValue = fill;
+        log.AppendLine($"· {center.name}.progressFill ← BarFill");
+      }
+
+      if (fill != null && fillSprite != null)
+      {
+        fill.sprite = fillSprite;
+        fill.type = Image.Type.Filled;
+        fill.fillMethod = Image.FillMethod.Horizontal;
+        fill.fillOrigin = (int)Image.OriginHorizontal.Left;
+        EditorUtility.SetDirty(fill);
+      }
+
+      var barBg = FindNamed(bar, "BarBg")?.GetComponent<Image>();
+      if (barBg != null && trackSprite != null)
+      {
+        barBg.sprite = trackSprite;
+        EditorUtility.SetDirty(barBg);
+      }
+
+      var labelProp = so.FindProperty("progressLabelText");
+      var label = FindNamed(bar, "Label")?.GetComponent<TextMeshProUGUI>();
+      if (labelProp != null && label != null && labelProp.objectReferenceValue == null)
+        labelProp.objectReferenceValue = label;
+
+      var timeProp = so.FindProperty("progressTimeText");
+      var time = FindNamed(bar, "Time")?.GetComponent<TextMeshProUGUI>();
+      if (timeProp != null && time != null && timeProp.objectReferenceValue == null)
+        timeProp.objectReferenceValue = time;
+
+      so.ApplyModifiedPropertiesWithoutUndo();
+      EditorUtility.SetDirty(center);
     }
 
     private static void BindOneDetail(
@@ -454,9 +491,6 @@ namespace UniverIdle.Editor
       AssignIfNull(so, "button", card.GetComponent<Button>(), log, null);
 
       var thumbRoot = card.transform.Find("Thumb") ?? card.transform.Find("ThumbInner");
-      var thumb = thumbRoot?.GetComponent<Image>();
-      AssignIfNull(so, "thumb", thumb, log, null);
-
       Image thumbArt = null;
       if (thumbRoot != null)
       {

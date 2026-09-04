@@ -9,9 +9,7 @@ namespace UniverIdle.UI
   {
     [SerializeField] private Image background;
     [SerializeField] private Outline border;
-    [Tooltip("底板；不要往这里塞动作图。")]
-    [SerializeField] private Image thumb;
-    [Tooltip("Thumb 下的动作图（常见节点名 Image）。剪影与 sprite 都打在这里。")]
+    [Tooltip("Thumb 下的动作图（常见节点名 Image）。剪影与 sprite 都打在这里；Thumb 底板由预制体静态 Image 负责。")]
     [SerializeField] private Image thumbArt;
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI metaLeftText;

@@ -169,6 +169,7 @@ namespace UniverIdle.UI
 
     private void OnActionStopped(WorkActionDefinition action)
     {
+      lootToast?.ResetSessionXp();
       if (action == null) return;
       if (workCenterHost != null && workCenterHost.TryGet(action.WorkId, out var owner))
         owner.OnRunnerActionStopped(this, action);

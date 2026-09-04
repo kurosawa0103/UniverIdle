@@ -22,7 +22,6 @@ namespace UniverIdle.Game
     public long Gold => _gold;
     public int UnlockedPageCount => _unlockedPageCount;
     public int UnlockedSlotCount => _unlockedSlotCount;
-    public int SlotCapacity => _unlockedSlotCount;
 
     public PlayerState() => ApplyBagDefaults();
 

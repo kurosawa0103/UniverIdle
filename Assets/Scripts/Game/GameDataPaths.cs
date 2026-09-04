@@ -14,6 +14,12 @@ namespace UniverIdle.Game
     /// <summary>经验图标 Resources 路径（无扩展名）。</summary>
     public const string XpIconResourcePath = "ItemIcon/ui_xp";
 
+    /// <summary>挂机进度条填充图（实心白底可染色）；Filled Image 必须有 sprite。</summary>
+    public const string ProgressFillResourcePath = "ItemIcon/ui_progress_fill";
+
+    /// <summary>挂机进度条槽位底图。</summary>
+    public const string ProgressTrackResourcePath = "ItemIcon/ui_progress_track";
+
     /// <summary>熟练度图标分档（铜 / 银 / 金），Resources 路径无扩展名。</summary>
     public const string MasteryIconTier1Path = "ItemIcon/ui_mastery";
     public const string MasteryIconTier2Path = "ItemIcon/ui_mastery_2";

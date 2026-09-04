@@ -58,11 +58,12 @@ Assets/Editor/UI/MainUIBindMenu.cs
 | `ScavengeHubView` | `WorkView_scavenge` | `detailPanel` → 拾荒 `Detail`（`ScavengeDetailView`，**无 GetComponent 兜底**） |
 | `StandardWorkCenterView` | **拾荒地图节点**（如 `Content/村口`）；挖矿/魔物可挂工作根 | `workId`、`sceneId`、动作卡；**必拖** `runningBarRoot` + fill/文案；挖矿等多地区时 **必拖** `sceneTagsRoot`（**无** `Find("Tags")`） |
 | `ActionListWorkCenterView` | `WorkView_woodcutting` | `workId`、动作卡、**必拖** `runningBarRoot` + fill/文案、`detailPanel` → 砍树 `Detail`（**无** Find RunningBar） |
+| 进度条 | 各工作 `RunningBar`；复用预制体 `进度条.prefab` | **必绑** `BarFill`→`ItemIcon/ui_progress_fill`（实心）、`BarBg`→`ui_progress_track`；菜单 **UniverIdle → 安装进度条预制体** |
 | `ScavengeDetailView` | **仅** `WorkView_scavenge/Detail` | 标题、正文、`Btn_工作` + `workButtonText`、`LootPreviewView`（**无**按钮文案 InChildren 兜底） |
 | `WorkActionDetailView` | `WorkView_woodcutting/Detail` 等 | 标题、正文、掉落预览；**无**开始按钮 |
 | `SkillNavItemView` | 左栏每项 | `workId`、高亮状态 |
-| `ActionCardView` | 动作卡 | 标题、元信息、Thumb、`unlockText`、**`button`（`ClickButton`）**、`MasteryIcon` / `MasteryLevel`；Center Wire 用 `ClickButton`，不 `GetComponent` |
-| `LootToastView` | **`App` 根下「获得提示区」**（勿挂 `WorkView_*` / Detail） | **必拖** `lineRoot` / `floatLayer` / `linePrefab`（`获得提示.prefab`）/ `floaterPrefab`（`获得提示飘字.prefab`）；`MainUI.lootToast` 只拖此节点；结算可推道具 / 金币 / **经验**（`ItemIconLoader.GetXp()` → `ui_xp`） |
+| `ActionCardView` | 动作卡 | 标题、元信息、`thumbArt`（动作图）、`unlockText`、**`button`（`ClickButton`）**、`MasteryIcon` / `MasteryLevel`；Thumb 底板由预制体静态 Image，脚本不绑 `thumb`；Center Wire 用 `ClickButton`，不 `GetComponent` |
+| `LootToastView` | **`App` 根下「获得提示区」**（勿挂 `WorkView_*` / Detail） | **必拖** `lineRoot` / `floatLayer` / `linePrefab`（`获得提示.prefab`）/ `floaterPrefab`（`获得提示飘字.prefab`）；`MainUI.lootToast` 只拖此节点；结算可推道具 / 金币 / **经验**（`ItemIconLoader.GetXp()` → `ui_xp`）；经验右侧为本轮挂机累计，停机清零 |
 | `LootToastLineView` | `获得提示.prefab` | `icon` / 文案 + **`row` → `Row`**（布局必拖） |
 | `InventoryPanelView` | `InventoryOverlay` | 见 [UI-背包](UI-背包.md)；`pageTabs` 必拖（**不**扫 `tabRoot`） |
 | `LootPreviewView` | `Detail/掉落预览` | `slotPrefab` → `掉落slot.prefab` |
@@ -89,8 +90,10 @@ Assets/Editor/UI/MainUIBindMenu.cs
 
 ## 已知限制
 
-- **进度条**：Standard / ActionList 均手配 `runningBarRoot` + fill/文案；预制体 fill 若无 sprite，运行时补白图才能看见滚动；已删基类按名 Find
-- **获得提示**：全局 overlay，挂 `App`；行·飘字预制体只绑在 `LootToastView` 上；切工作不隐藏；错挂 WorkView 时一键绑定只挪父级、**不改**你调好的锚点/位置（仅新建才用默认占位）；行须绑 `row`
+- **进度条**：`进度条.prefab` + `ui_progress_fill` / `ui_progress_track`；MainUI 内 `BarFill` 必须有 sprite（`Image.Type.Filled` 无图不滚）；运行时仅 Resources 兜底，**禁止**再依赖 `Texture2D.whiteTexture`；菜单 `UniverIdle/安装进度条预制体` 可重建预制体并写回 MainUI
+- **停机**：`ActionRunner.Stop()` 与材料不足停机同一条路径，均发 `OnActionStopped` → Center `OnRunnerActionStopped`
+- **砍树列表**：结算只刷详情；卡表靠背包 / 总等级·熟练度变更 `Refresh`，避免每轮双绑
+- **获得提示**：全局 overlay，挂 `App`；行·飘字预制体只绑在 `LootToastView` 上；切工作不隐藏；错挂 WorkView 时一键绑定只挪父级、**不改**你调好的锚点/位置（仅新建才用默认占位）；行须绑 `row`；道具/金币/经验行共用 `RefreshGainLine`；经验右侧为**本轮挂机累计**（非 `当前/升级`），`OnActionStopped` → `ResetSessionXp`
 - **砍树**：无地图节点；点卡即开停；详情用 `WorkActionDetailView`，与拾荒 `ScavengeDetailView` 分离
 - **顶栏金币**：`TopBar/Currency` + `TopBarGoldView`；图鉴/设置按钮无逻辑；背包见 [UI-背包](UI-背包.md)
 - 本地存档见 [SAVE-存档](SAVE-存档.md)（默认 10 秒自动存）；离线收益尚未做

@@ -23,6 +23,12 @@ namespace UniverIdle.Game
 
     public static Sprite GetXp() => GetByResourcePath(GameDataPaths.XpIconResourcePath);
 
+    /// <summary>进度条 Fill 用实心 sprite（预制体应已绑；运行时仅兜底）。</summary>
+    public static Sprite GetProgressFill() => GetByResourcePath(GameDataPaths.ProgressFillResourcePath);
+
+    /// <summary>进度条 Track 用 sprite。</summary>
+    public static Sprite GetProgressTrack() => GetByResourcePath(GameDataPaths.ProgressTrackResourcePath);
+
     /// <summary>按动作熟练度等级取分档图标：1–30 铜、31–70 银、71+ 金。</summary>
     public static Sprite GetMastery(int level)
     {
