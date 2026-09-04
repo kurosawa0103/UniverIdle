@@ -5,13 +5,13 @@ using UnityEngine;
 namespace UniverIdle.UI
 {
   /// <summary>
-  /// 拾荒工作根（WorkView_scavenge）：向 Host 注册 workId=scavenge。
+  /// 地图式工作根（拾荒 / 砍树等）：向 Host 注册 workId。
   /// 各地图节点上的 <see cref="StandardWorkCenterView"/> 由本组件转发生命周期；
-  /// 详情 <see cref="ScavengeDetailView"/> 只属于拾荒，由本 Hub 分发给当前地图。
+  /// 详情 <see cref="WorkRunDetailView"/> 由本 Hub 分发给当前地图。
   /// </summary>
-  public sealed class ScavengeHubView : WorkCenterView
+  public sealed class WorkMapHubView : WorkCenterView
   {
-    [SerializeField] private ScavengeDetailView detailPanel;
+    [SerializeField] private WorkRunDetailView detailPanel;
     [Tooltip("各地图节点上的 StandardWorkCenterView；一键绑定可补齐。")]
     [SerializeField] private List<StandardWorkCenterView> maps = new();
 
@@ -79,7 +79,7 @@ namespace UniverIdle.UI
     private void BindDetails()
     {
       for (var i = 0; i < maps.Count; i++)
-        maps[i]?.BindScavengeDetail(detailPanel);
+        maps[i]?.BindDetail(detailPanel);
     }
   }
 }

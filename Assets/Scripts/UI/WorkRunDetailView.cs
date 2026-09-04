@@ -6,10 +6,10 @@ using UnityEngine.UI;
 namespace UniverIdle.UI
 {
   /// <summary>
-  /// 拾荒专用详情：在通用详情之上管理「开始/停止」按钮，只 Wire 拾荒地图 Center。
-  /// 不挂到砍树等其它工作。
+  /// 地图式工作详情：在通用详情之上管理「开始/停止」按钮，Wire 到 <see cref="StandardWorkCenterView"/>。
+  /// 拾荒、砍树等共用。
   /// </summary>
-  public sealed class ScavengeDetailView : WorkActionDetailView
+  public sealed class WorkRunDetailView : WorkActionDetailView
   {
     [SerializeField] private Button workButton;
     [SerializeField] private TextMeshProUGUI workButtonText;
@@ -17,7 +17,7 @@ namespace UniverIdle.UI
     private StandardWorkCenterView _center;
     private bool _wired;
 
-    private const string LabelStart = "拾荒";
+    private const string LabelStartFallback = "开始";
     private const string LabelStop = "停止";
 
     public void Wire(StandardWorkCenterView center)
@@ -73,7 +73,7 @@ namespace UniverIdle.UI
     private string GetStartLabel()
     {
       var work = GameContent.GetWork(_center.WorkId);
-      return work != null && !string.IsNullOrEmpty(work.DisplayName) ? work.DisplayName : LabelStart;
+      return work != null && !string.IsNullOrEmpty(work.DisplayName) ? work.DisplayName : LabelStartFallback;
     }
   }
 }

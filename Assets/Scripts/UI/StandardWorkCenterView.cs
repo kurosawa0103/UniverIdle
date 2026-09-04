@@ -8,8 +8,8 @@ namespace UniverIdle.UI
 {
   /// <summary>
   /// 横幅 + 动作卡的工作 Center。
-  /// 拾荒：挂地图节点（sceneId 如 gate），工作根另挂 <see cref="ScavengeHubView"/> 注入 <see cref="ScavengeDetailView"/>。
-  /// 挖矿/魔物：可挂工作根（sceneId 空）。砍树用 <see cref="ActionListWorkCenterView"/>。
+  /// 地图式（拾荒/砍树）：挂地图节点（sceneId），工作根另挂 <see cref="WorkMapHubView"/> 注入 <see cref="WorkRunDetailView"/>。
+  /// 挖矿/魔物：可挂工作根（sceneId 空）。
   /// </summary>
   public sealed class StandardWorkCenterView : WorkCenterView
   {
@@ -20,7 +20,7 @@ namespace UniverIdle.UI
     [SerializeField] private Image progressFill;
     [SerializeField] private TextMeshProUGUI progressLabelText;
     [SerializeField] private TextMeshProUGUI progressTimeText;
-    [SerializeField] private ScavengeDetailView detailPanel;
+    [SerializeField] private WorkRunDetailView detailPanel;
 
     private MainUIController _host;
     private string _activeActionId;
@@ -40,8 +40,8 @@ namespace UniverIdle.UI
 
     public override void OnDeactivated() => HideCenterProgressBar();
 
-    /// <summary>仅由 <see cref="ScavengeHubView"/> 注入拾荒详情，勿给其它工作复用。</summary>
-    public void BindScavengeDetail(ScavengeDetailView detail)
+    /// <summary>由 <see cref="WorkMapHubView"/> 注入带开工按钮的详情。</summary>
+    public void BindDetail(WorkRunDetailView detail)
     {
       if (detail != null)
         detailPanel = detail;
@@ -180,7 +180,7 @@ namespace UniverIdle.UI
       get
       {
         if (!string.IsNullOrEmpty(WorkId)) return WorkId;
-        var hub = GetComponentInParent<ScavengeHubView>();
+        var hub = GetComponentInParent<WorkMapHubView>();
         return hub != null ? hub.WorkId : WorkId;
       }
     }

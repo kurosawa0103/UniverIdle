@@ -42,7 +42,6 @@ namespace UniverIdle.Editor
       BindMainController(root, log);
       BindTopBarGold(root, log);
       BindInventory(root, log);
-      EnsureWoodcuttingActionList(root, log);
       BindWorkDetails(root, log);
       BindActionCards(root, log);
 
@@ -270,76 +269,14 @@ namespace UniverIdle.Editor
       }
     }
 
-    /// <summary>
-    /// 砍树根误挂 <see cref="ScavengeHubView"/> 时换成 <see cref="ActionListWorkCenterView"/>，并补齐 actionCards。
-    /// </summary>
-    private static void EnsureWoodcuttingActionList(Transform root, StringBuilder log)
-    {
-      foreach (var hub in root.GetComponentsInChildren<ScavengeHubView>(true))
-      {
-        if (hub == null) continue;
-        var so = new SerializedObject(hub);
-        var workId = so.FindProperty("workId")?.stringValue;
-        var name = hub.gameObject.name ?? string.Empty;
-        var isWood = workId == GameContent.WorkWoodcuttingId
-                     || name.IndexOf("woodcutting", System.StringComparison.OrdinalIgnoreCase) >= 0
-                     || name.Contains("砍树");
-        if (!isWood) continue;
-
-        var go = hub.gameObject;
-        Undo.DestroyObjectImmediate(hub);
-        var list = Undo.AddComponent<ActionListWorkCenterView>(go);
-        var lso = new SerializedObject(list);
-        var workProp = lso.FindProperty("workId");
-        if (workProp != null)
-          workProp.stringValue = GameContent.WorkWoodcuttingId;
-        lso.ApplyModifiedPropertiesWithoutUndo();
-        EditorUtility.SetDirty(list);
-        log.AppendLine($"· {go.name}：ScavengeHubView → ActionListWorkCenterView");
-      }
-
-      foreach (var list in root.GetComponentsInChildren<ActionListWorkCenterView>(true))
-      {
-        if (list == null) continue;
-        var so = new SerializedObject(list);
-        var cardsProp = so.FindProperty("actionCards");
-        if (cardsProp == null || !cardsProp.isArray) continue;
-
-        var needFill = cardsProp.arraySize == 0;
-        if (!needFill)
-        {
-          for (var i = 0; i < cardsProp.arraySize; i++)
-          {
-            if (cardsProp.GetArrayElementAtIndex(i).objectReferenceValue == null)
-            {
-              needFill = true;
-              break;
-            }
-          }
-        }
-
-        if (!needFill) continue;
-
-        var found = list.GetComponentsInChildren<ActionCardView>(true);
-        if (found == null || found.Length == 0) continue;
-
-        cardsProp.arraySize = found.Length;
-        for (var i = 0; i < found.Length; i++)
-          cardsProp.GetArrayElementAtIndex(i).objectReferenceValue = found[i];
-        so.ApplyModifiedPropertiesWithoutUndo();
-        EditorUtility.SetDirty(list);
-        log.AppendLine($"· {list.name}.actionCards ← {found.Length} 张卡");
-      }
-    }
-
     private static void BindWorkDetails(Transform root, StringBuilder log)
     {
       var dropSlot = LoadComponent<LootDropSlotView>(DropSlotPrefabPath);
 
-      foreach (var hub in root.GetComponentsInChildren<ScavengeHubView>(true))
+      foreach (var hub in root.GetComponentsInChildren<WorkMapHubView>(true))
       {
         var so = new SerializedObject(hub);
-        var detail = hub.GetComponentInChildren<ScavengeDetailView>(true);
+        var detail = hub.GetComponentInChildren<WorkRunDetailView>(true);
         AssignIfNull(so, "detailPanel", detail, log, $"{hub.name}.detailPanel");
 
         var mapsProp = so.FindProperty("maps");
@@ -382,18 +319,13 @@ namespace UniverIdle.Editor
       foreach (var list in root.GetComponentsInChildren<ActionListWorkCenterView>(true))
       {
         var so = new SerializedObject(list);
-        var detail = list.GetComponentInChildren<WorkActionDetailView>(true);
-        // 砍树详情是 WorkActionDetailView，不要绑到拾荒 ScavengeDetailView
-        if (detail is ScavengeDetailView)
-          detail = null;
-        if (detail == null)
+        // ActionList 用不带开工按钮的通用详情；WorkRunDetailView 留给地图 Hub
+        WorkActionDetailView detail = null;
+        foreach (var d in list.GetComponentsInChildren<WorkActionDetailView>(true))
         {
-          foreach (var d in list.GetComponentsInChildren<WorkActionDetailView>(true))
-          {
-            if (d is ScavengeDetailView) continue;
-            detail = d;
-            break;
-          }
+          if (d is WorkRunDetailView) continue;
+          detail = d;
+          break;
         }
 
         AssignIfNull(so, "detailPanel", detail, log, $"{list.name}.detailPanel");
@@ -435,7 +367,7 @@ namespace UniverIdle.Editor
         bar = FindNamed(center.transform, "RunningBar");
         if (bar == null)
         {
-          var detail = so.FindProperty("detailPanel")?.objectReferenceValue as ScavengeDetailView;
+          var detail = so.FindProperty("detailPanel")?.objectReferenceValue as WorkRunDetailView;
           if (detail != null)
             bar = FindNamed(detail.transform, "RunningBar");
         }
@@ -499,7 +431,7 @@ namespace UniverIdle.Editor
       var preview = detail.GetComponentInChildren<LootPreviewView>(true);
       AssignIfNull(so, "lootPreview", preview, log, $"{detail.name}.lootPreview");
 
-      if (detail is ScavengeDetailView)
+      if (detail is WorkRunDetailView)
       {
         AssignButtonByNames(so, "workButton", detail.transform, log, $"{detail.name}.workButton", "Btn_工作");
         var workBtn = so.FindProperty("workButton")?.objectReferenceValue as Button;
