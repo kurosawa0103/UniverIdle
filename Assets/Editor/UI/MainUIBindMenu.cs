@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using UniverIdle.Game;
 using UniverIdle.UI;
 using UnityEditor;
 using UnityEngine;
@@ -41,6 +42,7 @@ namespace UniverIdle.Editor
       BindMainController(root, log);
       BindTopBarGold(root, log);
       BindInventory(root, log);
+      EnsureWoodcuttingActionList(root, log);
       BindWorkDetails(root, log);
       BindActionCards(root, log);
 
@@ -120,6 +122,7 @@ namespace UniverIdle.Editor
         toast = CreateLootToastHost(host, log);
 
       EnsureToastIsGlobalOverlay(toast, host, log);
+      RemoveDuplicateLootToasts(root, toast, log);
 
       AssignIfNull(so, "lootToast", toast, log, "MainUI.lootToast");
 
@@ -143,22 +146,35 @@ namespace UniverIdle.Editor
       EditorUtility.SetDirty(toast);
     }
 
-    /// <summary>若挂在 WorkView/Detail 下，提到 MainUI 根，避免切工作被 SetActive(false)。不改已有锚点/偏移。</summary>
+    /// <summary>全局一份：挂在 MainUI/App 下；若在 WorkView/Detail 下则挪到 App，不改已有锚点（仅挪父级）。</summary>
     private static void EnsureToastIsGlobalOverlay(LootToastView toast, Transform host, StringBuilder log)
     {
       if (toast == null || host == null) return;
-
-      var underWork = toast.GetComponentInParent<WorkCenterView>(true) != null
-                      || toast.GetComponentInParent<WorkActionDetailView>(true) != null;
-      if (!underWork) return;
       if (toast.transform.parent == host) return;
 
-      // 只改父级并保留世界位置；不写死锚点，避免覆盖手配
-      Undo.RecordObject(toast.transform, "Move 获得提示区 to MainUI root");
+      Undo.RecordObject(toast.transform, "Move 获得提示区 to App");
       toast.transform.SetParent(host, worldPositionStays: true);
       toast.transform.SetAsLastSibling();
       EditorUtility.SetDirty(toast);
-      log.AppendLine($"· 获得提示区 ← 挪到 {host.name}（保留原位置，未改锚点）");
+      log.AppendLine($"· 获得提示区 ← 挪到 {host.name}（全局一份，保留原位置）");
+    }
+
+    /// <summary>删掉 WorkView/Detail 下多余的获得提示，只保留 MainUI.lootToast 那一份。</summary>
+    private static void RemoveDuplicateLootToasts(Transform root, LootToastView keep, StringBuilder log)
+    {
+      if (root == null || keep == null) return;
+      var all = root.GetComponentsInChildren<LootToastView>(true);
+      var removed = 0;
+      for (var i = 0; i < all.Length; i++)
+      {
+        var other = all[i];
+        if (other == null || other == keep) continue;
+        Undo.DestroyObjectImmediate(other.gameObject);
+        removed++;
+      }
+
+      if (removed > 0)
+        log.AppendLine($"· 删除多余获得提示区 ×{removed}");
     }
 
     /// <summary>仅新建「获得提示区」时用的默认占位；已有节点勿再调用。</summary>
@@ -254,16 +270,111 @@ namespace UniverIdle.Editor
       }
     }
 
+    /// <summary>
+    /// 砍树根误挂 <see cref="ScavengeHubView"/> 时换成 <see cref="ActionListWorkCenterView"/>，并补齐 actionCards。
+    /// </summary>
+    private static void EnsureWoodcuttingActionList(Transform root, StringBuilder log)
+    {
+      foreach (var hub in root.GetComponentsInChildren<ScavengeHubView>(true))
+      {
+        if (hub == null) continue;
+        var so = new SerializedObject(hub);
+        var workId = so.FindProperty("workId")?.stringValue;
+        var name = hub.gameObject.name ?? string.Empty;
+        var isWood = workId == GameContent.WorkWoodcuttingId
+                     || name.IndexOf("woodcutting", System.StringComparison.OrdinalIgnoreCase) >= 0
+                     || name.Contains("砍树");
+        if (!isWood) continue;
+
+        var go = hub.gameObject;
+        Undo.DestroyObjectImmediate(hub);
+        var list = Undo.AddComponent<ActionListWorkCenterView>(go);
+        var lso = new SerializedObject(list);
+        var workProp = lso.FindProperty("workId");
+        if (workProp != null)
+          workProp.stringValue = GameContent.WorkWoodcuttingId;
+        lso.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(list);
+        log.AppendLine($"· {go.name}：ScavengeHubView → ActionListWorkCenterView");
+      }
+
+      foreach (var list in root.GetComponentsInChildren<ActionListWorkCenterView>(true))
+      {
+        if (list == null) continue;
+        var so = new SerializedObject(list);
+        var cardsProp = so.FindProperty("actionCards");
+        if (cardsProp == null || !cardsProp.isArray) continue;
+
+        var needFill = cardsProp.arraySize == 0;
+        if (!needFill)
+        {
+          for (var i = 0; i < cardsProp.arraySize; i++)
+          {
+            if (cardsProp.GetArrayElementAtIndex(i).objectReferenceValue == null)
+            {
+              needFill = true;
+              break;
+            }
+          }
+        }
+
+        if (!needFill) continue;
+
+        var found = list.GetComponentsInChildren<ActionCardView>(true);
+        if (found == null || found.Length == 0) continue;
+
+        cardsProp.arraySize = found.Length;
+        for (var i = 0; i < found.Length; i++)
+          cardsProp.GetArrayElementAtIndex(i).objectReferenceValue = found[i];
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(list);
+        log.AppendLine($"· {list.name}.actionCards ← {found.Length} 张卡");
+      }
+    }
+
     private static void BindWorkDetails(Transform root, StringBuilder log)
     {
       var dropSlot = LoadComponent<LootDropSlotView>(DropSlotPrefabPath);
 
-      var hub = root.GetComponentInChildren<ScavengeHubView>(true);
-      if (hub != null)
+      foreach (var hub in root.GetComponentsInChildren<ScavengeHubView>(true))
       {
         var so = new SerializedObject(hub);
         var detail = hub.GetComponentInChildren<ScavengeDetailView>(true);
-        AssignIfNull(so, "detailPanel", detail, log, "ScavengeHub.detailPanel");
+        AssignIfNull(so, "detailPanel", detail, log, $"{hub.name}.detailPanel");
+
+        var mapsProp = so.FindProperty("maps");
+        if (mapsProp != null && mapsProp.isArray)
+        {
+          var found = hub.GetComponentsInChildren<StandardWorkCenterView>(true);
+          var list = new List<StandardWorkCenterView>();
+          for (var i = 0; i < found.Length; i++)
+          {
+            if (found[i] != null)
+              list.Add(found[i]);
+          }
+
+          var needFill = mapsProp.arraySize == 0;
+          if (!needFill)
+          {
+            for (var i = 0; i < mapsProp.arraySize; i++)
+            {
+              if (mapsProp.GetArrayElementAtIndex(i).objectReferenceValue == null)
+              {
+                needFill = true;
+                break;
+              }
+            }
+          }
+
+          if (needFill && list.Count > 0)
+          {
+            mapsProp.arraySize = list.Count;
+            for (var i = 0; i < list.Count; i++)
+              mapsProp.GetArrayElementAtIndex(i).objectReferenceValue = list[i];
+            log.AppendLine($"· {hub.name}.maps ← {list.Count} 地图");
+          }
+        }
+
         so.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(hub);
       }
@@ -409,27 +520,28 @@ namespace UniverIdle.Editor
       }
     }
 
-    private static LootToastView CreateLootToastHost(Transform detail, StringBuilder log)
+    /// <summary>仅在 App 下新建「获得提示区」；勿挂 WorkView/Detail。</summary>
+    private static LootToastView CreateLootToastHost(Transform appRoot, StringBuilder log)
     {
-      var existing = detail.Find("获得提示区");
+      var existing = appRoot.Find("获得提示区");
       if (existing != null)
       {
         var view = existing.GetComponent<LootToastView>();
         if (view == null)
           view = Undo.AddComponent<LootToastView>(existing.gameObject);
         EnsureToastChildren(existing);
-        log.AppendLine($"· 复用 {DetailPath(detail)}/获得提示区");
+        log.AppendLine($"· 复用 {appRoot.name}/获得提示区");
         return view;
       }
 
       var go = new GameObject("获得提示区", typeof(RectTransform));
       Undo.RegisterCreatedObjectUndo(go, "Create 获得提示区");
-      go.transform.SetParent(detail, false);
+      go.transform.SetParent(appRoot, false);
       ApplyGlobalToastAnchors((RectTransform)go.transform);
 
       EnsureToastChildren(go.transform);
       var toast = Undo.AddComponent<LootToastView>(go);
-      log.AppendLine($"· 创建 {DetailPath(detail)}/获得提示区");
+      log.AppendLine($"· 创建 {appRoot.name}/获得提示区（全局一份）");
       return toast;
     }
 
@@ -457,22 +569,34 @@ namespace UniverIdle.Editor
       var cards = root.GetComponentsInChildren<ActionCardView>(true);
       var created = 0;
       var wired = 0;
+      var masterySprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Resources/ItemIcon/ui_mastery.png");
       for (var i = 0; i < cards.Length; i++)
       {
         var card = cards[i];
         var so = new SerializedObject(card);
         EnsureCardChrome(so, card, log);
 
-        var icon = so.FindProperty("masteryIcon")?.objectReferenceValue as Image;
-        var level = so.FindProperty("masteryLevelText")?.objectReferenceValue as TextMeshProUGUI;
-        if (icon == null || level == null)
+        // 砍树 Card_二狗家 曾残留已删字段 thumb，易导致 masteryIcon 丢失；始终按子节点重绑
+        EnsureMasteryNodes(card.transform, out var icon, out var level, ref created);
+        var iconProp = so.FindProperty("masteryIcon");
+        var levelProp = so.FindProperty("masteryLevelText");
+        if (iconProp != null && icon != null && iconProp.objectReferenceValue != icon)
         {
-          EnsureMasteryNodes(card.transform, out icon, out level, ref created);
-          if (icon != null)
-            so.FindProperty("masteryIcon").objectReferenceValue = icon;
-          if (level != null)
-            so.FindProperty("masteryLevelText").objectReferenceValue = level;
+          iconProp.objectReferenceValue = icon;
           wired++;
+        }
+
+        if (levelProp != null && level != null && levelProp.objectReferenceValue != level)
+        {
+          levelProp.objectReferenceValue = level;
+          wired++;
+        }
+
+        if (icon != null && icon.sprite == null && masterySprite != null)
+        {
+          icon.sprite = masterySprite;
+          icon.preserveAspect = true;
+          EditorUtility.SetDirty(icon);
         }
 
         so.ApplyModifiedPropertiesWithoutUndo();
@@ -612,7 +736,7 @@ namespace UniverIdle.Editor
       }
     }
 
-    private static Transform FindNamed(Transform root, string name)
+    internal static Transform FindNamed(Transform root, string name)
     {
       if (root == null || string.IsNullOrEmpty(name)) return null;
       if (root.name == name) return root;

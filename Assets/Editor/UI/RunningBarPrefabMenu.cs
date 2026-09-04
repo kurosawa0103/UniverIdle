@@ -230,7 +230,7 @@ namespace UniverIdle.Editor
       if (barProp?.objectReferenceValue is GameObject go)
         bar = go.transform;
       if (bar == null)
-        bar = FindNamed(center.transform, "RunningBar");
+        bar = MainUIBindMenu.FindNamed(center.transform, "RunningBar");
 
       if (bar == null)
       {
@@ -246,33 +246,21 @@ namespace UniverIdle.Editor
       if (barProp != null && barProp.objectReferenceValue == null)
         barProp.objectReferenceValue = bar.gameObject;
 
-      var fill = FindNamed(bar, "BarFill")?.GetComponent<Image>();
+      var fill = MainUIBindMenu.FindNamed(bar, "BarFill")?.GetComponent<Image>();
       if (fillProp != null && fill != null)
         fillProp.objectReferenceValue = fill;
 
-      var label = FindNamed(bar, "Label")?.GetComponent<TextMeshProUGUI>();
+      var label = MainUIBindMenu.FindNamed(bar, "Label")?.GetComponent<TextMeshProUGUI>();
       if (labelProp != null && label != null)
         labelProp.objectReferenceValue = label;
 
-      var time = FindNamed(bar, "Time")?.GetComponent<TextMeshProUGUI>();
+      var time = MainUIBindMenu.FindNamed(bar, "Time")?.GetComponent<TextMeshProUGUI>();
       if (timeProp != null && time != null)
         timeProp.objectReferenceValue = time;
 
       so.ApplyModifiedPropertiesWithoutUndo();
       EditorUtility.SetDirty(center);
       log.AppendLine($"· {center.name} 已绑 runningBar / fill / label / time");
-    }
-
-    private static Transform FindNamed(Transform root, string name)
-    {
-      if (root == null) return null;
-      if (root.name == name) return root;
-      for (var i = 0; i < root.childCount; i++)
-      {
-        var found = FindNamed(root.GetChild(i), name);
-        if (found != null) return found;
-      }
-      return null;
     }
   }
 }

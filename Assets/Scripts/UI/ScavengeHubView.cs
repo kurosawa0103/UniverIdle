@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UniverIdle.Game;
 using UnityEngine;
 
@@ -11,19 +12,19 @@ namespace UniverIdle.UI
   public sealed class ScavengeHubView : WorkCenterView
   {
     [SerializeField] private ScavengeDetailView detailPanel;
+    [Tooltip("各地图节点上的 StandardWorkCenterView；一键绑定可补齐。")]
+    [SerializeField] private List<StandardWorkCenterView> maps = new();
 
-    private StandardWorkCenterView[] _maps;
     private bool _wired;
 
     public StandardWorkCenterView ActiveMap
     {
       get
       {
-        EnsureMaps();
         StandardWorkCenterView first = null;
-        for (var i = 0; i < _maps.Length; i++)
+        for (var i = 0; i < maps.Count; i++)
         {
-          var map = _maps[i];
+          var map = maps[i];
           if (map == null) continue;
           if (first == null) first = map;
           if (map.isActiveAndEnabled)
@@ -33,52 +34,40 @@ namespace UniverIdle.UI
       }
     }
 
-    private void Awake() => EnsureMaps();
-
     public override void Wire(MainUIController host)
     {
       if (_wired) return;
       _wired = true;
-      EnsureMaps();
       BindDetails();
-      for (var i = 0; i < _maps.Length; i++)
-        _maps[i]?.Wire(host);
+      for (var i = 0; i < maps.Count; i++)
+        maps[i]?.Wire(host);
     }
 
     public override void OnActivated(MainUIController host)
     {
-      EnsureMaps();
       BindDetails();
       ActiveMap?.OnActivated(host);
     }
 
     public override void OnDeactivated()
     {
-      EnsureMaps();
-      for (var i = 0; i < _maps.Length; i++)
-        _maps[i]?.OnDeactivated();
+      for (var i = 0; i < maps.Count; i++)
+        maps[i]?.OnDeactivated();
     }
 
-    public override void Refresh(MainUIController host)
-    {
+    public override void Refresh(MainUIController host) =>
       ActiveMap?.Refresh(host);
-    }
 
-    public override void TickProgress(MainUIController host)
-    {
+    public override void TickProgress(MainUIController host) =>
       ActiveMap?.TickProgress(host);
-    }
 
-    public override void OnActionCompleted(MainUIController host, ActionCompleteResult result)
-    {
+    public override void OnActionCompleted(MainUIController host, ActionCompleteResult result) =>
       ActiveMap?.OnActionCompleted(host, result);
-    }
 
     public override void OnRunnerActionStopped(MainUIController host, WorkActionDefinition action)
     {
-      EnsureMaps();
-      for (var i = 0; i < _maps.Length; i++)
-        _maps[i]?.OnRunnerActionStopped(host, action);
+      for (var i = 0; i < maps.Count; i++)
+        maps[i]?.OnRunnerActionStopped(host, action);
     }
 
     public override void OnInventoryChanged(MainUIController host) =>
@@ -87,17 +76,10 @@ namespace UniverIdle.UI
     public override void OnWorkOrMasteryChanged(MainUIController host) =>
       ActiveMap?.OnWorkOrMasteryChanged(host);
 
-    private void EnsureMaps()
-    {
-      if (_maps != null) return;
-      _maps = GetComponentsInChildren<StandardWorkCenterView>(true);
-    }
-
     private void BindDetails()
     {
-      EnsureMaps();
-      for (var i = 0; i < _maps.Length; i++)
-        _maps[i]?.BindScavengeDetail(detailPanel);
+      for (var i = 0; i < maps.Count; i++)
+        maps[i]?.BindScavengeDetail(detailPanel);
     }
   }
 }

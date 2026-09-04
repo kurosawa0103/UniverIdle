@@ -141,7 +141,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 9afb1f1fa50638144aaaea6ce1ad6af9, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -514,13 +514,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   background: {fileID: 7929959312137770626}
   border: {fileID: 0}
-  thumb: {fileID: 0}
-  thumbArt: {fileID: 0}
+  thumbArt: {fileID: 3947498523232075125}
   titleText: {fileID: 7468586933558575220}
   metaLeftText: {fileID: 2687847306398243691}
   metaRightText: {fileID: 0}
-  unlockText: {fileID: 0}
+  unlockText: {fileID: 2038215133726396772}
   canvasGroup: {fileID: 6910599488721448208}
+  button: {fileID: 4526439006658912113}
   masteryIcon: {fileID: 774900169966778804}
   masteryLevelText: {fileID: 774900169966778814}
 --- !u!1 &4809258078746337066

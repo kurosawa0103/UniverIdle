@@ -419,7 +419,6 @@ MonoBehaviour:
   progressFill: {fileID: 0}
   progressLabelText: {fileID: 0}
   progressTimeText: {fileID: 0}
-  sceneTagsRoot: {fileID: 0}
   detailPanel: {fileID: 0}
 --- !u!1 &3718210087536044405
 GameObject:

@@ -47,7 +47,7 @@ alwaysApply: true
 
 - 菜单：`UniverIdle/一键绑定主界面引用`；进度条另有 `UniverIdle/安装进度条预制体`（生成 `进度条.prefab` 并写回 Fill/Track 图）
 - 默认目标：选中的 MainUI / App，否则 `Assets/Resources/Prefab/UniverIdle_MainUI.prefab`
-- 会按节点名补引用；缺「获得提示区」或卡上 `MasteryIcon`/`MasteryLevel` 时在**编辑器**创建并绑好
+- 会按节点名补引用；缺「获得提示区」时在 **App** 下创建（全游戏一份，勿挂 WorkView）；缺卡上 `MasteryIcon`/`MasteryLevel` 时在编辑器创建并绑好
 - 跑完后你在 Unity 里 **保存预制体/场景**
 
 ## 禁止
@@ -55,3 +55,4 @@ alwaysApply: true
 - 为「少拖一次引用」去改 prefab 里大量坐标/LayoutGroup（除非你要求）
 - 用 Editor 脚本偷偷改场景布局替代你的手配（绑定引用除外）
 - **进度条 Fill 不绑 sprite / 只靠运行时 `Texture2D.whiteTexture`**（Filled 无图不滚；必须用 `ui_progress_fill`）
+- **把「获得提示区」挂进拾荒/砍树等 WorkView 或 Detail**（切页会被隐藏；必须挂 `App`）

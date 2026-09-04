@@ -20,14 +20,12 @@ namespace UniverIdle.UI
     [SerializeField] private Image progressFill;
     [SerializeField] private TextMeshProUGUI progressLabelText;
     [SerializeField] private TextMeshProUGUI progressTimeText;
-    [SerializeField] private Transform sceneTagsRoot;
     [SerializeField] private ScavengeDetailView detailPanel;
 
     private MainUIController _host;
     private string _activeActionId;
     private string _activeSceneId;
     private readonly List<WorkActionDefinition> _visibleActions = new();
-    private readonly List<GameObject> _sceneTagObjects = new();
     private bool _wired;
 
     public MainUIController Host => _host;
@@ -85,7 +83,6 @@ namespace UniverIdle.UI
       _host = host;
       EnsureActiveScene();
       UpdateLocationBannerForScene();
-      RefreshSceneTags();
 
       RefreshActionCardBindings();
       if (string.IsNullOrEmpty(_activeActionId) ||
@@ -145,16 +142,14 @@ namespace UniverIdle.UI
         progressTimeText.text = WorkActionRules.FormatRemainingTime(runner.SecondsRemaining);
     }
 
-    public override void OnInventoryChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: false);
+    public override void OnInventoryChanged(MainUIController host) => RefreshCenterState(host);
 
-    public override void OnWorkOrMasteryChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: true);
+    public override void OnWorkOrMasteryChanged(MainUIController host) => RefreshCenterState(host);
 
-    private void RefreshCenterState(MainUIController host, bool refreshSceneTags)
+    private void RefreshCenterState(MainUIController host)
     {
       _host = host;
       RefreshActionCardBindings();
-      if (refreshSceneTags)
-        RefreshSceneTags();
       UpdateActionSelectionUi();
       if (string.IsNullOrEmpty(_activeActionId)) return;
 
@@ -297,7 +292,6 @@ namespace UniverIdle.UI
       }
 
       UpdateLocationBannerForScene();
-      RefreshSceneTags();
       if (!refreshCards) return;
 
       RefreshActionCardBindings();
@@ -392,90 +386,6 @@ namespace UniverIdle.UI
           ActionCardView.ResolveMasteryIcon(mastery),
           unlockHint);
       }
-    }
-
-    private void RefreshSceneTags()
-    {
-      if (BoundToMap || sceneTagsRoot == null) return;
-
-      ClearSceneTags();
-      var groups = SceneGroups;
-      if (groups.Count <= 1) return;
-
-      var player = _host?.Session?.Player;
-      foreach (var group in groups)
-      {
-        var sceneId = group.SceneId;
-        var unlocked = player != null && player.GetWork(WorkId).Level >= group.MinRequiredWorkLevel;
-        var selected = sceneId == _activeSceneId;
-        var label = group.SceneName;
-        if (!unlocked && player != null)
-          label = $"🔒{label}";
-
-        var tag = CreateSceneTag(label, selected, unlocked, sceneId);
-        _sceneTagObjects.Add(tag);
-      }
-    }
-
-    private void ClearSceneTags()
-    {
-      for (var i = 0; i < _sceneTagObjects.Count; i++)
-      {
-        if (_sceneTagObjects[i] != null)
-          Destroy(_sceneTagObjects[i]);
-      }
-      _sceneTagObjects.Clear();
-
-      if (sceneTagsRoot == null) return;
-      for (var i = sceneTagsRoot.childCount - 1; i >= 0; i--)
-        Destroy(sceneTagsRoot.GetChild(i).gameObject);
-    }
-
-    private GameObject CreateSceneTag(string label, bool selected, bool unlocked, string sceneId)
-    {
-      var rt = new GameObject($"SceneTag_{sceneId}", typeof(RectTransform)).GetComponent<RectTransform>();
-      rt.SetParent(sceneTagsRoot, false);
-      rt.sizeDelta = new Vector2(0f, 22f);
-
-      var le = rt.gameObject.AddComponent<LayoutElement>();
-      le.minHeight = 22f;
-      le.preferredHeight = 22f;
-      le.minWidth = 48f;
-
-      var img = rt.gameObject.AddComponent<Image>();
-      img.color = selected
-        ? new Color(UITheme.Teal.r, UITheme.Teal.g, UITheme.Teal.b, 0.45f)
-        : UITheme.TagBg;
-      if (!unlocked)
-        img.color = new Color(img.color.r, img.color.g, img.color.b, 0.55f);
-
-      var btn = rt.gameObject.AddComponent<Button>();
-      btn.targetGraphic = img;
-      btn.interactable = unlocked;
-      btn.onClick.AddListener(() => SetActiveScene(sceneId, refreshCards: true));
-
-      var textGo = new GameObject("Label", typeof(RectTransform));
-      var textRt = textGo.GetComponent<RectTransform>();
-      textRt.SetParent(rt, false);
-      textRt.anchorMin = Vector2.zero;
-      textRt.anchorMax = Vector2.one;
-      textRt.offsetMin = Vector2.zero;
-      textRt.offsetMax = Vector2.zero;
-
-      var tmp = textGo.AddComponent<TextMeshProUGUI>();
-      if (locationTitleText != null)
-      {
-        tmp.font = locationTitleText.font;
-        tmp.fontSharedMaterial = locationTitleText.fontSharedMaterial;
-      }
-      tmp.fontSize = 11f;
-      tmp.alignment = TextAlignmentOptions.Center;
-      tmp.color = selected ? UITheme.TealBright : UITheme.TagText;
-      tmp.margin = new Vector4(8f, 3f, 8f, 3f);
-      tmp.raycastTarget = false;
-      tmp.text = label;
-
-      return rt.gameObject;
     }
 
     private string FindFirstUnlockedActionId()
