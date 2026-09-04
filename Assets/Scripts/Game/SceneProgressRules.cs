@@ -37,6 +37,23 @@ namespace UniverIdle.Game
 
     public static string FormatDurationSeconds(float seconds) => $"{seconds:0.#}s";
 
+    /// <summary>动作卡标题：优先子地点名。</summary>
+    public static string FormatSpotTitle(WorkActionDefinition action)
+    {
+      if (action == null) return "";
+      return string.IsNullOrEmpty(action.SpotName) ? action.Id : action.SpotName;
+    }
+
+    /// <summary>进度条 / 详情标题：优先展示名，再子地点 / 场景。</summary>
+    public static string FormatActionTitle(WorkActionDefinition action)
+    {
+      if (action == null) return "";
+      if (!string.IsNullOrEmpty(action.DisplayName)) return action.DisplayName;
+      if (!string.IsNullOrEmpty(action.SpotName)) return action.SpotName;
+      if (!string.IsNullOrEmpty(action.SceneName)) return action.SceneName;
+      return action.Id;
+    }
+
     public static string FormatRemainingTime(float seconds)
     {
       var total = Mathf.CeilToInt(seconds);

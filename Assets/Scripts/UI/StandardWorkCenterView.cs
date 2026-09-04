@@ -145,7 +145,7 @@ namespace UniverIdle.UI
         _centerRunningBarRoot.SetActive(true);
 
       if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + FormatActionTitle(runner.CurrentAction);
+        progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(runner.CurrentAction);
       if (progressFill != null)
         progressFill.fillAmount = runner.Progress;
       if (progressTimeText != null)
@@ -391,7 +391,7 @@ namespace UniverIdle.UI
         var mastery = player.GetSceneProgress(action.WorkId, action.SceneId).Level;
         actionCards[i].gameObject.SetActive(true);
         actionCards[i].Bind(
-          FormatSpotTitle(action),
+          SceneProgressRules.FormatSpotTitle(action),
           metaLeft,
           metaRight,
           !unlocked,
@@ -503,20 +503,6 @@ namespace UniverIdle.UI
         actionCards[i].SetSelected(i < _visibleActions.Count && _visibleActions[i].Id == _activeActionId);
     }
 
-    private static string FormatSpotTitle(WorkActionDefinition action)
-    {
-      if (action == null) return "";
-      return string.IsNullOrEmpty(action.SpotName) ? action.Id : action.SpotName;
-    }
-
-    private static string FormatActionTitle(WorkActionDefinition action)
-    {
-      if (action == null) return "";
-      if (!string.IsNullOrEmpty(action.DisplayName)) return action.DisplayName;
-      if (!string.IsNullOrEmpty(action.SpotName)) return action.SpotName;
-      return action.Id;
-    }
-
     private void UpdateLocationBannerForScene()
     {
       if (locationTitleText == null) return;
@@ -611,7 +597,7 @@ namespace UniverIdle.UI
       if (_centerRunningBarRoot != null)
         _centerRunningBarRoot.SetActive(true);
       if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + FormatActionTitle(action);
+        progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(action);
       if (progressFill != null)
         progressFill.fillAmount = 0f;
       if (progressTimeText != null)

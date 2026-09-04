@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using TMPro;
 using UniverIdle.Game;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UniverIdle.UI
 {
-  /// <summary>主界面：工作切换、各工作独立 Center、背包。</summary>
+  /// <summary>主界面：工作切换、各工作独立 Center、背包、全局获得提示。</summary>
   [DefaultExecutionOrder(0)]
   public class MainUIController : MonoBehaviour
   {
@@ -21,6 +22,11 @@ namespace UniverIdle.UI
 
     [Header("顶栏")]
     [SerializeField] private TopBarGoldView topBarGold;
+
+    [Header("全局获得提示")]
+    [SerializeField] private LootToastView lootToast;
+    [SerializeField] private LootToastLineView lootLinePrefab;
+    [SerializeField] private TextMeshProUGUI lootFloaterPrefab;
 
     private GameSession _session;
     private string _activeWorkId;
@@ -38,6 +44,7 @@ namespace UniverIdle.UI
     private void Start()
     {
       WireButtons();
+      WireLootToast();
 
       if (_session?.Player != null)
       {
@@ -91,6 +98,13 @@ namespace UniverIdle.UI
       }
     }
 
+    private void WireLootToast()
+    {
+      if (lootToast == null)
+        lootToast = GetComponentInChildren<LootToastView>(true);
+      lootToast?.BindPrefabs(lootLinePrefab, lootFloaterPrefab);
+    }
+
     private void OnDestroy()
     {
       if (_session?.Player != null)
@@ -116,14 +130,7 @@ namespace UniverIdle.UI
       var work = GameContent.GetWork(workId);
       if (work == null || workCenterHost == null) return;
 
-      var workChanged = _activeWorkId != workId;
-      if (workChanged && _session?.Runner != null && _session.Runner.IsRunning)
-      {
-        var running = _session.Runner.CurrentAction;
-        if (running != null && running.WorkId != workId)
-          _session.Runner.Stop();
-      }
-
+      // 切工作只换界面，不停止后台挂机；点另一工作的开始才会换 Runner 当前动作
       _activeWorkId = workId;
       for (var i = 0; i < skillItems.Count; i++)
       {
@@ -174,12 +181,22 @@ namespace UniverIdle.UI
     private void OnActionStopped(WorkActionDefinition action)
     {
       if (action == null) return;
-      workCenterHost?.Active?.OnRunnerActionStopped(this, action);
+      if (workCenterHost != null && workCenterHost.TryGet(action.WorkId, out var owner))
+        owner.OnRunnerActionStopped(this, action);
+      else
+        workCenterHost?.Active?.OnRunnerActionStopped(this, action);
     }
 
     private void OnActionCompleted(ActionCompleteResult result)
     {
-      workCenterHost?.Active?.OnActionCompleted(this, result);
+      WireLootToast();
+      lootToast?.PushResult(result, _session?.Player);
+
+      if (result?.Action != null &&
+          workCenterHost != null &&
+          workCenterHost.TryGet(result.Action.WorkId, out var owner))
+        owner.OnActionCompleted(this, result);
+
       RefreshWorkNav();
     }
 

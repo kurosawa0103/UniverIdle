@@ -157,6 +157,70 @@ namespace UniverIdle.UI
       RefreshTextLine(line, message.Trim());
     }
 
+    /// <summary>一次动作结算的全局获得提示（任意工作共用）。</summary>
+    public void PushResult(ActionCompleteResult result, PlayerState player)
+    {
+      if (result?.Action == null) return;
+
+      var hasLoot = false;
+      if (result.Loot != null)
+      {
+        for (var i = 0; i < result.Loot.Count; i++)
+        {
+          if (LootRules.IsEmpty(result.Loot[i].ItemId)) continue;
+          hasLoot = true;
+          break;
+        }
+      }
+
+      var hasGold = result.GoldGained > 0;
+      if (!hasLoot && !hasGold)
+        PushText(EmptyLootLine(result.Action.WorkId));
+      else
+      {
+        if (hasLoot)
+        {
+          for (var i = 0; i < result.Loot.Count; i++)
+          {
+            var drop = result.Loot[i];
+            if (LootRules.IsEmpty(drop.ItemId)) continue;
+            var total = player != null ? player.GetItemCount(drop.ItemId) : drop.Amount;
+            PushItem(drop.ItemId, drop.Amount, total);
+          }
+        }
+
+        if (hasGold)
+        {
+          var goldTotal = player != null ? player.Gold : result.GoldGained;
+          PushGold(result.GoldGained, goldTotal);
+        }
+      }
+
+      if (result.BagFull)
+        PushText("背包已满，装不下新道具。");
+
+      if (result.WorkLeveledUp)
+      {
+        var work = GameContent.GetWork(result.Action.WorkId);
+        var workName = work != null ? work.DisplayName : "工作";
+        PushText($"{workName}升至 Lv.{result.WorkNewLevel}！");
+      }
+
+      if (result.LeveledUp)
+      {
+        var scene = string.IsNullOrEmpty(result.SceneName) ? "本地区" : result.SceneName;
+        PushText($"{scene}熟练度升至 Lv.{result.NewLevel}！");
+      }
+    }
+
+    private static string EmptyLootLine(string workId) =>
+      workId switch
+      {
+        "woodcutting" => "这次没砍下原木。",
+        "scavenge" => "这次什么也没捡到。",
+        _ => "这次什么也没有。"
+      };
+
     private void WireLines()
     {
       if (_wired) return;

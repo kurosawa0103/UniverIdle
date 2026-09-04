@@ -6,19 +6,14 @@ using UnityEngine;
 namespace UniverIdle.UI
 {
   /// <summary>
-  /// 工作页右侧详情（通用）：标题、正文、掉落预览、获得提示。
-  /// 不含开始/停止按钮；砍树等动作列表工作用本组件。
+  /// 工作页右侧详情（通用）：标题、正文、掉落预览。
+  /// 获得提示由主界面全局 <see cref="LootToastView"/> 处理。
   /// </summary>
   public class WorkActionDetailView : MonoBehaviour
   {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI bodyText;
     [SerializeField] private LootPreviewView lootPreview;
-    [SerializeField] private LootToastView lootToast;
-    [SerializeField] private LootToastLineView lootLinePrefab;
-    [SerializeField] private TextMeshProUGUI lootFloaterPrefab;
-
-    protected virtual void Awake() => BindLootToastPrefabs();
 
     public virtual void ShowAction(WorkActionDefinition action, PlayerState player, bool revealGuaranteedLoot = false)
     {
@@ -42,67 +37,8 @@ namespace UniverIdle.UI
     public virtual void OnActionCompleted(ActionCompleteResult result, PlayerState player)
     {
       if (result?.Action == null) return;
-      BindLootToastPrefabs();
-      PushLootToasts(result, player);
       lootPreview?.RevealLoot(result);
     }
-
-    private void PushLootToasts(ActionCompleteResult result, PlayerState player)
-    {
-      if (lootToast == null) return;
-
-      var hasLoot = false;
-      if (result.Loot != null)
-      {
-        for (var i = 0; i < result.Loot.Count; i++)
-        {
-          if (LootRules.IsEmpty(result.Loot[i].ItemId)) continue;
-          hasLoot = true;
-          break;
-        }
-      }
-      var hasGold = result.GoldGained > 0;
-      if (!hasLoot && !hasGold)
-        lootToast.PushText(EmptyLootLine(result.Action.WorkId));
-      else
-      {
-        if (hasLoot)
-        {
-          for (var i = 0; i < result.Loot.Count; i++)
-          {
-            var drop = result.Loot[i];
-            if (LootRules.IsEmpty(drop.ItemId)) continue;
-            var total = player != null ? player.GetItemCount(drop.ItemId) : drop.Amount;
-            lootToast.PushItem(drop.ItemId, drop.Amount, total);
-          }
-        }
-
-        if (hasGold)
-        {
-          var goldTotal = player != null ? player.Gold : result.GoldGained;
-          lootToast.PushGold(result.GoldGained, goldTotal);
-        }
-      }
-
-      if (result.BagFull)
-        lootToast.PushText("背包已满，装不下新道具。");
-
-      if (result.WorkLeveledUp)
-      {
-        var work = GameContent.GetWork(result.Action.WorkId);
-        var workName = work != null ? work.DisplayName : "工作";
-        lootToast.PushText($"{workName}升至 Lv.{result.WorkNewLevel}！");
-      }
-
-      if (result.LeveledUp)
-      {
-        var scene = string.IsNullOrEmpty(result.SceneName) ? "本地区" : result.SceneName;
-        lootToast.PushText($"{scene}熟练度升至 Lv.{result.NewLevel}！");
-      }
-    }
-
-    private void BindLootToastPrefabs() =>
-      lootToast?.BindPrefabs(lootLinePrefab, lootFloaterPrefab);
 
     protected static string BuildDetailBody(WorkActionDefinition action, PlayerState player, WorkDefinition work)
     {
@@ -159,16 +95,6 @@ namespace UniverIdle.UI
           sb.Append("、");
         sb.Append(name).Append(amount);
       }
-    }
-
-    private static string EmptyLootLine(string workId)
-    {
-      return workId switch
-      {
-        "woodcutting" => "这次没砍下原木。",
-        "scavenge" => "这次什么也没捡到。",
-        _ => "这次什么也没有。"
-      };
     }
   }
 }

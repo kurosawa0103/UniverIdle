@@ -11,6 +11,17 @@ namespace UniverIdle.UI
 
     public WorkCenterView Active { get; private set; }
 
+    public bool TryGet(string workId, out WorkCenterView view)
+    {
+      EnsureRegistered();
+      if (string.IsNullOrEmpty(workId))
+      {
+        view = null;
+        return false;
+      }
+      return _views.TryGetValue(workId, out view) && view != null;
+    }
+
     private void Awake() => EnsureRegistered();
 
     public void Register(WorkCenterView view)

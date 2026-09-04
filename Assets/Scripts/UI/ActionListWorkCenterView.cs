@@ -92,7 +92,7 @@ namespace UniverIdle.UI
         _runningBarRoot.SetActive(true);
 
       if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + FormatTitle(runner.CurrentAction);
+        progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(runner.CurrentAction);
       if (progressFill != null)
         progressFill.fillAmount = runner.Progress;
       if (progressTimeText != null)
@@ -167,7 +167,7 @@ namespace UniverIdle.UI
         var mastery = player.GetSceneProgress(action.WorkId, action.SceneId).Level;
         card.gameObject.SetActive(true);
         card.Bind(
-          FormatTitle(action),
+          SceneProgressRules.FormatActionTitle(action),
           metaLeft,
           metaRight,
           !unlocked,
@@ -230,7 +230,7 @@ namespace UniverIdle.UI
       if (_runningBarRoot != null)
         _runningBarRoot.SetActive(true);
       if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + FormatTitle(action);
+        progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(action);
       if (progressFill != null)
         progressFill.fillAmount = 0f;
       if (progressTimeText != null)
@@ -252,14 +252,6 @@ namespace UniverIdle.UI
       if (_runningBarRoot != null) return;
       _runningBarRoot = FindRunningBarRoot(transform, progressFill);
       HideProgressBar();
-    }
-
-    private static string FormatTitle(WorkActionDefinition action)
-    {
-      if (action == null) return "";
-      if (!string.IsNullOrEmpty(action.DisplayName)) return action.DisplayName;
-      if (!string.IsNullOrEmpty(action.SceneName)) return action.SceneName;
-      return action.Id;
     }
   }
 }

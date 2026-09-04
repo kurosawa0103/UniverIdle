@@ -85,6 +85,8 @@ namespace UniverIdle.Editor
       var bagBtn = FindNamed(root, "Btn_背包")?.GetComponent<Button>();
       AssignIfNull(so, "inventoryButton", bagBtn, log, "MainUI.inventoryButton");
 
+      BindGlobalLootToast(root, main, so, log);
+
       var skillProp = so.FindProperty("skillItems");
       if (skillProp != null && skillProp.isArray && skillProp.arraySize == 0)
       {
@@ -97,6 +99,39 @@ namespace UniverIdle.Editor
 
       so.ApplyModifiedPropertiesWithoutUndo();
       EditorUtility.SetDirty(main);
+    }
+
+    private static void BindGlobalLootToast(Transform root, MainUIController main, SerializedObject so, StringBuilder log)
+    {
+      var linePrefab = LoadComponent<LootToastLineView>(ToastLinePrefabPath);
+      var floaterPrefab = LoadComponent<TextMeshProUGUI>(ToastFloaterPrefabPath);
+
+      var toast = so.FindProperty("lootToast")?.objectReferenceValue as LootToastView;
+      if (toast == null)
+      {
+        var named = FindNamed(root, "获得提示区");
+        if (named != null)
+          toast = named.GetComponent<LootToastView>() ?? named.GetComponentInChildren<LootToastView>(true);
+      }
+      if (toast == null)
+        toast = root.GetComponentInChildren<LootToastView>(true);
+      if (toast == null)
+        toast = CreateLootToastHost(root, log);
+
+      AssignIfNull(so, "lootToast", toast, log, "MainUI.lootToast");
+      AssignIfNull(so, "lootLinePrefab", linePrefab, log, "MainUI.lootLinePrefab");
+      AssignIfNull(so, "lootFloaterPrefab", floaterPrefab, log, "MainUI.lootFloaterPrefab");
+
+      if (toast == null) return;
+      var tso = new SerializedObject(toast);
+      var lines = toast.transform.Find("Lines") as RectTransform;
+      var floats = toast.transform.Find("FloatLayer") as RectTransform;
+      AssignIfNull(tso, "lineRoot", lines, log, $"{toast.name}.lineRoot");
+      AssignIfNull(tso, "floatLayer", floats, log, $"{toast.name}.floatLayer");
+      AssignIfNull(tso, "linePrefab", linePrefab, log, $"{toast.name}.linePrefab");
+      AssignIfNull(tso, "floaterPrefab", floaterPrefab, log, $"{toast.name}.floaterPrefab");
+      tso.ApplyModifiedPropertiesWithoutUndo();
+      EditorUtility.SetDirty(toast);
     }
 
     private static void BindTopBarGold(Transform root, StringBuilder log)
@@ -184,8 +219,6 @@ namespace UniverIdle.Editor
 
     private static void BindWorkDetails(Transform root, StringBuilder log)
     {
-      var linePrefab = LoadComponent<LootToastLineView>(ToastLinePrefabPath);
-      var floaterPrefab = LoadComponent<TextMeshProUGUI>(ToastFloaterPrefabPath);
       var dropSlot = LoadComponent<LootDropSlotView>(DropSlotPrefabPath);
 
       var hub = root.GetComponentInChildren<ScavengeHubView>(true);
@@ -221,13 +254,11 @@ namespace UniverIdle.Editor
       }
 
       foreach (var detail in root.GetComponentsInChildren<WorkActionDetailView>(true))
-        BindOneDetail(detail, linePrefab, floaterPrefab, dropSlot, log);
+        BindOneDetail(detail, dropSlot, log);
     }
 
     private static void BindOneDetail(
       WorkActionDetailView detail,
-      LootToastLineView linePrefab,
-      TextMeshProUGUI floaterPrefab,
       LootDropSlotView dropSlot,
       StringBuilder log)
     {
@@ -237,14 +268,6 @@ namespace UniverIdle.Editor
 
       var preview = detail.GetComponentInChildren<LootPreviewView>(true);
       AssignIfNull(so, "lootPreview", preview, log, $"{detail.name}.lootPreview");
-
-      var toast = detail.GetComponentInChildren<LootToastView>(true);
-      if (toast == null)
-        toast = CreateLootToastHost(detail.transform, log);
-
-      AssignIfNull(so, "lootToast", toast, log, $"{detail.name}.lootToast");
-      AssignIfNull(so, "lootLinePrefab", linePrefab, log, $"{detail.name}.lootLinePrefab");
-      AssignIfNull(so, "lootFloaterPrefab", floaterPrefab, log, $"{detail.name}.lootFloaterPrefab");
 
       if (detail is ScavengeDetailView)
       {
@@ -265,19 +288,6 @@ namespace UniverIdle.Editor
         pso.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(preview);
       }
-
-      if (toast != null)
-      {
-        var tso = new SerializedObject(toast);
-        var lines = toast.transform.Find("Lines") as RectTransform;
-        var floats = toast.transform.Find("FloatLayer") as RectTransform;
-        AssignIfNull(tso, "lineRoot", lines, log, $"{toast.name}.lineRoot");
-        AssignIfNull(tso, "floatLayer", floats, log, $"{toast.name}.floatLayer");
-        AssignIfNull(tso, "linePrefab", linePrefab, log, $"{toast.name}.linePrefab");
-        AssignIfNull(tso, "floaterPrefab", floaterPrefab, log, $"{toast.name}.floaterPrefab");
-        tso.ApplyModifiedPropertiesWithoutUndo();
-        EditorUtility.SetDirty(toast);
-      }
     }
 
     private static LootToastView CreateLootToastHost(Transform detail, StringBuilder log)
@@ -297,10 +307,22 @@ namespace UniverIdle.Editor
       Undo.RegisterCreatedObjectUndo(go, "Create 获得提示区");
       go.transform.SetParent(detail, false);
       var rt = (RectTransform)go.transform;
-      rt.anchorMin = new Vector2(0f, 0f);
-      rt.anchorMax = new Vector2(1f, 0.35f);
-      rt.offsetMin = new Vector2(8f, 8f);
-      rt.offsetMax = new Vector2(-8f, -8f);
+      // 挂在主界面根：贴底 overlay；挂在详情里则占下半区（兼容旧调用）
+      if (detail.GetComponentInParent<MainUIController>(true) != null &&
+          detail.GetComponentInParent<WorkActionDetailView>(true) == null)
+      {
+        rt.anchorMin = new Vector2(0.55f, 0f);
+        rt.anchorMax = new Vector2(1f, 0.45f);
+        rt.offsetMin = new Vector2(12f, 12f);
+        rt.offsetMax = new Vector2(-12f, -12f);
+      }
+      else
+      {
+        rt.anchorMin = new Vector2(0f, 0f);
+        rt.anchorMax = new Vector2(1f, 0.35f);
+        rt.offsetMin = new Vector2(8f, 8f);
+        rt.offsetMax = new Vector2(-8f, -8f);
+      }
 
       EnsureToastChildren(go.transform);
       var toast = Undo.AddComponent<LootToastView>(go);
