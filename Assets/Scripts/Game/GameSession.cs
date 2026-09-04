@@ -81,7 +81,7 @@ namespace UniverIdle.Game
       Player.OnInventoryChanged += MarkDirty;
       Player.OnGoldChanged += MarkDirty;
       Player.OnWorkChanged += MarkDirtyIgnoreArgs;
-      Player.OnSceneProgressChanged += MarkDirtyIgnoreArgs;
+      Player.OnActionMasteryChanged += MarkDirtyIgnoreArgs;
     }
 
     private void UnwireSave()
@@ -90,12 +90,10 @@ namespace UniverIdle.Game
       Player.OnInventoryChanged -= MarkDirty;
       Player.OnGoldChanged -= MarkDirty;
       Player.OnWorkChanged -= MarkDirtyIgnoreArgs;
-      Player.OnSceneProgressChanged -= MarkDirtyIgnoreArgs;
+      Player.OnActionMasteryChanged -= MarkDirtyIgnoreArgs;
     }
 
     private void MarkDirtyIgnoreArgs(string _) => MarkDirty();
-
-    private void MarkDirtyIgnoreArgs(string _, string __) => MarkDirty();
 
     private void MarkDirty()
     {

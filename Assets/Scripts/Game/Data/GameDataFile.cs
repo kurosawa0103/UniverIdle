@@ -27,7 +27,19 @@ namespace UniverIdle.Game
   {
     public int version = 3;
     public WorkRow[] works;
+    /// <summary>工作总等级：从该级升到下一级所需经验；有表时优先于 works 公式。</summary>
+    public LevelXpRow[] workLevels;
+    /// <summary>动作熟练度：每条 action 共用此曲线；进度按 actionId 独立累计。</summary>
+    public LevelXpRow[] actionLevels;
     public ActionRow[] actions;
+  }
+
+  [Serializable]
+  public class LevelXpRow
+  {
+    public int level;
+    /// <summary>从该级升到下一级所需经验；末级可填 0。</summary>
+    public int xp;
   }
 
   [Serializable]
@@ -50,9 +62,11 @@ namespace UniverIdle.Game
     public string locationName;
     public int xpBase;
     public int xpPerLevel;
+    /// <summary>动作熟练度公式兜底（表列名仍为 sceneXp*）。</summary>
     public int sceneXpBase;
     public int sceneXpPerLevel;
     public int grantWorkXp = 1;
+    /// <summary>是否加动作熟练度 XP（表列名仍为 grantSceneXp）。</summary>
     public int grantSceneXp = 1;
   }
 

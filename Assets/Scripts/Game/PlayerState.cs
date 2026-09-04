@@ -7,7 +7,7 @@ namespace UniverIdle.Game
   {
     private readonly Dictionary<string, long> _inventory = new();
     private readonly Dictionary<string, WorkProgress> _works = new();
-    private readonly Dictionary<string, WorkProgress> _sceneProgress = new();
+    private readonly Dictionary<string, WorkProgress> _actionMastery = new();
 
     private long _gold;
     private int _unlockedPageCount;
@@ -16,7 +16,7 @@ namespace UniverIdle.Game
     public event Action OnInventoryChanged;
     public event Action OnGoldChanged;
     public event Action<string> OnWorkChanged;
-    public event Action<string, string> OnSceneProgressChanged;
+    public event Action<string> OnActionMasteryChanged;
 
     public IReadOnlyDictionary<string, long> Inventory => _inventory;
     public long Gold => _gold;
@@ -100,13 +100,14 @@ namespace UniverIdle.Game
       return progress;
     }
 
-    public WorkProgress GetSceneProgress(string workId, string sceneId)
+    public WorkProgress GetActionMastery(string actionId)
     {
-      var key = $"{workId}:{sceneId}";
-      if (!_sceneProgress.TryGetValue(key, out var progress))
+      if (string.IsNullOrEmpty(actionId))
+        return new WorkProgress();
+      if (!_actionMastery.TryGetValue(actionId, out var progress))
       {
         progress = new WorkProgress();
-        _sceneProgress[key] = progress;
+        _actionMastery[actionId] = progress;
       }
       return progress;
     }
@@ -141,24 +142,24 @@ namespace UniverIdle.Game
       if (string.IsNullOrEmpty(workId) || xp <= 0) return;
       var work = GameContent.GetWork(workId);
       if (work == null || !work.GrantWorkXp) return;
-      GetWork(workId).AddXp(xp, work, forScene: false);
+      GetWork(workId).AddXp(xp, work, forActionMastery: false);
       OnWorkChanged?.Invoke(workId);
     }
 
-    public void AddSceneXp(string workId, string sceneId, int xp)
+    public void AddActionXp(string workId, string actionId, int xp)
     {
-      if (string.IsNullOrEmpty(workId) || string.IsNullOrEmpty(sceneId) || xp <= 0) return;
+      if (string.IsNullOrEmpty(workId) || string.IsNullOrEmpty(actionId) || xp <= 0) return;
       var work = GameContent.GetWork(workId);
-      if (work == null || !work.GrantSceneXp) return;
-      GetSceneProgress(workId, sceneId).AddXp(xp, work, forScene: true);
-      OnSceneProgressChanged?.Invoke(workId, sceneId);
+      if (work == null || !work.GrantActionXp) return;
+      GetActionMastery(actionId).AddXp(xp, work, forActionMastery: true);
+      OnActionMasteryChanged?.Invoke(actionId);
     }
 
     public void ResetToNewPlayer()
     {
       _inventory.Clear();
       _works.Clear();
-      _sceneProgress.Clear();
+      _actionMastery.Clear();
       _gold = 0;
       ApplyBagDefaults();
     }
@@ -181,15 +182,13 @@ namespace UniverIdle.Game
         i++;
       }
 
-      var scenes = new SaveSceneRow[_sceneProgress.Count];
+      var masteries = new SaveActionMasteryRow[_actionMastery.Count];
       i = 0;
-      foreach (var kv in _sceneProgress)
+      foreach (var kv in _actionMastery)
       {
-        SplitSceneKey(kv.Key, out var workId, out var sceneId);
-        scenes[i] = new SaveSceneRow
+        masteries[i] = new SaveActionMasteryRow
         {
-          workId = workId,
-          sceneId = sceneId,
+          actionId = kv.Key,
           level = kv.Value.Level,
           xp = kv.Value.Xp,
         };
@@ -204,7 +203,7 @@ namespace UniverIdle.Game
         unlockedSlotCount = _unlockedSlotCount,
         items = items,
         works = works,
-        scenes = scenes,
+        actionMasteries = masteries,
       };
     }
 
@@ -241,14 +240,13 @@ namespace UniverIdle.Game
         }
       }
 
-      if (file.scenes != null)
+      if (file.actionMasteries != null)
       {
-        for (var i = 0; i < file.scenes.Length; i++)
+        for (var i = 0; i < file.actionMasteries.Length; i++)
         {
-          var row = file.scenes[i];
-          if (row == null || string.IsNullOrEmpty(row.workId) || string.IsNullOrEmpty(row.sceneId))
-            continue;
-          _sceneProgress[$"{row.workId}:{row.sceneId}"] = new WorkProgress
+          var row = file.actionMasteries[i];
+          if (row == null || string.IsNullOrEmpty(row.actionId)) continue;
+          _actionMastery[row.actionId] = new WorkProgress
           {
             Level = row.level < 1 ? 1 : row.level,
             Xp = row.xp < 0 ? 0 : row.xp,
@@ -262,7 +260,7 @@ namespace UniverIdle.Game
       OnGoldChanged?.Invoke();
       OnInventoryChanged?.Invoke();
       OnWorkChanged?.Invoke("");
-      OnSceneProgressChanged?.Invoke("", "");
+      OnActionMasteryChanged?.Invoke("");
     }
 
     private void ApplyBagDefaults()
@@ -283,17 +281,6 @@ namespace UniverIdle.Game
       if (slots < bag.FreeSlotCount) slots = bag.FreeSlotCount;
       if (slots > cap) slots = cap;
       _unlockedSlotCount = slots;
-    }
-
-    private static void SplitSceneKey(string key, out string workId, out string sceneId)
-    {
-      workId = key;
-      sceneId = "";
-      if (string.IsNullOrEmpty(key)) return;
-      var colon = key.IndexOf(':');
-      if (colon <= 0 || colon >= key.Length - 1) return;
-      workId = key.Substring(0, colon);
-      sceneId = key.Substring(colon + 1);
     }
   }
 }

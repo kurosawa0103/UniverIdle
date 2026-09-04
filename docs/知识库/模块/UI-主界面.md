@@ -62,7 +62,7 @@ Assets/Editor/UI/MainUIBindMenu.cs
 | `WorkActionDetailView` | `WorkView_woodcutting/Detail` 等 | 标题、正文、掉落预览；**无**开始按钮 |
 | `SkillNavItemView` | 左栏每项 | `workId`、高亮状态 |
 | `ActionCardView` | 动作卡 | 标题、元信息、Thumb、`unlockText`、**`button`（`ClickButton`）**、`MasteryIcon` / `MasteryLevel`；Center Wire 用 `ClickButton`，不 `GetComponent` |
-| `LootToastView` | **`App` 根下「获得提示区」**（勿挂 `WorkView_*` / Detail） | **必拖** `lineRoot` / `floatLayer` / `linePrefab`（`获得提示.prefab`）/ `floaterPrefab`（`获得提示飘字.prefab`）；`MainUI.lootToast` 只拖此节点 |
+| `LootToastView` | **`App` 根下「获得提示区」**（勿挂 `WorkView_*` / Detail） | **必拖** `lineRoot` / `floatLayer` / `linePrefab`（`获得提示.prefab`）/ `floaterPrefab`（`获得提示飘字.prefab`）；`MainUI.lootToast` 只拖此节点；结算可推道具 / 金币 / **经验**（`ItemIconLoader.GetXp()` → `ui_xp`） |
 | `LootToastLineView` | `获得提示.prefab` | `icon` / 文案 + **`row` → `Row`**（布局必拖） |
 | `InventoryPanelView` | `InventoryOverlay` | 见 [UI-背包](UI-背包.md)；`pageTabs` 必拖（**不**扫 `tabRoot`） |
 | `LootPreviewView` | `Detail/掉落预览` | `slotPrefab` → `掉落slot.prefab` |
@@ -77,7 +77,7 @@ Assets/Editor/UI/MainUIBindMenu.cs
 ## 依赖
 
 - TextMeshPro、uGUI
-- `UniverIdle.Game`（挂机与内容表）；图标统一 `ItemIconLoader`（含 `GetGold()`、按等级 `GetMastery()`）
+- `UniverIdle.Game`（挂机与内容表）；图标统一 `ItemIconLoader`（含 `GetGold()`、`GetXp()`、按等级 `GetMastery()`）
 
 ## 扩展指南
 

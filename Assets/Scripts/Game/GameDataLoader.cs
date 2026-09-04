@@ -146,6 +146,10 @@ namespace UniverIdle.Game
     private static void RegisterWorks(WorkContentDataFile data, IDictionary<string, WorkDefinition> works)
     {
       if (data?.works == null) return;
+
+      var maxWorkLevel = WorkProgression.BuildXpTable(data.workLevels, out var workXpByLevel);
+      var maxActionLevel = WorkProgression.BuildXpTable(data.actionLevels, out var actionXpByLevel);
+
       foreach (var row in data.works)
       {
         if (string.IsNullOrEmpty(row.id)) continue;
@@ -159,10 +163,14 @@ namespace UniverIdle.Game
           LocationName = row.locationName,
           XpBase = row.xpBase > 0 ? row.xpBase : 40,
           XpPerLevel = row.xpPerLevel > 0 ? row.xpPerLevel : 20,
-          SceneXpBase = row.sceneXpBase,
-          SceneXpPerLevel = row.sceneXpPerLevel,
+          ActionXpBase = row.sceneXpBase,
+          ActionXpPerLevel = row.sceneXpPerLevel,
           GrantWorkXp = row.grantWorkXp != 0,
-          GrantSceneXp = row.grantSceneXp != 0,
+          GrantActionXp = row.grantSceneXp != 0,
+          WorkXpByLevel = workXpByLevel,
+          ActionXpByLevel = actionXpByLevel,
+          MaxWorkLevel = maxWorkLevel,
+          MaxActionLevel = maxActionLevel,
         };
       }
     }

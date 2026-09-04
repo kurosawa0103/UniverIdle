@@ -41,13 +41,14 @@ namespace UniverIdle.Editor
     };
     private static readonly string[] LootHeaders = { "actionId", "itemId", "chance", "min", "max" };
     private static readonly string[] LootExcelHeaders = { "actionId", "itemId", "#itemName", "chance", "min", "max" };
+    private static readonly string[] LevelXpHeaders = { "level", "xp" };
 
     private static readonly string[] ItemHeaderComments =
       { "道具ID", "显示名称", "分类(junk/wood/ore/monster/herb/tool/relic/system)", "图标(空=自动)", "描述" };
     private static readonly string[] WorkHeaderComments =
     {
       "工作ID", "工作名称", "地点名称",
-      "工作经验基数", "每级额外工作经验", "地区熟练度基数", "地区熟练度每级增量", "是否加工作XP(1/0)", "是否加地区XP(1/0)",
+      "工作经验基数", "每级额外工作经验", "动作熟练度基数", "动作熟练度每级增量", "是否加总等级XP(1/0)", "是否加动作熟练度XP(1/0)",
     };
     private static readonly string[] ActionHeaderComments =
     {
@@ -57,6 +58,8 @@ namespace UniverIdle.Editor
     };
     private static readonly string[] LootExcelHeaderComments =
       { "动作ID", "道具ID", "道具名(不导出)", "概率0~1", "最少数量", "最多数量" };
+    private static readonly string[] LevelXpHeaderComments =
+      { "等级", "升到下级所需经验" };
 
     private enum ActionSheetLayout
     {
@@ -159,10 +162,14 @@ namespace UniverIdle.Editor
       if (selected.Contains("items"))
         items.items = ReadSheet("items", () => ReadItemSheet(RequireSheet(excelCache, "items"))).ToArray();
 
-      MergeWorkContent(scavenge, excelCache, selected, "scavenge_works", "scavenge_actions", "scavenge_loot", "scavenge.json");
-      MergeWorkContent(woodcutting, excelCache, selected, "woodcutting_works", "woodcutting_actions", "woodcutting_loot", "woodcutting.json");
-      MergeWorkContent(mining, excelCache, selected, "mining_works", "mining_actions", "mining_loot", "mining.json");
-      MergeWorkContent(monsterExplore, excelCache, selected, "monster_explore_works", "monster_explore_actions", "monster_explore_loot", "monster_explore.json");
+      MergeWorkContent(scavenge, excelCache, selected,
+        "scavenge_works", "scavenge_work_levels", "scavenge_action_levels", "scavenge_actions", "scavenge_loot", "scavenge.json");
+      MergeWorkContent(woodcutting, excelCache, selected,
+        "woodcutting_works", "woodcutting_work_levels", "woodcutting_action_levels", "woodcutting_actions", "woodcutting_loot", "woodcutting.json");
+      MergeWorkContent(mining, excelCache, selected,
+        "mining_works", "mining_work_levels", "mining_action_levels", "mining_actions", "mining_loot", "mining.json");
+      MergeWorkContent(monsterExplore, excelCache, selected,
+        "monster_explore_works", "monster_explore_work_levels", "monster_explore_action_levels", "monster_explore_actions", "monster_explore_loot", "monster_explore.json");
 
       items.version = Math.Max(items.version, 3);
       ValidateItemReferences(items, scavenge, "scavenge_actions", "scavenge_loot");
@@ -177,6 +184,8 @@ namespace UniverIdle.Editor
       IReadOnlyDictionary<string, Dictionary<string, List<string[]>>> excelCache,
       ISet<string> selected,
       string worksSheetId,
+      string workLevelsSheetId,
+      string actionLevelsSheetId,
       string actionsSheetId,
       string lootSheetId,
       string jsonFileName)
@@ -189,7 +198,17 @@ namespace UniverIdle.Editor
       if (selected.Contains(worksSheetId))
         data.works = ReadSheet(worksSheetId, () => ReadWorkSheet(RequireSheet(excelCache, worksSheetId))).ToArray();
 
-      if (!exportActions && !exportLoot) return;
+      if (selected.Contains(workLevelsSheetId))
+        data.workLevels = ReadSheet(workLevelsSheetId, () => ReadLevelXpSheet(RequireSheet(excelCache, workLevelsSheetId))).ToArray();
+
+      if (selected.Contains(actionLevelsSheetId))
+        data.actionLevels = ReadSheet(actionLevelsSheetId, () => ReadLevelXpSheet(RequireSheet(excelCache, actionLevelsSheetId))).ToArray();
+
+      if (!exportActions && !exportLoot)
+      {
+        data.version = Math.Max(data.version, 3);
+        return;
+      }
 
       var actions = exportActions
         ? ReadSheet(actionsSheetId, () => ReadActionSheet(RequireSheet(excelCache, actionsSheetId)))
@@ -344,6 +363,12 @@ namespace UniverIdle.Editor
       sb.Append("  \"works\": [\n");
       WriteWorkRows(sb, data.works);
       sb.Append("  ],\n");
+      sb.Append("  \"workLevels\": [\n");
+      WriteLevelXpRows(sb, data.workLevels);
+      sb.Append("  ],\n");
+      sb.Append("  \"actionLevels\": [\n");
+      WriteLevelXpRows(sb, data.actionLevels);
+      sb.Append("  ],\n");
       sb.Append("  \"actions\": [\n");
       WriteActionRows(sb, data.actions);
       sb.Append("  ]\n}");
@@ -355,6 +380,8 @@ namespace UniverIdle.Editor
       return new Dictionary<string, IList<string[]>>(StringComparer.OrdinalIgnoreCase)
       {
         ["works"] = BuildWorkRows(data?.works),
+        ["work_levels"] = BuildLevelXpRows(data?.workLevels),
+        ["action_levels"] = BuildLevelXpRows(data?.actionLevels),
         ["actions"] = BuildActionRows(data?.actions),
         ["loot"] = BuildLootRows(items, data?.actions),
       };
@@ -389,6 +416,8 @@ namespace UniverIdle.Editor
           ? actionHeaderIndex
           : -1,
         GameDataSheetRegistry.WorkSheetKind.Loot => FindLootHeaderRowIndex(rows),
+        GameDataSheetRegistry.WorkSheetKind.WorkLevels => FindHeaderRowIndex(rows, LevelXpHeaders),
+        GameDataSheetRegistry.WorkSheetKind.ActionLevels => FindHeaderRowIndex(rows, LevelXpHeaders),
         _ => 0,
       };
       if (headerIndex < 0) return -1;
@@ -624,6 +653,13 @@ namespace UniverIdle.Editor
         sceneXpPerLevel = ParseInt(r[6], 0),
         grantWorkXp = ParseInt(r[7], 1),
         grantSceneXp = ParseInt(r[8], 1),
+      });
+
+    private static List<LevelXpRow> ReadLevelXpSheet(List<string[]> rows) =>
+      MapRows(rows, LevelXpHeaders, r => new LevelXpRow
+      {
+        level = ParseInt(r[0]),
+        xp = ParseInt(r[1]),
       });
 
     private static List<ActionRow> ReadActionSheet(List<string[]> rows)
@@ -934,6 +970,22 @@ namespace UniverIdle.Editor
       return rows;
     }
 
+    private static List<string[]> BuildLevelXpRows(LevelXpRow[] levels)
+    {
+      var rows = new List<string[]> { LevelXpHeaderComments, LevelXpHeaders };
+      if (levels == null) return rows;
+      foreach (var row in levels)
+      {
+        if (row == null || row.level < 1) continue;
+        rows.Add(new[]
+        {
+          row.level.ToString(CultureInfo.InvariantCulture),
+          row.xp.ToString(CultureInfo.InvariantCulture),
+        });
+      }
+      return rows;
+    }
+
     private static List<string[]> BuildActionRows(ActionRow[] actions)
     {
       var rows = new List<string[]> { ActionHeaderComments, ActionHeaders };
@@ -1039,6 +1091,24 @@ namespace UniverIdle.Editor
         if (i < works.Length - 1) sb.Append(",");
         sb.Append("\n");
       }
+    }
+
+    private static void WriteLevelXpRows(StringBuilder sb, LevelXpRow[] levels)
+    {
+      if (levels == null || levels.Length == 0) return;
+      var first = true;
+      for (var i = 0; i < levels.Length; i++)
+      {
+        var row = levels[i];
+        if (row == null || row.level < 1) continue;
+        if (!first) sb.Append(",\n");
+        first = false;
+        sb.Append("    {\n");
+        sb.Append("      \"level\": ").Append(row.level).Append(",\n");
+        sb.Append("      \"xp\": ").Append(row.xp).Append("\n");
+        sb.Append("    }");
+      }
+      if (!first) sb.Append("\n");
     }
 
     private static void WriteActionRows(StringBuilder sb, ActionRow[] actions)

@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 
 namespace UniverIdle.Editor
 {
@@ -17,6 +18,8 @@ namespace UniverIdle.Editor
       Works,
       Actions,
       Loot,
+      WorkLevels,
+      ActionLevels,
     }
 
     public readonly struct SheetInfo
@@ -46,7 +49,13 @@ namespace UniverIdle.Editor
         "物品 · items", "全游戏共用道具；category 分类；icon 列填图标名（如 item_rag）或 Resources 路径，空则自动 item_{id}"),
       new SheetInfo(
         "scavenge_works", ScavengeExcelKey, "works", WorkSheetKind.Works,
-        "拾荒 · works", "拾荒工作参数、经验公式"),
+        "拾荒 · works", "拾荒工作参数；xp 公式仅作无等级表时兜底"),
+      new SheetInfo(
+        "scavenge_work_levels", ScavengeExcelKey, "work_levels", WorkSheetKind.WorkLevels,
+        "拾荒 · work_levels", "拾荒总等级 1–160：每级升到下级所需经验"),
+      new SheetInfo(
+        "scavenge_action_levels", ScavengeExcelKey, "action_levels", WorkSheetKind.ActionLevels,
+        "拾荒 · action_levels", "各动作独立熟练度曲线 1–160（进度按 actionId）"),
       new SheetInfo(
         "scavenge_actions", ScavengeExcelKey, "actions", WorkSheetKind.Actions,
         "拾荒 · actions", "各地区子地点；description=右侧详情文案，每条不同；cost 列可留空"),
@@ -55,7 +64,13 @@ namespace UniverIdle.Editor
         "拾荒 · loot", "掉落：actionId + itemId；chance=权重，每次随机 1 种；#itemName 列仅方便阅读，不导出"),
       new SheetInfo(
         "woodcutting_works", WoodcuttingExcelKey, "works", WorkSheetKind.Works,
-        "砍树 · works", "砍树工作参数、经验公式"),
+        "砍树 · works", "砍树工作参数；xp 公式仅作无等级表时兜底"),
+      new SheetInfo(
+        "woodcutting_work_levels", WoodcuttingExcelKey, "work_levels", WorkSheetKind.WorkLevels,
+        "砍树 · work_levels", "砍树总等级 1–160：每级升到下级所需经验"),
+      new SheetInfo(
+        "woodcutting_action_levels", WoodcuttingExcelKey, "action_levels", WorkSheetKind.ActionLevels,
+        "砍树 · action_levels", "各树种动作独立熟练度曲线 1–160"),
       new SheetInfo(
         "woodcutting_actions", WoodcuttingExcelKey, "actions", WorkSheetKind.Actions,
         "砍树 · actions", "各树种动作；cost 列可留空"),
@@ -64,7 +79,13 @@ namespace UniverIdle.Editor
         "砍树 · loot", "掉落：actionId + itemId；#itemName 列仅方便阅读，不导出"),
       new SheetInfo(
         "mining_works", MiningExcelKey, "works", WorkSheetKind.Works,
-        "挖矿 · works", "挖矿工作参数、经验公式"),
+        "挖矿 · works", "挖矿工作参数；xp 公式仅作无等级表时兜底"),
+      new SheetInfo(
+        "mining_work_levels", MiningExcelKey, "work_levels", WorkSheetKind.WorkLevels,
+        "挖矿 · work_levels", "挖矿总等级 1–160：每级升到下级所需经验"),
+      new SheetInfo(
+        "mining_action_levels", MiningExcelKey, "action_levels", WorkSheetKind.ActionLevels,
+        "挖矿 · action_levels", "各矿脉动作独立熟练度曲线 1–160"),
       new SheetInfo(
         "mining_actions", MiningExcelKey, "actions", WorkSheetKind.Actions,
         "挖矿 · actions", "各矿脉动作；cost 列可留空"),
@@ -73,7 +94,13 @@ namespace UniverIdle.Editor
         "挖矿 · loot", "掉落：actionId + itemId；#itemName 列仅方便阅读，不导出"),
       new SheetInfo(
         "monster_explore_works", MonsterExploreExcelKey, "works", WorkSheetKind.Works,
-        "魔物探索 · works", "魔物探索工作参数、经验公式"),
+        "魔物探索 · works", "魔物探索工作参数；xp 公式仅作无等级表时兜底"),
+      new SheetInfo(
+        "monster_explore_work_levels", MonsterExploreExcelKey, "work_levels", WorkSheetKind.WorkLevels,
+        "魔物探索 · work_levels", "探索总等级 1–160：每级升到下级所需经验"),
+      new SheetInfo(
+        "monster_explore_action_levels", MonsterExploreExcelKey, "action_levels", WorkSheetKind.ActionLevels,
+        "魔物探索 · action_levels", "各场景动作独立熟练度曲线 1–160"),
       new SheetInfo(
         "monster_explore_actions", MonsterExploreExcelKey, "actions", WorkSheetKind.Actions,
         "魔物探索 · actions", "各场景动作；costItemId / costAmount 为每次消耗"),
@@ -90,6 +117,17 @@ namespace UniverIdle.Editor
           return sheet;
       }
       throw new ArgumentException("未知表格：" + sheetId, nameof(sheetId));
+    }
+
+    public static SheetInfo[] SheetsOf(string excelKey)
+    {
+      var list = new List<SheetInfo>();
+      foreach (var sheet in All)
+      {
+        if (sheet.ExcelKey == excelKey)
+          list.Add(sheet);
+      }
+      return list.ToArray();
     }
 
     public static string GetExcelFileName(string excelKey) => excelKey + ".xlsx";
@@ -130,23 +168,23 @@ namespace UniverIdle.Editor
       new WorkbookInfo(
         ItemsExcelKey, "道具表",
         GameDataPaths.ItemsExcelAssetPath, GameDataPaths.ItemsJsonAssetPath,
-        new[] { All[0] }),
+        SheetsOf(ItemsExcelKey)),
       new WorkbookInfo(
         ScavengeExcelKey, "拾荒表",
         GameDataPaths.ScavengeExcelAssetPath, GameDataPaths.ScavengeJsonAssetPath,
-        new[] { All[1], All[2], All[3] }),
+        SheetsOf(ScavengeExcelKey)),
       new WorkbookInfo(
         WoodcuttingExcelKey, "砍树表",
         GameDataPaths.WoodcuttingExcelAssetPath, GameDataPaths.WoodcuttingJsonAssetPath,
-        new[] { All[4], All[5], All[6] }),
+        SheetsOf(WoodcuttingExcelKey)),
       new WorkbookInfo(
         MiningExcelKey, "挖矿表",
         GameDataPaths.MiningExcelAssetPath, GameDataPaths.MiningJsonAssetPath,
-        new[] { All[7], All[8], All[9] }),
+        SheetsOf(MiningExcelKey)),
       new WorkbookInfo(
         MonsterExploreExcelKey, "魔物探索表",
         GameDataPaths.MonsterExploreExcelAssetPath, GameDataPaths.MonsterExploreJsonAssetPath,
-        new[] { All[10], All[11], All[12] }),
+        SheetsOf(MonsterExploreExcelKey)),
     };
   }
 }

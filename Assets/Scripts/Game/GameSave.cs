@@ -7,13 +7,14 @@ namespace UniverIdle.Game
   [Serializable]
   public sealed class GameSaveFile
   {
-    public int version = 1;
+    public int version = 2;
     public long gold;
     public int unlockedPageCount = 1;
     public int unlockedSlotCount = 10;
     public SaveItemRow[] items;
     public SaveWorkRow[] works;
-    public SaveSceneRow[] scenes;
+    /// <summary>各动作独立熟练度。</summary>
+    public SaveActionMasteryRow[] actionMasteries;
   }
 
   [Serializable]
@@ -32,18 +33,17 @@ namespace UniverIdle.Game
   }
 
   [Serializable]
-  public sealed class SaveSceneRow
+  public sealed class SaveActionMasteryRow
   {
-    public string workId;
-    public string sceneId;
+    public string actionId;
     public int level = 1;
     public int xp;
   }
 
-  /// <summary>本地存档（save.dat，内容为 JSON）：金币、背包解锁、物品、工作/地区熟练度。不存进行中的挂机。</summary>
+  /// <summary>本地存档（save.dat，内容为 JSON）：金币、背包解锁、物品、工作总等级 / 动作熟练度。不存进行中的挂机。</summary>
   public static class GameSave
   {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
     public const string FileName = "save.dat";
 
     public static string FilePath =>
@@ -54,19 +54,17 @@ namespace UniverIdle.Game
     public static bool TryLoad(out GameSaveFile data)
     {
       data = null;
-      var path = FilePath;
-      if (!File.Exists(path)) return false;
-
+      if (!Exists) return false;
       try
       {
-        var json = File.ReadAllText(path);
-        if (string.IsNullOrWhiteSpace(json)) return false;
+        var json = File.ReadAllText(FilePath);
         data = JsonUtility.FromJson<GameSaveFile>(json);
         return data != null;
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        Debug.LogWarning($"读取存档失败：{e.Message}");
+        Debug.LogWarning("[UniverIdle] 读取存档失败：" + ex.Message);
+        data = null;
         return false;
       }
     }
@@ -79,24 +77,23 @@ namespace UniverIdle.Game
       {
         File.WriteAllText(FilePath, JsonUtility.ToJson(data, true));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        Debug.LogWarning($"写入存档失败：{e.Message}");
+        Debug.LogWarning("[UniverIdle] 写入存档失败：" + ex.Message);
       }
     }
 
     public static bool Delete()
     {
-      var path = FilePath;
-      if (!File.Exists(path)) return true;
       try
       {
-        File.Delete(path);
+        if (!Exists) return false;
+        File.Delete(FilePath);
         return true;
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        Debug.LogWarning($"删除存档失败：{e.Message}");
+        Debug.LogWarning("[UniverIdle] 删除存档失败：" + ex.Message);
         return false;
       }
     }

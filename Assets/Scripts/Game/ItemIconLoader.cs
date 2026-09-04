@@ -21,7 +21,9 @@ namespace UniverIdle.Game
 
     public static Sprite GetGold() => GetByResourcePath(GameDataPaths.GoldIconResourcePath);
 
-    /// <summary>按地区熟练度等级取分档图标：1–30 铜、31–70 银、71+ 金。</summary>
+    public static Sprite GetXp() => GetByResourcePath(GameDataPaths.XpIconResourcePath);
+
+    /// <summary>按动作熟练度等级取分档图标：1–30 铜、31–70 银、71+ 金。</summary>
     public static Sprite GetMastery(int level)
     {
       var path = level >= GameDataPaths.MasteryIconTier3MinLevel

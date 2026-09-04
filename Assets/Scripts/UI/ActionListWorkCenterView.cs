@@ -163,7 +163,7 @@ namespace UniverIdle.UI
           ? null
           : SceneProgressRules.FormatUnlockHint(action, work?.DisplayName);
 
-        var mastery = player.GetSceneProgress(action.WorkId, action.SceneId).Level;
+        var mastery = player.GetActionMastery(action.Id).Level;
         card.gameObject.SetActive(true);
         card.Bind(
           SceneProgressRules.FormatActionTitle(action),

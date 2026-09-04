@@ -1,6 +1,6 @@
 # SAVE-01 本地存档
 
-> 状态：**已实现** · 更新：2026-09-03
+> 状态：**已实现** · 更新：2026-09-04
 
 ## 职责
 
@@ -41,8 +41,8 @@ Assets/Editor/Gm/GmSaveWindow.cs
 | `gold` | 金币 |
 | `unlockedPageCount` / `unlockedSlotCount` | 背包页与格 |
 | `items[]` | `id` + `count` |
-| `works[]` | 工作等级与 XP |
-| `scenes[]` | `workId` + `sceneId` + 等级与 XP |
+| `works[]` | 工作总等级与 XP |
+| `actionMasteries[]` | `actionId` + 该动作熟练度等级与 XP（v2；旧 `scenes[]` 不再读取） |
 
 加载时页/格会按当前 `inventory.json` 夹紧。
 

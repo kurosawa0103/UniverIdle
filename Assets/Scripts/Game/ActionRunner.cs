@@ -89,9 +89,8 @@ namespace UniverIdle.Game
     {
       var action = CurrentAction;
       var workId = action.WorkId;
-      var sceneId = action.SceneId;
       var workBefore = _player.GetWork(workId).Level;
-      var sceneBefore = _player.GetSceneProgress(workId, sceneId).Level;
+      var masteryBefore = _player.GetActionMastery(action.Id).Level;
 
       var loot = LootRoller.Roll(action.LootTable, _rng);
       var granted = new List<LootResult>();
@@ -115,18 +114,18 @@ namespace UniverIdle.Game
       }
 
       _player.AddWorkXp(workId, action.XpReward);
-      _player.AddSceneXp(workId, sceneId, action.XpReward);
+      _player.AddActionXp(workId, action.Id, action.XpReward);
 
       var workAfter = _player.GetWork(workId).Level;
-      var sceneAfter = _player.GetSceneProgress(workId, sceneId).Level;
+      var masteryAfter = _player.GetActionMastery(action.Id).Level;
       OnActionCompleted?.Invoke(new ActionCompleteResult
       {
         Action = action,
         Loot = granted,
         XpGained = action.XpReward,
         GoldGained = goldGained,
-        LeveledUp = sceneAfter > sceneBefore,
-        NewLevel = sceneAfter,
+        LeveledUp = masteryAfter > masteryBefore,
+        NewLevel = masteryAfter,
         WorkLeveledUp = workAfter > workBefore,
         WorkNewLevel = workAfter,
         BagFull = bagFull,

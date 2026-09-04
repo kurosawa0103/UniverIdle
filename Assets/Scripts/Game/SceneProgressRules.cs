@@ -32,7 +32,7 @@ namespace UniverIdle.Game
     {
       if (action == null) return "未解锁";
       var workName = string.IsNullOrEmpty(workDisplayName) ? "工作" : workDisplayName;
-      return $"{workName}等级达到{action.RequiredWorkLevel}解锁";
+      return $"{workName}总等级达到{action.RequiredWorkLevel}解锁";
     }
 
     public static string FormatDurationSeconds(float seconds) => $"{seconds:0.#}s";

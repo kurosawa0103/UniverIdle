@@ -46,7 +46,7 @@ namespace UniverIdle.UI
       {
         _session.Player.OnInventoryChanged += OnInventoryChanged;
         _session.Player.OnWorkChanged += OnActiveWorkProgressChanged;
-        _session.Player.OnSceneProgressChanged += OnSceneProgressChanged;
+        _session.Player.OnActionMasteryChanged += OnActionMasteryChanged;
       }
       if (_session?.Runner != null)
       {
@@ -100,7 +100,7 @@ namespace UniverIdle.UI
       {
         _session.Player.OnInventoryChanged -= OnInventoryChanged;
         _session.Player.OnWorkChanged -= OnActiveWorkProgressChanged;
-        _session.Player.OnSceneProgressChanged -= OnSceneProgressChanged;
+        _session.Player.OnActionMasteryChanged -= OnActionMasteryChanged;
       }
       if (_session?.Runner != null)
       {
@@ -154,8 +154,8 @@ namespace UniverIdle.UI
       workCenterHost?.Active?.OnWorkOrSceneChanged(this);
     }
 
-    private void OnSceneProgressChanged(string workId, string sceneId) =>
-      OnActiveWorkProgressChanged(workId);
+    private void OnActionMasteryChanged(string actionId) =>
+      OnActiveWorkProgressChanged(_activeWorkId);
 
     private void OnInventoryChanged()
     {

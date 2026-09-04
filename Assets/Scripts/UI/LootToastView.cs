@@ -24,12 +24,14 @@ namespace UniverIdle.UI
     {
       public LootToastLineView View;
       public string ItemId;
+      public string ProgressLabel;
       public int Gained;
       public long Total;
       public float Remaining;
       public bool Active;
       public bool IsItem;
       public bool IsGold;
+      public bool IsXp;
     }
 
     private sealed class Floater
@@ -88,7 +90,9 @@ namespace UniverIdle.UI
       var line = TakeSlot();
       line.IsItem = true;
       line.IsGold = false;
+      line.IsXp = false;
       line.ItemId = itemId;
+      line.ProgressLabel = null;
       line.Gained = gained;
       line.Total = totalOwned;
       line.Remaining = defaultDuration;
@@ -119,13 +123,48 @@ namespace UniverIdle.UI
       var line = TakeSlot();
       line.IsItem = false;
       line.IsGold = true;
+      line.IsXp = false;
       line.ItemId = null;
+      line.ProgressLabel = null;
       line.Gained = gained;
       line.Total = totalOwned;
       line.Remaining = defaultDuration;
       line.Active = true;
       line.View.Root.SetActive(true);
       RefreshGoldLine(line);
+      SpawnGainFloater(line, gained);
+    }
+
+    public void PushXp(int gained, string progressLabel)
+    {
+      if (gained <= 0) return;
+      if (!_wired) WireLines();
+      if (!_wired) return;
+
+      var existing = FindActiveXpLine();
+      if (existing != null)
+      {
+        existing.Gained += gained;
+        existing.ProgressLabel = progressLabel;
+        existing.Remaining = defaultDuration;
+        existing.View.Root.SetActive(true);
+        RefreshXpLine(existing);
+        SpawnGainFloater(existing, gained);
+        return;
+      }
+
+      var line = TakeSlot();
+      line.IsItem = false;
+      line.IsGold = false;
+      line.IsXp = true;
+      line.ItemId = null;
+      line.ProgressLabel = progressLabel;
+      line.Gained = gained;
+      line.Total = 0;
+      line.Remaining = defaultDuration;
+      line.Active = true;
+      line.View.Root.SetActive(true);
+      RefreshXpLine(line);
       SpawnGainFloater(line, gained);
     }
 
@@ -138,7 +177,9 @@ namespace UniverIdle.UI
       var line = TakeSlot();
       line.IsItem = false;
       line.IsGold = false;
+      line.IsXp = false;
       line.ItemId = null;
+      line.ProgressLabel = null;
       line.Gained = 0;
       line.Total = 0;
       line.Remaining = defaultDuration;
@@ -186,6 +227,18 @@ namespace UniverIdle.UI
         }
       }
 
+      if (result.XpGained > 0 && player != null)
+      {
+        var work = GameContent.GetWork(result.Action.WorkId);
+        if (work != null && work.GrantWorkXp)
+        {
+          var progress = player.GetWork(result.Action.WorkId);
+          var need = progress.XpToNextLevel(work, forActionMastery: false);
+          var label = need > 0 ? $"{progress.Xp}/{need}" : "MAX";
+          PushXp(result.XpGained, label);
+        }
+      }
+
       if (result.BagFull)
         PushText("背包已满，装不下新道具。");
 
@@ -193,13 +246,15 @@ namespace UniverIdle.UI
       {
         var work = GameContent.GetWork(result.Action.WorkId);
         var workName = work != null ? work.DisplayName : "工作";
-        PushText($"{workName}升至 Lv.{result.WorkNewLevel}！");
+        PushText($"{workName}总等级升至 Lv.{result.WorkNewLevel}！");
       }
 
       if (result.LeveledUp)
       {
-        var scene = string.IsNullOrEmpty(result.SceneName) ? "本地区" : result.SceneName;
-        PushText($"{scene}熟练度升至 Lv.{result.NewLevel}！");
+        var scene = string.IsNullOrEmpty(result.SceneName) ? "本地点" : result.SceneName;
+        var spot = result.Action.SpotName;
+        var label = string.IsNullOrEmpty(spot) ? scene : spot;
+        PushText($"{label}熟练度升至 Lv.{result.NewLevel}！");
       }
     }
 
@@ -345,6 +400,18 @@ namespace UniverIdle.UI
       return null;
     }
 
+    private LineState FindActiveXpLine()
+    {
+      for (var i = 0; i < _lines.Length; i++)
+      {
+        var line = _lines[i];
+        if (line?.View == null) continue;
+        if (line.Active && line.IsXp)
+          return line;
+      }
+      return null;
+    }
+
     private LineState FindActiveItemLine(string itemId)
     {
       for (var i = 0; i < _lines.Length; i++)
@@ -382,7 +449,9 @@ namespace UniverIdle.UI
       line.Active = false;
       line.IsItem = false;
       line.IsGold = false;
+      line.IsXp = false;
       line.ItemId = null;
+      line.ProgressLabel = null;
       line.Gained = 0;
       line.Total = 0;
       line.Remaining = 0f;
@@ -457,6 +526,44 @@ namespace UniverIdle.UI
       {
         view.TotalText.gameObject.SetActive(true);
         view.TotalText.text = line.Total.ToString();
+      }
+
+      if (view.MessageText != null)
+        view.MessageText.gameObject.SetActive(false);
+
+      view.RefreshLayout();
+      view.PunchGainNumbers();
+    }
+
+    private void RefreshXpLine(LineState line)
+    {
+      var view = line.View;
+      if (view.Icon != null)
+      {
+        view.Icon.gameObject.SetActive(true);
+        var sprite = ItemIconLoader.GetXp();
+        if (sprite != null)
+        {
+          view.Icon.sprite = sprite;
+          view.Icon.color = Color.white;
+        }
+        else
+        {
+          view.Icon.sprite = null;
+          view.Icon.color = UITheme.TealBright;
+        }
+      }
+
+      if (view.GainText != null)
+      {
+        view.GainText.gameObject.SetActive(true);
+        view.GainText.text = $"+{line.Gained}";
+      }
+
+      if (view.TotalText != null)
+      {
+        view.TotalText.gameObject.SetActive(true);
+        view.TotalText.text = string.IsNullOrEmpty(line.ProgressLabel) ? "" : line.ProgressLabel;
       }
 
       if (view.MessageText != null)

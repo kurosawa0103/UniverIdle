@@ -6,18 +6,27 @@ namespace UniverIdle.Game
     public string DisplayName { get; set; }
     public string LocationName { get; set; }
 
-    /// <summary>工作等级升级：所需经验 = xpBase + 当前等级 × xpPerLevel。</summary>
+    /// <summary>总等级升级公式兜底：所需经验 = xpBase + 当前等级 × xpPerLevel。</summary>
     public int XpBase { get; set; } = 40;
     public int XpPerLevel { get; set; } = 20;
 
-    /// <summary>地区熟练度升级公式；为 0 时沿用工作等级参数。</summary>
-    public int SceneXpBase { get; set; }
-    public int SceneXpPerLevel { get; set; }
+    /// <summary>动作熟练度升级公式兜底；为 0 时沿用总等级参数。</summary>
+    public int ActionXpBase { get; set; }
+    public int ActionXpPerLevel { get; set; }
 
     public bool GrantWorkXp { get; set; } = true;
-    public bool GrantSceneXp { get; set; } = true;
+    public bool GrantActionXp { get; set; } = true;
 
-    public int ResolveSceneXpBase() => SceneXpBase > 0 ? SceneXpBase : XpBase;
-    public int ResolveSceneXpPerLevel() => SceneXpPerLevel > 0 ? SceneXpPerLevel : XpPerLevel;
+    /// <summary>下标=等级；有表时查表；空则走公式。</summary>
+    public int[] WorkXpByLevel { get; set; }
+    public int[] ActionXpByLevel { get; set; }
+    public int MaxWorkLevel { get; set; }
+    public int MaxActionLevel { get; set; }
+
+    public bool HasWorkLevelTable => WorkXpByLevel != null && MaxWorkLevel > 0;
+    public bool HasActionLevelTable => ActionXpByLevel != null && MaxActionLevel > 0;
+
+    public int ResolveActionXpBase() => ActionXpBase > 0 ? ActionXpBase : XpBase;
+    public int ResolveActionXpPerLevel() => ActionXpPerLevel > 0 ? ActionXpPerLevel : XpPerLevel;
   }
 }
