@@ -57,7 +57,7 @@ Assets/Editor/UI/MainUIBindMenu.cs
 | `WorkCenterHost` | `App/Body/Center` | 各 `WorkView_*` 子物体 |
 | `WorkMapHubView` | `WorkView_scavenge` / `WorkView_woodcutting` 等地图式工作根 | `detailPanel` → 本工作 `Detail`；**必拖** `maps` → 各地图 `StandardWorkCenterView`（**无**运行时扫；一键绑定可补） |
 | `StandardWorkCenterView` | **地图节点**（如 `Content/村口`）；挖矿/魔物可挂工作根 | `workId`、`sceneId`、动作卡；**必拖** `runningBarRoot` + fill/文案 |
-| `ActionListWorkCenterView` | 纯列表工作（若仍用） | `workId`、动作卡、进度条、`detailPanel` → 无开工按钮的 `WorkActionDetailView` |
+| `ActionListWorkCenterView` | **遗留**纯列表根（点卡即开停）；拾荒/砍树目标为地图 Hub，勿再往新工作挂 | `workId`、动作卡、进度条、`detailPanel` → `WorkActionDetailView` |
 | 进度条 | 各工作 `RunningBar`；复用预制体 `进度条.prefab` | **必绑** `BarFill`→`ItemIcon/ui_progress_fill`（实心）、`BarBg`→`ui_progress_track`；子节点名约定 `Label` / `Time`；菜单 **UniverIdle → 安装进度条预制体** |
 | `WorkRunDetailView` | 地图式工作的 `Detail`（拾荒/砍树共用脚本） | 标题、正文、`Btn_工作` + `workButtonText`、`LootPreviewView`；按钮文案取工作 `DisplayName` |
 | `WorkActionDetailView` | 无开工按钮的详情 | 标题、正文、掉落预览 |
