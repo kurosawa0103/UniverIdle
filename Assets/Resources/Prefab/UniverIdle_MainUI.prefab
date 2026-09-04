@@ -3584,8 +3584,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -6099,9 +6099,11 @@ MonoBehaviour:
   background: {fileID: 7958279254310511420}
   border: {fileID: 3479404857667995986}
   thumb: {fileID: 7961157861990408847}
+  thumbArt: {fileID: 0}
   titleText: {fileID: 5113927421558641621}
   metaLeftText: {fileID: 8332722922756414016}
   metaRightText: {fileID: 7467543705907810523}
+  unlockText: {fileID: 0}
   canvasGroup: {fileID: 8288272068393031651}
   masteryIcon: {fileID: 3053284280482940561}
   masteryLevelText: {fileID: 760292124097989284}
@@ -6744,9 +6746,11 @@ MonoBehaviour:
   background: {fileID: 1894886847894008910}
   border: {fileID: 792837919713828469}
   thumb: {fileID: 8610495928445260646}
+  thumbArt: {fileID: 0}
   titleText: {fileID: 8968886486708093433}
   metaLeftText: {fileID: 7795148825839051224}
   metaRightText: {fileID: 352963477849370939}
+  unlockText: {fileID: 0}
   canvasGroup: {fileID: 5871118829268285467}
   masteryIcon: {fileID: 8427596985611372395}
   masteryLevelText: {fileID: 2677049594372001408}
@@ -8101,8 +8105,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -10523,9 +10527,11 @@ MonoBehaviour:
   background: {fileID: 9117423914621158462}
   border: {fileID: 5552279203185863334}
   thumb: {fileID: 3405434342791736944}
+  thumbArt: {fileID: 0}
   titleText: {fileID: 6596883490016586076}
   metaLeftText: {fileID: 4696881292477071580}
   metaRightText: {fileID: 6849389746225521901}
+  unlockText: {fileID: 0}
   canvasGroup: {fileID: 6262386564999486599}
   masteryIcon: {fileID: 3939766266043666254}
   masteryLevelText: {fileID: 2314248703718729350}
@@ -12226,9 +12232,11 @@ MonoBehaviour:
   background: {fileID: 6371697259500008180}
   border: {fileID: 1762820783763700835}
   thumb: {fileID: 3674539563470056571}
+  thumbArt: {fileID: 0}
   titleText: {fileID: 8406255320568518852}
   metaLeftText: {fileID: 4568192770206790822}
   metaRightText: {fileID: 6451206748690946995}
+  unlockText: {fileID: 0}
   canvasGroup: {fileID: 3298523664307166772}
   masteryIcon: {fileID: 3045353776023860435}
   masteryLevelText: {fileID: 7838466557384418607}
@@ -13863,9 +13871,11 @@ MonoBehaviour:
   background: {fileID: 7106941868190481739}
   border: {fileID: 9178379486690631790}
   thumb: {fileID: 3531320589715888006}
+  thumbArt: {fileID: 0}
   titleText: {fileID: 1997291853766961272}
   metaLeftText: {fileID: 8134668252765015591}
   metaRightText: {fileID: 5646707486280799568}
+  unlockText: {fileID: 0}
   canvasGroup: {fileID: 6557986737410425647}
   masteryIcon: {fileID: 8210616447621000676}
   masteryLevelText: {fileID: 2997771030579855142}
@@ -15249,9 +15259,11 @@ MonoBehaviour:
   background: {fileID: 3753577710426181566}
   border: {fileID: 1002997603176247450}
   thumb: {fileID: 2406705591850523823}
+  thumbArt: {fileID: 0}
   titleText: {fileID: 1579624516735332705}
   metaLeftText: {fileID: 6150561006504974571}
   metaRightText: {fileID: 1981364927156212685}
+  unlockText: {fileID: 0}
   canvasGroup: {fileID: 4280814456005677638}
   masteryIcon: {fileID: 9145151907695748971}
   masteryLevelText: {fileID: 1422928987052144261}
@@ -17359,8 +17371,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -17929,8 +17941,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1313.9929, y: -50}
-  m_SizeDelta: {x: 223.20285, y: 72}
+  m_AnchoredPosition: {x: 1409, y: -50}
+  m_SizeDelta: {x: 160, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7890707926312519423
 MonoBehaviour:
@@ -23151,9 +23163,11 @@ MonoBehaviour:
   background: {fileID: 8111990000000000197}
   border: {fileID: 0}
   thumb: {fileID: 8111990000000000166}
+  thumbArt: {fileID: 0}
   titleText: {fileID: 8111990000000000218}
   metaLeftText: {fileID: 8111990000000000374}
   metaRightText: {fileID: 0}
+  unlockText: {fileID: 0}
   canvasGroup: {fileID: 8111990000000000113}
   masteryIcon: {fileID: 5767852016930353938}
   masteryLevelText: {fileID: 4894680439711474812}
@@ -23446,9 +23460,11 @@ MonoBehaviour:
   background: {fileID: 8111990000000000110}
   border: {fileID: 0}
   thumb: {fileID: 8111990000000000335}
+  thumbArt: {fileID: 0}
   titleText: {fileID: 8111990000000000204}
   metaLeftText: {fileID: 8111990000000000120}
   metaRightText: {fileID: 0}
+  unlockText: {fileID: 0}
   canvasGroup: {fileID: 8111990000000000370}
   masteryIcon: {fileID: 359413007369276472}
   masteryLevelText: {fileID: 9098272189021136683}
@@ -23816,9 +23832,11 @@ MonoBehaviour:
   background: {fileID: 8111990000000000267}
   border: {fileID: 0}
   thumb: {fileID: 8111990000000000320}
+  thumbArt: {fileID: 0}
   titleText: {fileID: 8111990000000000254}
   metaLeftText: {fileID: 8111990000000000103}
   metaRightText: {fileID: 0}
+  unlockText: {fileID: 0}
   canvasGroup: {fileID: 8111990000000000149}
   masteryIcon: {fileID: 5881219027973440755}
   masteryLevelText: {fileID: 6045386282378190278}
@@ -24110,9 +24128,11 @@ MonoBehaviour:
   background: {fileID: 8111990000000000327}
   border: {fileID: 0}
   thumb: {fileID: 8111990000000000278}
+  thumbArt: {fileID: 0}
   titleText: {fileID: 8111990000000000141}
   metaLeftText: {fileID: 8111990000000000211}
   metaRightText: {fileID: 0}
+  unlockText: {fileID: 0}
   canvasGroup: {fileID: 8111990000000000342}
   masteryIcon: {fileID: 947583172558862070}
   masteryLevelText: {fileID: 4137970865171018313}
@@ -24368,9 +24388,11 @@ MonoBehaviour:
   background: {fileID: 8111990000000000272}
   border: {fileID: 0}
   thumb: {fileID: 8111990000000000311}
+  thumbArt: {fileID: 0}
   titleText: {fileID: 8111990000000000167}
   metaLeftText: {fileID: 8111990000000000247}
   metaRightText: {fileID: 0}
+  unlockText: {fileID: 0}
   canvasGroup: {fileID: 8111990000000000210}
   masteryIcon: {fileID: 1671584222409249571}
   masteryLevelText: {fileID: 6245988345261964752}
@@ -25461,8 +25483,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1551.1958, y: -50}
-  m_SizeDelta: {x: 223.20285, y: 72}
+  m_AnchoredPosition: {x: 1601.2029, y: -50}
+  m_SizeDelta: {x: 160, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1991277069060278175
 MonoBehaviour:
@@ -27805,7 +27827,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 1788.3987, y: -50}
-  m_SizeDelta: {x: 223.20285, y: 72}
+  m_SizeDelta: {x: 160, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8704196032839227855
 MonoBehaviour:

@@ -364,13 +364,34 @@ namespace UniverIdle.Editor
       AssignIfNull(so, "border", card.GetComponent<Outline>(), log, null);
       AssignIfNull(so, "canvasGroup", card.GetComponent<CanvasGroup>(), log, null);
 
-      var thumb = card.transform.Find("Thumb")?.GetComponent<Image>()
-                  ?? card.transform.Find("ThumbInner")?.GetComponent<Image>();
+      var thumbRoot = card.transform.Find("Thumb") ?? card.transform.Find("ThumbInner");
+      var thumb = thumbRoot?.GetComponent<Image>();
       AssignIfNull(so, "thumb", thumb, log, null);
+
+      Image thumbArt = null;
+      if (thumbRoot != null)
+      {
+        var art = thumbRoot.Find("Image") ?? thumbRoot.Find("Art") ?? thumbRoot.Find("Icon");
+        if (art == null)
+        {
+          for (var i = 0; i < thumbRoot.childCount; i++)
+          {
+            var child = thumbRoot.GetChild(i);
+            if (child.GetComponent<Image>() != null)
+            {
+              art = child;
+              break;
+            }
+          }
+        }
+        thumbArt = art != null ? art.GetComponent<Image>() : null;
+      }
+      AssignIfNull(so, "thumbArt", thumbArt, log, null);
 
       AssignTmpByNames(so, "titleText", card.transform, null, null, "name", "Title", "Name");
       AssignTmpByNames(so, "metaLeftText", card.transform, null, null, "CD", "MetaLeft", "Time");
       AssignTmpByNames(so, "metaRightText", card.transform, null, null, "Yield", "MetaRight", "产量");
+      AssignTmpByNames(so, "unlockText", card.transform, null, null, "Unlock", "解锁", "UnlockText", "LockHint");
     }
 
     private static void EnsureMasteryNodes(

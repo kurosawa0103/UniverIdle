@@ -158,19 +158,11 @@ namespace UniverIdle.UI
 
         var action = _actions[i];
         var unlocked = SceneProgressRules.IsRegionUnlocked(player, action);
-
-        string metaLeft;
-        string metaRight;
-        if (!unlocked)
-        {
-          metaLeft = SceneProgressRules.FormatUnlockHint(action, work?.DisplayName);
-          metaRight = "";
-        }
-        else
-        {
-          metaLeft = SceneProgressRules.FormatDurationSeconds(action.DurationSeconds);
-          metaRight = SceneProgressRules.FormatYieldHint(action);
-        }
+        var metaLeft = SceneProgressRules.FormatDurationSeconds(action.DurationSeconds);
+        var metaRight = SceneProgressRules.FormatYieldHint(action);
+        var unlockHint = unlocked
+          ? null
+          : SceneProgressRules.FormatUnlockHint(action, work?.DisplayName);
 
         var mastery = player.GetSceneProgress(action.WorkId, action.SceneId).Level;
         card.gameObject.SetActive(true);
@@ -181,7 +173,8 @@ namespace UniverIdle.UI
           !unlocked,
           ActionImageLoader.Get(action),
           mastery,
-          ActionCardView.ResolveMasteryIcon(mastery));
+          ActionCardView.ResolveMasteryIcon(mastery),
+          unlockHint);
       }
 
       RefreshDetail();

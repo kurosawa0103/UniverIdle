@@ -133,12 +133,14 @@ namespace UniverIdle.UI
     public override void TickProgress(MainUIController host)
     {
       var runner = host.Session?.Runner;
-      if (!IsRunningThisWork() || runner?.CurrentAction == null)
+      // 切到其它 action 时隐藏条，后台仍跑；回到正在执行的 action 再显示并滚动
+      if (!IsShowingRunningAction() || runner?.CurrentAction == null)
       {
         HideCenterProgressBar();
         return;
       }
 
+      EnsureProgressBarReady();
       if (_centerRunningBarRoot != null && !_centerRunningBarRoot.activeSelf)
         _centerRunningBarRoot.SetActive(true);
 
@@ -181,7 +183,18 @@ namespace UniverIdle.UI
     public bool IsRunningThisWork()
     {
       var runner = _host?.Session?.Runner;
-      return runner != null && runner.IsRunning && runner.CurrentAction?.WorkId == WorkId;
+      if (runner == null || !runner.IsRunning || runner.CurrentAction == null) return false;
+      return runner.CurrentAction.WorkId == EffectiveWorkId;
+    }
+
+    private string EffectiveWorkId
+    {
+      get
+      {
+        if (!string.IsNullOrEmpty(WorkId)) return WorkId;
+        var hub = GetComponentInParent<ScavengeHubView>();
+        return hub != null ? hub.WorkId : WorkId;
+      }
     }
 
     /// <summary>当前选中的动作卡是否就是 Runner 正在执行的那条。</summary>
@@ -238,6 +251,7 @@ namespace UniverIdle.UI
       ShowDetail(action);
       UpdateLocationBannerForScene();
       detailPanel?.RefreshWorkButton();
+      SyncProgressBarVisibility(_host);
     }
 
     private void EnsureActiveScene()
@@ -368,19 +382,11 @@ namespace UniverIdle.UI
 
         var action = _visibleActions[i];
         var unlocked = SceneProgressRules.IsRegionUnlocked(player, action);
-
-        string metaLeft;
-        string metaRight;
-        if (!unlocked)
-        {
-          metaLeft = SceneProgressRules.FormatUnlockHint(action, work?.DisplayName);
-          metaRight = "";
-        }
-        else
-        {
-          metaLeft = SceneProgressRules.FormatDurationSeconds(action.DurationSeconds);
-          metaRight = SceneProgressRules.FormatYieldHint(action);
-        }
+        var metaLeft = SceneProgressRules.FormatDurationSeconds(action.DurationSeconds);
+        var metaRight = SceneProgressRules.FormatYieldHint(action);
+        var unlockHint = unlocked
+          ? null
+          : SceneProgressRules.FormatUnlockHint(action, work?.DisplayName);
 
         var mastery = player.GetSceneProgress(action.WorkId, action.SceneId).Level;
         actionCards[i].gameObject.SetActive(true);
@@ -391,7 +397,8 @@ namespace UniverIdle.UI
           !unlocked,
           ActionImageLoader.Get(action),
           mastery,
-          ActionCardView.ResolveMasteryIcon(mastery));
+          ActionCardView.ResolveMasteryIcon(mastery),
+          unlockHint);
       }
     }
 
@@ -527,15 +534,64 @@ namespace UniverIdle.UI
 
     private void ResolveCenterRunningBarRoot()
     {
-      if (_centerRunningBarRoot != null) return;
-      _centerRunningBarRoot = FindRunningBarRoot(transform, progressFill);
-      HideCenterProgressBar();
+      if (_centerRunningBarRoot != null && progressFill != null) return;
+
+      if (_centerRunningBarRoot == null)
+        _centerRunningBarRoot = FindRunningBarRoot(transform, progressFill);
+      // 拾荒：RunningBar 在共享 Detail 上，地图节点下找不到
+      if (_centerRunningBarRoot == null && detailPanel != null)
+        _centerRunningBarRoot = FindRunningBarRoot(detailPanel.transform, null);
+
+      if (progressFill == null && _centerRunningBarRoot != null)
+      {
+        var barFill = _centerRunningBarRoot.transform.Find("Mid/BarBg/BarFill")
+                      ?? _centerRunningBarRoot.transform.Find("BarBg/BarFill")
+                      ?? _centerRunningBarRoot.transform.Find("BarFill");
+        if (barFill != null)
+          progressFill = barFill.GetComponent<Image>();
+      }
+
+      if (_centerRunningBarRoot != null)
+      {
+        var texts = _centerRunningBarRoot.GetComponentsInChildren<TextMeshProUGUI>(true);
+        if (progressLabelText == null && texts.Length > 0)
+          progressLabelText = texts[0];
+        if (progressTimeText == null && texts.Length > 1)
+          progressTimeText = texts[texts.Length - 1];
+      }
+
+      EnsureProgressBarReady();
+      if (_centerRunningBarRoot != null && !IsShowingRunningAction())
+        HideCenterProgressBar();
+    }
+
+    private void EnsureProgressBarReady()
+    {
+      if (progressFill == null) return;
+      progressFill.type = Image.Type.Filled;
+      progressFill.fillMethod = Image.FillMethod.Horizontal;
+      progressFill.fillOrigin = (int)Image.OriginHorizontal.Left;
+      if (progressFill.sprite == null)
+        progressFill.sprite = GetWhiteSprite();
+    }
+
+    private static Sprite _whiteSprite;
+
+    private static Sprite GetWhiteSprite()
+    {
+      if (_whiteSprite != null) return _whiteSprite;
+      _whiteSprite = Sprite.Create(
+        Texture2D.whiteTexture,
+        new Rect(0, 0, 4, 4),
+        new Vector2(0.5f, 0.5f),
+        4f);
+      return _whiteSprite;
     }
 
     private void SyncProgressBarVisibility(MainUIController host)
     {
       ResolveCenterRunningBarRoot();
-      if (IsRunningThisWork())
+      if (IsShowingRunningAction())
       {
         var action = host?.Session?.Runner?.CurrentAction;
         if (action != null)
@@ -551,6 +607,7 @@ namespace UniverIdle.UI
     {
       if (action == null) return;
       ResolveCenterRunningBarRoot();
+      EnsureProgressBarReady();
       if (_centerRunningBarRoot != null)
         _centerRunningBarRoot.SetActive(true);
       if (progressLabelText != null)
