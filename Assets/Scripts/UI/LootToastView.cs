@@ -48,11 +48,7 @@ namespace UniverIdle.UI
     private LootToastLineView[] _lineSlots;
     private bool _wired;
 
-    private void Awake()
-    {
-      ResolveReferences();
-      WireLines();
-    }
+    private void Awake() => WireLines();
 
     public void BindPrefabs(LootToastLineView line, TextMeshProUGUI floater)
     {
@@ -91,6 +87,7 @@ namespace UniverIdle.UI
         existing.Gained += gained;
         existing.Total = totalOwned;
         existing.Remaining = defaultDuration;
+        existing.View.Root.SetActive(true);
         RefreshItemLine(existing);
         SpawnGainFloater(existing, gained);
         return;
@@ -121,6 +118,7 @@ namespace UniverIdle.UI
         existing.Gained += gained;
         existing.Total = totalOwned;
         existing.Remaining = defaultDuration;
+        existing.View.Root.SetActive(true);
         RefreshGoldLine(existing);
         SpawnGainFloater(existing, gained);
         return;
@@ -224,7 +222,6 @@ namespace UniverIdle.UI
     private void WireLines()
     {
       if (_wired) return;
-      ResolveReferences();
       EnsureLineSlots();
 
       if (_lineSlots == null || _lineSlots.Length == 0)
@@ -236,7 +233,6 @@ namespace UniverIdle.UI
       var count = Mathf.Min(MaxLines, _lineSlots.Length);
       for (var i = 0; i < count; i++)
       {
-        _lineSlots[i]?.ResolveReferences();
         _lines[i] = new LineState { View = _lineSlots[i] };
         _lines[i].View.Root.SetActive(false);
       }
@@ -268,21 +264,6 @@ namespace UniverIdle.UI
         }
         line.gameObject.SetActive(false);
         _lineSlots[i] = line;
-      }
-    }
-
-    private void ResolveReferences()
-    {
-      if (lineRoot == null)
-      {
-        var lines = transform.Find("Lines");
-        if (lines != null) lineRoot = lines as RectTransform;
-      }
-
-      if (floatLayer == null)
-      {
-        var layer = transform.Find("FloatLayer");
-        if (layer != null) floatLayer = layer as RectTransform;
       }
     }
 

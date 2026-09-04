@@ -21,8 +21,6 @@ namespace UniverIdle.UI
     [SerializeField] private Image masteryIcon;
     [SerializeField] private TextMeshProUGUI masteryLevelText;
 
-    private void Awake() => ResolveReferences();
-
     public void Bind(
       string displayTitle,
       string metaLeft,
@@ -33,8 +31,6 @@ namespace UniverIdle.UI
       Sprite masterySprite = null,
       string unlockHint = null)
     {
-      ResolveReferences();
-
       if (locked)
       {
         ApplyLocked(unlockHint, thumbSprite);
@@ -59,13 +55,6 @@ namespace UniverIdle.UI
         unlockText.gameObject.SetActive(true);
         if (!string.IsNullOrEmpty(unlockHint))
           unlockText.text = unlockHint;
-      }
-      else if (titleText != null)
-      {
-        // 预制体尚未拖 Unlock 时兜底，仍不改 CD
-        titleText.gameObject.SetActive(true);
-        if (!string.IsNullOrEmpty(unlockHint))
-          titleText.text = unlockHint;
       }
 
       if (canvasGroup != null)
@@ -155,64 +144,6 @@ namespace UniverIdle.UI
         background.color = selected ? UITheme.CardHover : UITheme.Panel;
       if (border != null)
         border.effectColor = selected ? UITheme.Accent : UITheme.BorderSubtle;
-    }
-
-    private void ResolveReferences()
-    {
-      if (thumb == null)
-      {
-        var t = transform.Find("Thumb") ?? transform.Find("ThumbInner");
-        if (t != null) thumb = t.GetComponent<Image>();
-      }
-
-      if (thumbArt == null)
-      {
-        Transform art = null;
-        if (thumb != null)
-          art = thumb.transform.Find("Image")
-                ?? thumb.transform.Find("Art")
-                ?? thumb.transform.Find("Icon")
-                ?? FindFirstChildImage(thumb.transform);
-        if (art == null)
-          art = transform.Find("Thumb/Image")
-                ?? transform.Find("Thumb/Art")
-                ?? transform.Find("Thumb/Icon");
-        if (art != null)
-          thumbArt = art.GetComponent<Image>();
-      }
-
-      if (titleText == null)
-        titleText = FindTmp("name", "Title", "Name");
-      if (metaLeftText == null)
-        metaLeftText = FindTmp("CD", "MetaLeft", "Time");
-      if (metaRightText == null)
-        metaRightText = FindTmp("Yield", "MetaRight", "产量");
-      if (unlockText == null)
-        unlockText = FindTmp("Unlock", "解锁", "UnlockText", "LockHint");
-    }
-
-    private static Transform FindFirstChildImage(Transform parent)
-    {
-      if (parent == null) return null;
-      for (var i = 0; i < parent.childCount; i++)
-      {
-        var child = parent.GetChild(i);
-        if (child.GetComponent<Image>() != null)
-          return child;
-      }
-      return null;
-    }
-
-    private TextMeshProUGUI FindTmp(params string[] names)
-    {
-      for (var i = 0; i < names.Length; i++)
-      {
-        var t = transform.Find(names[i]);
-        if (t == null) continue;
-        var tmp = t.GetComponent<TextMeshProUGUI>();
-        if (tmp != null) return tmp;
-      }
-      return null;
     }
 
     private static void SetActive(Component c, bool active)

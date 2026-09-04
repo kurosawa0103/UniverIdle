@@ -100,9 +100,27 @@ namespace UniverIdle.UI
 
     private void WireLootToast()
     {
-      if (lootToast == null)
-        lootToast = GetComponentInChildren<LootToastView>(true);
+      EnsureGlobalLootToastHost();
       lootToast?.BindPrefabs(lootLinePrefab, lootFloaterPrefab);
+    }
+
+    /// <summary>
+    /// 获得提示必须挂在切工作不会关掉的节点上（App / MainUIController），
+    /// 不能放在 WorkView_* / Detail 里，否则切到砍树等会随拾荒一起 inactive。
+    /// </summary>
+    private void EnsureGlobalLootToastHost()
+    {
+      if (lootToast == null) return;
+
+      var toastTf = lootToast.transform;
+      if (toastTf.GetComponentInParent<WorkCenterView>(true) != null)
+      {
+        toastTf.SetParent(transform, worldPositionStays: true);
+        toastTf.SetAsLastSibling();
+      }
+
+      if (!lootToast.gameObject.activeSelf)
+        lootToast.gameObject.SetActive(true);
     }
 
     private void OnDestroy()

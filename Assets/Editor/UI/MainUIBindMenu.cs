@@ -105,6 +105,7 @@ namespace UniverIdle.Editor
     {
       var linePrefab = LoadComponent<LootToastLineView>(ToastLinePrefabPath);
       var floaterPrefab = LoadComponent<TextMeshProUGUI>(ToastFloaterPrefabPath);
+      var host = main != null ? main.transform : root;
 
       var toast = so.FindProperty("lootToast")?.objectReferenceValue as LootToastView;
       if (toast == null)
@@ -116,11 +117,21 @@ namespace UniverIdle.Editor
       if (toast == null)
         toast = root.GetComponentInChildren<LootToastView>(true);
       if (toast == null)
-        toast = CreateLootToastHost(root, log);
+        toast = CreateLootToastHost(host, log);
+
+      EnsureToastIsGlobalOverlay(toast, host, log);
 
       AssignIfNull(so, "lootToast", toast, log, "MainUI.lootToast");
       AssignIfNull(so, "lootLinePrefab", linePrefab, log, "MainUI.lootLinePrefab");
       AssignIfNull(so, "lootFloaterPrefab", floaterPrefab, log, "MainUI.lootFloaterPrefab");
+
+      if (linePrefab != null)
+      {
+        var lso = new SerializedObject(linePrefab);
+        AssignIfNull(lso, "row", linePrefab.transform.Find("Row") as RectTransform, log, "获得提示.row");
+        lso.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(linePrefab);
+      }
 
       if (toast == null) return;
       var tso = new SerializedObject(toast);
@@ -132,6 +143,33 @@ namespace UniverIdle.Editor
       AssignIfNull(tso, "floaterPrefab", floaterPrefab, log, $"{toast.name}.floaterPrefab");
       tso.ApplyModifiedPropertiesWithoutUndo();
       EditorUtility.SetDirty(toast);
+    }
+
+    /// <summary>若挂在 WorkView/Detail 下，提到 MainUI 根，避免切工作被 SetActive(false)。</summary>
+    private static void EnsureToastIsGlobalOverlay(LootToastView toast, Transform host, StringBuilder log)
+    {
+      if (toast == null || host == null) return;
+
+      var underWork = toast.GetComponentInParent<WorkCenterView>(true) != null
+                      || toast.GetComponentInParent<WorkActionDetailView>(true) != null;
+      if (!underWork && toast.transform.parent == host) return;
+
+      if (underWork)
+      {
+        Undo.SetTransformParent(toast.transform, host, "Move 获得提示区 to MainUI root");
+        ApplyGlobalToastAnchors(toast.transform as RectTransform);
+        toast.transform.SetAsLastSibling();
+        log.AppendLine($"· 获得提示区 ← 从工作详情挪到 {host.name}（全局 overlay）");
+      }
+    }
+
+    private static void ApplyGlobalToastAnchors(RectTransform rt)
+    {
+      if (rt == null) return;
+      rt.anchorMin = new Vector2(0.55f, 0f);
+      rt.anchorMax = new Vector2(1f, 0.45f);
+      rt.offsetMin = new Vector2(12f, 12f);
+      rt.offsetMax = new Vector2(-12f, -12f);
     }
 
     private static void BindTopBarGold(Transform root, StringBuilder log)
@@ -306,23 +344,7 @@ namespace UniverIdle.Editor
       var go = new GameObject("获得提示区", typeof(RectTransform));
       Undo.RegisterCreatedObjectUndo(go, "Create 获得提示区");
       go.transform.SetParent(detail, false);
-      var rt = (RectTransform)go.transform;
-      // 挂在主界面根：贴底 overlay；挂在详情里则占下半区（兼容旧调用）
-      if (detail.GetComponentInParent<MainUIController>(true) != null &&
-          detail.GetComponentInParent<WorkActionDetailView>(true) == null)
-      {
-        rt.anchorMin = new Vector2(0.55f, 0f);
-        rt.anchorMax = new Vector2(1f, 0.45f);
-        rt.offsetMin = new Vector2(12f, 12f);
-        rt.offsetMax = new Vector2(-12f, -12f);
-      }
-      else
-      {
-        rt.anchorMin = new Vector2(0f, 0f);
-        rt.anchorMax = new Vector2(1f, 0.35f);
-        rt.offsetMin = new Vector2(8f, 8f);
-        rt.offsetMax = new Vector2(-8f, -8f);
-      }
+      ApplyGlobalToastAnchors((RectTransform)go.transform);
 
       EnsureToastChildren(go.transform);
       var toast = Undo.AddComponent<LootToastView>(go);

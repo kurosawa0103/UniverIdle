@@ -93,6 +93,18 @@ MonoBehaviour:
   gainText: {fileID: 9100000000000000035}
   totalText: {fileID: 9100000000000000039}
   messageText: {fileID: 9100000000000000043}
+  row: {fileID: 9100000000000000026}
+  horizontalPadding: 12
+  iconToGainGap: 8
+  gainToTotalGap: 38
+  iconSize: 38
+  rowHeight: 42
+  minWidth: 96
+  maxWidth: 420
+  gainPunchPeak: 1.32
+  totalPunchPeak: 1.18
+  punchUpDuration: 0.07
+  punchDownDuration: 0.13
 --- !u!1 &9100000000000000025
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,7 +179,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 22, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_SizeDelta: {x: 38, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9100000000000000030
 CanvasRenderer:
@@ -241,7 +253,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 60, y: 0}
+  m_AnchoredPosition: {x: 65, y: 0}
   m_SizeDelta: {x: 80, y: 28}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &9100000000000000035
@@ -291,8 +303,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -376,7 +388,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -28, y: 0}
-  m_SizeDelta: {x: 48, y: 28}
+  m_SizeDelta: {x: 76, y: 28}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &9100000000000000039
 MonoBehaviour:
@@ -425,8 +437,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -559,8 +571,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

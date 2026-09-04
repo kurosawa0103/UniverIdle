@@ -1,4 +1,5 @@
 using System.Collections;
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,23 +9,71 @@ namespace UniverIdle.UI
   /// <summary>获得提示单行：图标、+N、仓库总数 / 纯文字；宽度随内容收缩。</summary>
   public sealed class LootToastLineView : MonoBehaviour
   {
+    [FoldoutGroup("引用", Expanded = true)]
+    [LabelText("图标")]
     [SerializeField] private Image icon;
+
+    [FoldoutGroup("引用")]
+    [LabelText("获得数量文案")]
     [SerializeField] private TextMeshProUGUI gainText;
+
+    [FoldoutGroup("引用")]
+    [LabelText("仓库总数字案")]
     [SerializeField] private TextMeshProUGUI totalText;
+
+    [FoldoutGroup("引用")]
+    [LabelText("纯文字提示")]
     [SerializeField] private TextMeshProUGUI messageText;
+
+    [FoldoutGroup("引用")]
+    [LabelText("行容器 Row")]
+    [SerializeField] private RectTransform row;
+
+    [FoldoutGroup("布局")]
+    [LabelText("左右内边距")]
     [SerializeField] private float horizontalPadding = 12f;
-    [SerializeField] private float elementGap = 8f;
+
+    [FoldoutGroup("布局")]
+    [LabelText("图标 ↔ 获得数量")]
+    [SerializeField] private float iconToGainGap = 8f;
+
+    [FoldoutGroup("布局")]
+    [LabelText("获得数量 ↔ 仓库总数")]
+    [SerializeField] private float gainToTotalGap = 8f;
+
+    [FoldoutGroup("布局")]
+    [LabelText("图标边长")]
     [SerializeField] private float iconSize = 28f;
+
+    [FoldoutGroup("布局")]
+    [LabelText("行高")]
     [SerializeField] private float rowHeight = 36f;
+
+    [FoldoutGroup("布局")]
+    [LabelText("最小宽度")]
     [SerializeField] private float minWidth = 96f;
+
+    [FoldoutGroup("布局")]
+    [LabelText("最大宽度")]
     [SerializeField] private float maxWidth = 420f;
+
+    [FoldoutGroup("动效")]
+    [LabelText("+N 放大峰值")]
     [SerializeField] private float gainPunchPeak = 1.32f;
+
+    [FoldoutGroup("动效")]
+    [LabelText("总数放大峰值")]
     [SerializeField] private float totalPunchPeak = 1.18f;
+
+    [FoldoutGroup("动效")]
+    [LabelText("放大耗时（秒）")]
     [SerializeField] private float punchUpDuration = 0.07f;
+
+    [FoldoutGroup("动效")]
+    [LabelText("回落耗时（秒）")]
     [SerializeField] private float punchDownDuration = 0.13f;
 
     private RectTransform _rootRect;
-    private RectTransform _rowRect;
     private Coroutine _gainPunchCo;
     private Coroutine _totalPunchCo;
 
@@ -34,43 +83,15 @@ namespace UniverIdle.UI
     public TextMeshProUGUI MessageText => messageText;
     public GameObject Root => gameObject;
 
-    private void Awake() => ResolveReferences();
+    private void Awake() => CacheRoot();
 
-    public void ResolveReferences()
-    {
-      _rootRect ??= transform as RectTransform;
-      _rowRect ??= transform.Find("Row") as RectTransform;
-
-      if (icon == null)
-      {
-        var t = transform.Find("Row/Icon");
-        if (t != null) icon = t.GetComponent<Image>();
-      }
-
-      if (gainText == null)
-      {
-        var t = transform.Find("Row/Gain");
-        if (t != null) gainText = t.GetComponent<TextMeshProUGUI>();
-      }
-
-      if (totalText == null)
-      {
-        var t = transform.Find("Row/Total");
-        if (t != null) totalText = t.GetComponent<TextMeshProUGUI>();
-      }
-
-      if (messageText == null)
-      {
-        var t = transform.Find("Row/Message");
-        if (t != null) messageText = t.GetComponent<TextMeshProUGUI>();
-      }
-    }
+    private void CacheRoot() => _rootRect ??= transform as RectTransform;
 
     /// <summary>根据当前可见内容重算行宽并摆放子节点。</summary>
     public void RefreshLayout()
     {
-      ResolveReferences();
-      if (_rootRect == null || _rowRect == null) return;
+      CacheRoot();
+      if (_rootRect == null || row == null) return;
 
       var width = messageText != null && messageText.gameObject.activeSelf
         ? LayoutMessageMode()
@@ -84,24 +105,27 @@ namespace UniverIdle.UI
       _rootRect.pivot = new Vector2(0.5f, 0.5f);
       _rootRect.sizeDelta = new Vector2(width, rowHeight);
 
-      _rowRect.anchorMin = Vector2.zero;
-      _rowRect.anchorMax = Vector2.one;
-      _rowRect.offsetMin = Vector2.zero;
-      _rowRect.offsetMax = Vector2.zero;
+      row.anchorMin = Vector2.zero;
+      row.anchorMax = Vector2.one;
+      row.offsetMin = Vector2.zero;
+      row.offsetMax = Vector2.zero;
     }
 
     /// <summary>获得时 +N 与总数做一次 scale punch。</summary>
     public void PunchGainNumbers()
     {
-      ResolveReferences();
-      if (gainText != null && gainText.gameObject.activeSelf)
+      // 须 activeInHierarchy：父级关掉时子节点 activeSelf 仍可能为 true，StartCoroutine 会报错
+      if (!isActiveAndEnabled) return;
+
+      if (gainText != null && gainText.gameObject.activeInHierarchy)
         _gainPunchCo = RestartPunch(_gainPunchCo, gainText.rectTransform, gainPunchPeak);
-      if (totalText != null && totalText.gameObject.activeSelf)
+      if (totalText != null && totalText.gameObject.activeInHierarchy)
         _totalPunchCo = RestartPunch(_totalPunchCo, totalText.rectTransform, totalPunchPeak);
     }
 
     private Coroutine RestartPunch(Coroutine running, RectTransform rt, float peak)
     {
+      if (!isActiveAndEnabled) return null;
       if (running != null) StopCoroutine(running);
       return StartCoroutine(PunchScale(rt, peak));
     }
@@ -153,14 +177,14 @@ namespace UniverIdle.UI
       if (icon != null && icon.gameObject.activeSelf)
       {
         PlaceIcon(icon.rectTransform, x);
-        x += iconSize + elementGap;
+        x += iconSize + iconToGainGap;
       }
 
       if (gainText != null && gainText.gameObject.activeSelf)
       {
         var w = MeasureText(gainText);
         PlaceTextLeft(gainText.rectTransform, x, w);
-        x += w + elementGap;
+        x += w + gainToTotalGap;
       }
 
       if (totalText != null && totalText.gameObject.activeSelf)

@@ -30,9 +30,6 @@ namespace UniverIdle.UI
         workButton.onClick.AddListener(OnWorkButtonClicked);
       }
 
-      if (workButtonText == null && workButton != null)
-        workButtonText = workButton.GetComponentInChildren<TextMeshProUGUI>(true);
-
       _wired = true;
       RefreshWorkButton();
     }
