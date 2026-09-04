@@ -7,10 +7,10 @@
       "locationName": "坠星野外",
       "xpBase": 45,
       "xpPerLevel": 22,
-      "sceneXpBase": 45,
-      "sceneXpPerLevel": 22,
       "grantWorkXp": 1,
-      "grantSceneXp": 1
+      "actionXpBase": 45,
+      "actionXpPerLevel": 22,
+      "grantActionXp": 1
     }
   ],
   "workLevels": [

@@ -2,9 +2,10 @@ using UnityEngine;
 
 namespace UniverIdle.Game
 {
-  public static class SceneProgressRules
+  /// <summary>动作解锁、消耗与展示文案（总等级门槛 + 动作熟练度无关的纯规则）。</summary>
+  public static class WorkActionRules
   {
-    /// <summary>地区是否已解锁：看整项工作的等级（拾荒等级）。</summary>
+    /// <summary>是否已达该动作的工作总等级门槛。</summary>
     public static bool IsRegionUnlocked(PlayerState player, WorkActionDefinition action)
     {
       if (player == null || action == null) return false;

@@ -151,7 +151,7 @@ namespace UniverIdle.UI
     {
       RefreshWorkNav();
       if (workId != _activeWorkId) return;
-      workCenterHost?.Active?.OnWorkOrSceneChanged(this);
+      workCenterHost?.Active?.OnWorkOrMasteryChanged(this);
     }
 
     private void OnActionMasteryChanged(string actionId) =>
@@ -161,7 +161,7 @@ namespace UniverIdle.UI
     {
       RefreshInventory();
       if (_session?.Runner?.CurrentAction != null &&
-          !SceneProgressRules.CanAffordCost(_session.Player, _session.Runner.CurrentAction))
+          !WorkActionRules.CanAffordCost(_session.Player, _session.Runner.CurrentAction))
         _session.Runner.Stop();
 
       workCenterHost?.Active?.OnInventoryChanged(this);

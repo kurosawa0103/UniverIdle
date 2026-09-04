@@ -89,7 +89,7 @@ namespace UniverIdle.UI
 
       RefreshActionCardBindings();
       if (string.IsNullOrEmpty(_activeActionId) ||
-          !SceneProgressRules.CanPerform(host.Session.Player, GameContent.GetAction(_activeActionId)))
+          !WorkActionRules.CanPerform(host.Session.Player, GameContent.GetAction(_activeActionId)))
         _activeActionId = FindFirstUnlockedActionId();
 
       if (!string.IsNullOrEmpty(_activeActionId))
@@ -138,16 +138,16 @@ namespace UniverIdle.UI
         runningBarRoot.SetActive(true);
 
       if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(runner.CurrentAction);
+        progressLabelText.text = "进行中 · " + WorkActionRules.FormatActionTitle(runner.CurrentAction);
       if (progressFill != null)
         progressFill.fillAmount = runner.Progress;
       if (progressTimeText != null)
-        progressTimeText.text = SceneProgressRules.FormatRemainingTime(runner.SecondsRemaining);
+        progressTimeText.text = WorkActionRules.FormatRemainingTime(runner.SecondsRemaining);
     }
 
     public override void OnInventoryChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: false);
 
-    public override void OnWorkOrSceneChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: true);
+    public override void OnWorkOrMasteryChanged(MainUIController host) => RefreshCenterState(host, refreshSceneTags: true);
 
     private void RefreshCenterState(MainUIController host, bool refreshSceneTags)
     {
@@ -168,7 +168,7 @@ namespace UniverIdle.UI
     {
       if (_host == null || index >= _visibleActions.Count) return;
       var action = _visibleActions[index];
-      if (action == null || !SceneProgressRules.IsRegionUnlocked(_host.Session.Player, action))
+      if (action == null || !WorkActionRules.IsRegionUnlocked(_host.Session.Player, action))
         return;
       SelectAction(action.Id);
     }
@@ -214,7 +214,7 @@ namespace UniverIdle.UI
       if (IsShowingRunningAction()) return false;
       var action = GameContent.GetAction(_activeActionId);
       return action != null && action.WorkId == WorkId &&
-             SceneProgressRules.CanPerform(_host.Session.Player, action);
+             WorkActionRules.CanPerform(_host.Session.Player, action);
     }
 
     public bool TryStartSelectedAction()
@@ -374,17 +374,17 @@ namespace UniverIdle.UI
         }
 
         var action = _visibleActions[i];
-        var unlocked = SceneProgressRules.IsRegionUnlocked(player, action);
-        var metaLeft = SceneProgressRules.FormatDurationSeconds(action.DurationSeconds);
-        var metaRight = SceneProgressRules.FormatYieldHint(action);
+        var unlocked = WorkActionRules.IsRegionUnlocked(player, action);
+        var metaLeft = WorkActionRules.FormatDurationSeconds(action.DurationSeconds);
+        var metaRight = WorkActionRules.FormatYieldHint(action);
         var unlockHint = unlocked
           ? null
-          : SceneProgressRules.FormatUnlockHint(action, work?.DisplayName);
+          : WorkActionRules.FormatUnlockHint(action, work?.DisplayName);
 
         var mastery = player.GetActionMastery(action.Id).Level;
         actionCards[i].gameObject.SetActive(true);
         actionCards[i].Bind(
-          SceneProgressRules.FormatSpotTitle(action),
+          WorkActionRules.FormatSpotTitle(action),
           metaLeft,
           metaRight,
           !unlocked,
@@ -484,7 +484,7 @@ namespace UniverIdle.UI
       if (_host == null) return null;
       foreach (var action in _visibleActions)
       {
-        if (SceneProgressRules.CanPerform(_host.Session.Player, action))
+        if (WorkActionRules.CanPerform(_host.Session.Player, action))
           return action.Id;
       }
       return _visibleActions.Count > 0 ? _visibleActions[0].Id : null;
@@ -532,11 +532,11 @@ namespace UniverIdle.UI
       if (runningBarRoot != null)
         runningBarRoot.SetActive(true);
       if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(action);
+        progressLabelText.text = "进行中 · " + WorkActionRules.FormatActionTitle(action);
       if (progressFill != null)
         progressFill.fillAmount = 0f;
       if (progressTimeText != null)
-        progressTimeText.text = SceneProgressRules.FormatRemainingTime(action.DurationSeconds);
+        progressTimeText.text = WorkActionRules.FormatRemainingTime(action.DurationSeconds);
     }
 
     private void HideCenterProgressBar()

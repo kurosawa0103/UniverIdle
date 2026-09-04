@@ -9,8 +9,8 @@ namespace UniverIdle.Game
     public IReadOnlyList<LootResult> Loot { get; set; }
     public int XpGained { get; set; }
     public int GoldGained { get; set; }
-    public bool LeveledUp { get; set; }
-    public int NewLevel { get; set; }
+    public bool ActionMasteryLeveledUp { get; set; }
+    public int ActionMasteryNewLevel { get; set; }
     public bool WorkLeveledUp { get; set; }
     public int WorkNewLevel { get; set; }
     public bool BagFull { get; set; }
@@ -37,7 +37,7 @@ namespace UniverIdle.Game
 
     public bool TryStart(WorkActionDefinition action)
     {
-      if (action == null || !SceneProgressRules.CanPerform(_player, action)) return false;
+      if (action == null || !WorkActionRules.CanPerform(_player, action)) return false;
       CurrentAction = action;
       return BeginCycle();
     }
@@ -68,7 +68,7 @@ namespace UniverIdle.Game
     private bool BeginCycle()
     {
       if (CurrentAction == null) return false;
-      if (!SceneProgressRules.CanAffordCost(_player, CurrentAction)) return false;
+      if (!WorkActionRules.CanAffordCost(_player, CurrentAction)) return false;
       if (CurrentAction.HasCost && !_player.TryConsumeItem(CurrentAction.CostItemId, CurrentAction.CostAmount))
         return false;
 
@@ -124,8 +124,8 @@ namespace UniverIdle.Game
         Loot = granted,
         XpGained = action.XpReward,
         GoldGained = goldGained,
-        LeveledUp = masteryAfter > masteryBefore,
-        NewLevel = masteryAfter,
+        ActionMasteryLeveledUp = masteryAfter > masteryBefore,
+        ActionMasteryNewLevel = masteryAfter,
         WorkLeveledUp = workAfter > workBefore,
         WorkNewLevel = workAfter,
         BagFull = bagFull,

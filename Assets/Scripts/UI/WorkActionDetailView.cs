@@ -51,9 +51,9 @@ namespace UniverIdle.UI
         sb.Append("暂无描述。");
 
       var workName = work != null ? work.DisplayName : "工作";
-      if (player != null && !SceneProgressRules.IsRegionUnlocked(player, action))
+      if (player != null && !WorkActionRules.IsRegionUnlocked(player, action))
       {
-        sb.Append("\n\n").Append(SceneProgressRules.FormatUnlockHint(action, workName));
+        sb.Append("\n\n").Append(WorkActionRules.FormatUnlockHint(action, workName));
         return sb.ToString();
       }
 
@@ -63,8 +63,8 @@ namespace UniverIdle.UI
         var costName = costItem != null ? costItem.DisplayName : action.CostItemId;
         var owned = player.GetItemCount(action.CostItemId);
         sb.Append($"\n\n每次消耗：{costName} ×{action.CostAmount}（持有 {owned}）");
-        if (!SceneProgressRules.CanAffordCost(player, action))
-          sb.Append("\n").Append(SceneProgressRules.FormatCostHint(action));
+        if (!WorkActionRules.CanAffordCost(player, action))
+          sb.Append("\n").Append(WorkActionRules.FormatCostHint(action));
       }
 
       AppendGuaranteedLoot(sb, action);

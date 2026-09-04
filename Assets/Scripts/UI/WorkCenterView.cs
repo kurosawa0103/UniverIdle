@@ -26,6 +26,6 @@ namespace UniverIdle.UI
 
     public virtual void OnInventoryChanged(MainUIController host) { }
 
-    public virtual void OnWorkOrSceneChanged(MainUIController host) { }
+    public virtual void OnWorkOrMasteryChanged(MainUIController host) { }
   }
 }

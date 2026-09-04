@@ -20,7 +20,7 @@ namespace UniverIdle.Editor
     private static readonly string[] WorkHeaders =
     {
       "id", "name", "locationName",
-      "xpBase", "xpPerLevel", "sceneXpBase", "sceneXpPerLevel", "grantWorkXp", "grantSceneXp",
+      "xpBase", "xpPerLevel", "actionXpBase", "actionXpPerLevel", "grantWorkXp", "grantActionXp",
     };
     private static readonly string[] ActionHeaders =
     {
@@ -649,10 +649,10 @@ namespace UniverIdle.Editor
         locationName = r[2],
         xpBase = ParseInt(r[3], 40),
         xpPerLevel = ParseInt(r[4], 20),
-        sceneXpBase = ParseInt(r[5], 0),
-        sceneXpPerLevel = ParseInt(r[6], 0),
+        actionXpBase = ParseInt(r[5], 0),
+        actionXpPerLevel = ParseInt(r[6], 0),
         grantWorkXp = ParseInt(r[7], 1),
-        grantSceneXp = ParseInt(r[8], 1),
+        grantActionXp = ParseInt(r[8], 1),
       });
 
     private static List<LevelXpRow> ReadLevelXpSheet(List<string[]> rows) =>
@@ -961,10 +961,10 @@ namespace UniverIdle.Editor
           work.id, work.name, work.locationName,
           work.xpBase.ToString(CultureInfo.InvariantCulture),
           work.xpPerLevel.ToString(CultureInfo.InvariantCulture),
-          work.sceneXpBase.ToString(CultureInfo.InvariantCulture),
-          work.sceneXpPerLevel.ToString(CultureInfo.InvariantCulture),
+          work.actionXpBase.ToString(CultureInfo.InvariantCulture),
+          work.actionXpPerLevel.ToString(CultureInfo.InvariantCulture),
           work.grantWorkXp.ToString(CultureInfo.InvariantCulture),
-          work.grantSceneXp.ToString(CultureInfo.InvariantCulture),
+          work.grantActionXp.ToString(CultureInfo.InvariantCulture),
         });
       }
       return rows;
@@ -1083,10 +1083,10 @@ namespace UniverIdle.Editor
         sb.Append("      \"locationName\": ").Append(Q(work.locationName)).Append(",\n");
         sb.Append("      \"xpBase\": ").Append(work.xpBase).Append(",\n");
         sb.Append("      \"xpPerLevel\": ").Append(work.xpPerLevel).Append(",\n");
-        sb.Append("      \"sceneXpBase\": ").Append(work.sceneXpBase).Append(",\n");
-        sb.Append("      \"sceneXpPerLevel\": ").Append(work.sceneXpPerLevel).Append(",\n");
+        sb.Append("      \"actionXpBase\": ").Append(work.actionXpBase).Append(",\n");
+        sb.Append("      \"actionXpPerLevel\": ").Append(work.actionXpPerLevel).Append(",\n");
         sb.Append("      \"grantWorkXp\": ").Append(work.grantWorkXp).Append(",\n");
-        sb.Append("      \"grantSceneXp\": ").Append(work.grantSceneXp).Append("\n");
+        sb.Append("      \"grantActionXp\": ").Append(work.grantActionXp).Append("\n");
         sb.Append("    }");
         if (i < works.Length - 1) sb.Append(",");
         sb.Append("\n");

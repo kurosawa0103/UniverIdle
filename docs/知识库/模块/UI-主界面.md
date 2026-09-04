@@ -41,7 +41,7 @@ Assets/Scripts/UI/UITheme.cs
 Assets/Scripts/Game/GameSession.cs
 Assets/Scripts/Game/GameContent.cs
 Assets/Scripts/Game/ItemIconLoader.cs
-Assets/Scripts/Game/SceneProgressRules.cs
+Assets/Scripts/Game/WorkActionRules.cs
 Assets/Editor/UI/MainUIBindMenu.cs
 ```
 

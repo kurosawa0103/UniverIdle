@@ -84,8 +84,8 @@ namespace UniverIdle.UI
     public override void OnInventoryChanged(MainUIController host) =>
       ActiveMap?.OnInventoryChanged(host);
 
-    public override void OnWorkOrSceneChanged(MainUIController host) =>
-      ActiveMap?.OnWorkOrSceneChanged(host);
+    public override void OnWorkOrMasteryChanged(MainUIController host) =>
+      ActiveMap?.OnWorkOrMasteryChanged(host);
 
     private void EnsureMaps()
     {

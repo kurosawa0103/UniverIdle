@@ -62,12 +62,10 @@ namespace UniverIdle.Game
     public string locationName;
     public int xpBase;
     public int xpPerLevel;
-    /// <summary>动作熟练度公式兜底（表列名仍为 sceneXp*）。</summary>
-    public int sceneXpBase;
-    public int sceneXpPerLevel;
+    public int actionXpBase;
+    public int actionXpPerLevel;
     public int grantWorkXp = 1;
-    /// <summary>是否加动作熟练度 XP（表列名仍为 grantSceneXp）。</summary>
-    public int grantSceneXp = 1;
+    public int grantActionXp = 1;
   }
 
   [Serializable]

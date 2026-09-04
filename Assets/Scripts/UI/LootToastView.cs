@@ -249,12 +249,12 @@ namespace UniverIdle.UI
         PushText($"{workName}总等级升至 Lv.{result.WorkNewLevel}！");
       }
 
-      if (result.LeveledUp)
+      if (result.ActionMasteryLeveledUp)
       {
         var scene = string.IsNullOrEmpty(result.SceneName) ? "本地点" : result.SceneName;
         var spot = result.Action.SpotName;
         var label = string.IsNullOrEmpty(spot) ? scene : spot;
-        PushText($"{label}熟练度升至 Lv.{result.NewLevel}！");
+        PushText($"{label}熟练度升至 Lv.{result.ActionMasteryNewLevel}！");
       }
     }
 

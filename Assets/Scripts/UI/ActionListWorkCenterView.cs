@@ -57,7 +57,7 @@ namespace UniverIdle.UI
 
     public override void OnInventoryChanged(MainUIController host) => Refresh(host);
 
-    public override void OnWorkOrSceneChanged(MainUIController host) => Refresh(host);
+    public override void OnWorkOrMasteryChanged(MainUIController host) => Refresh(host);
 
     public override void OnActionCompleted(MainUIController host, ActionCompleteResult result)
     {
@@ -91,11 +91,11 @@ namespace UniverIdle.UI
         runningBarRoot.SetActive(true);
 
       if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(runner.CurrentAction);
+        progressLabelText.text = "进行中 · " + WorkActionRules.FormatActionTitle(runner.CurrentAction);
       if (progressFill != null)
         progressFill.fillAmount = runner.Progress;
       if (progressTimeText != null)
-        progressTimeText.text = SceneProgressRules.FormatRemainingTime(runner.SecondsRemaining);
+        progressTimeText.text = WorkActionRules.FormatRemainingTime(runner.SecondsRemaining);
     }
 
     private void OnCardClicked(int index)
@@ -104,11 +104,11 @@ namespace UniverIdle.UI
 
       var action = _actions[index];
       if (action == null) return;
-      if (!SceneProgressRules.IsRegionUnlocked(_host.Session.Player, action))
+      if (!WorkActionRules.IsRegionUnlocked(_host.Session.Player, action))
         return;
 
       ShowDetail(action);
-      if (!SceneProgressRules.CanPerform(_host.Session.Player, action))
+      if (!WorkActionRules.CanPerform(_host.Session.Player, action))
         return;
 
       var runner = _host.Session.Runner;
@@ -156,17 +156,17 @@ namespace UniverIdle.UI
         }
 
         var action = _actions[i];
-        var unlocked = SceneProgressRules.IsRegionUnlocked(player, action);
-        var metaLeft = SceneProgressRules.FormatDurationSeconds(action.DurationSeconds);
-        var metaRight = SceneProgressRules.FormatYieldHint(action);
+        var unlocked = WorkActionRules.IsRegionUnlocked(player, action);
+        var metaLeft = WorkActionRules.FormatDurationSeconds(action.DurationSeconds);
+        var metaRight = WorkActionRules.FormatYieldHint(action);
         var unlockHint = unlocked
           ? null
-          : SceneProgressRules.FormatUnlockHint(action, work?.DisplayName);
+          : WorkActionRules.FormatUnlockHint(action, work?.DisplayName);
 
         var mastery = player.GetActionMastery(action.Id).Level;
         card.gameObject.SetActive(true);
         card.Bind(
-          SceneProgressRules.FormatActionTitle(action),
+          WorkActionRules.FormatActionTitle(action),
           metaLeft,
           metaRight,
           !unlocked,
@@ -230,11 +230,11 @@ namespace UniverIdle.UI
       if (runningBarRoot != null)
         runningBarRoot.SetActive(true);
       if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(action);
+        progressLabelText.text = "进行中 · " + WorkActionRules.FormatActionTitle(action);
       if (progressFill != null)
         progressFill.fillAmount = 0f;
       if (progressTimeText != null)
-        progressTimeText.text = SceneProgressRules.FormatRemainingTime(action.DurationSeconds);
+        progressTimeText.text = WorkActionRules.FormatRemainingTime(action.DurationSeconds);
     }
 
     private void HideProgressBar()

@@ -7,10 +7,10 @@
       "locationName": "黑松林",
       "xpBase": 40,
       "xpPerLevel": 20,
-      "sceneXpBase": 40,
-      "sceneXpPerLevel": 20,
       "grantWorkXp": 1,
-      "grantSceneXp": 1
+      "actionXpBase": 40,
+      "actionXpPerLevel": 20,
+      "grantActionXp": 1
     }
   ],
   "workLevels": [
