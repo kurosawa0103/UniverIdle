@@ -5,7 +5,6 @@ namespace UniverIdle.Game
     public string Id { get; set; }
     public string DisplayName { get; set; }
     public string LocationName { get; set; }
-    public UnityEngine.Color IconColor { get; set; }
 
     /// <summary>工作等级升级：所需经验 = xpBase + 当前等级 × xpPerLevel。</summary>
     public int XpBase { get; set; } = 40;

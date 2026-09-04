@@ -18,8 +18,11 @@ namespace UniverIdle.UI
     [SerializeField] private TextMeshProUGUI metaRightText;
     [SerializeField] private TextMeshProUGUI unlockText;
     [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private Button button;
     [SerializeField] private Image masteryIcon;
     [SerializeField] private TextMeshProUGUI masteryLevelText;
+
+    public Button ClickButton => button;
 
     public void Bind(
       string displayTitle,
@@ -60,7 +63,6 @@ namespace UniverIdle.UI
       if (canvasGroup != null)
         canvasGroup.interactable = false;
 
-      var button = GetComponent<Button>();
       if (button != null)
         button.interactable = false;
     }
@@ -88,7 +90,6 @@ namespace UniverIdle.UI
       if (canvasGroup != null)
         canvasGroup.interactable = true;
 
-      var button = GetComponent<Button>();
       if (button != null)
         button.interactable = true;
     }

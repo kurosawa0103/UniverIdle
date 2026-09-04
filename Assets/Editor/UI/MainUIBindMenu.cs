@@ -122,8 +122,6 @@ namespace UniverIdle.Editor
       EnsureToastIsGlobalOverlay(toast, host, log);
 
       AssignIfNull(so, "lootToast", toast, log, "MainUI.lootToast");
-      AssignIfNull(so, "lootLinePrefab", linePrefab, log, "MainUI.lootLinePrefab");
-      AssignIfNull(so, "lootFloaterPrefab", floaterPrefab, log, "MainUI.lootFloaterPrefab");
 
       if (linePrefab != null)
       {
@@ -145,24 +143,25 @@ namespace UniverIdle.Editor
       EditorUtility.SetDirty(toast);
     }
 
-    /// <summary>若挂在 WorkView/Detail 下，提到 MainUI 根，避免切工作被 SetActive(false)。</summary>
+    /// <summary>若挂在 WorkView/Detail 下，提到 MainUI 根，避免切工作被 SetActive(false)。不改已有锚点/偏移。</summary>
     private static void EnsureToastIsGlobalOverlay(LootToastView toast, Transform host, StringBuilder log)
     {
       if (toast == null || host == null) return;
 
       var underWork = toast.GetComponentInParent<WorkCenterView>(true) != null
                       || toast.GetComponentInParent<WorkActionDetailView>(true) != null;
-      if (!underWork && toast.transform.parent == host) return;
+      if (!underWork) return;
+      if (toast.transform.parent == host) return;
 
-      if (underWork)
-      {
-        Undo.SetTransformParent(toast.transform, host, "Move 获得提示区 to MainUI root");
-        ApplyGlobalToastAnchors(toast.transform as RectTransform);
-        toast.transform.SetAsLastSibling();
-        log.AppendLine($"· 获得提示区 ← 从工作详情挪到 {host.name}（全局 overlay）");
-      }
+      // 只改父级并保留世界位置；不写死锚点，避免覆盖手配
+      Undo.RecordObject(toast.transform, "Move 获得提示区 to MainUI root");
+      toast.transform.SetParent(host, worldPositionStays: true);
+      toast.transform.SetAsLastSibling();
+      EditorUtility.SetDirty(toast);
+      log.AppendLine($"· 获得提示区 ← 挪到 {host.name}（保留原位置，未改锚点）");
     }
 
+    /// <summary>仅新建「获得提示区」时用的默认占位；已有节点勿再调用。</summary>
     private static void ApplyGlobalToastAnchors(RectTransform rt)
     {
       if (rt == null) return;
@@ -293,6 +292,51 @@ namespace UniverIdle.Editor
 
       foreach (var detail in root.GetComponentsInChildren<WorkActionDetailView>(true))
         BindOneDetail(detail, dropSlot, log);
+
+      BindRunningBars(root, log);
+    }
+
+    private static void BindRunningBars(Transform root, StringBuilder log)
+    {
+      foreach (var center in root.GetComponentsInChildren<StandardWorkCenterView>(true))
+      {
+        var so = new SerializedObject(center);
+        if (so.FindProperty("runningBarRoot")?.objectReferenceValue == null)
+        {
+          var named = FindNamed(center.transform, "RunningBar");
+          if (named == null)
+          {
+            var detail = so.FindProperty("detailPanel")?.objectReferenceValue as ScavengeDetailView;
+            if (detail != null)
+              named = FindNamed(detail.transform, "RunningBar");
+          }
+          if (named != null)
+          {
+            so.FindProperty("runningBarRoot").objectReferenceValue = named.gameObject;
+            log.AppendLine($"· {center.name}.runningBarRoot ← RunningBar");
+          }
+        }
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(center);
+      }
+
+      foreach (var list in root.GetComponentsInChildren<ActionListWorkCenterView>(true))
+      {
+        var so = new SerializedObject(list);
+        if (so.FindProperty("runningBarRoot")?.objectReferenceValue == null)
+        {
+          var named = FindNamed(list.transform, "RunningBar");
+          if (named != null)
+          {
+            so.FindProperty("runningBarRoot").objectReferenceValue = named.gameObject;
+            log.AppendLine($"· {list.name}.runningBarRoot ← RunningBar");
+          }
+        }
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(list);
+      }
     }
 
     private static void BindOneDetail(
@@ -407,6 +451,7 @@ namespace UniverIdle.Editor
       AssignIfNull(so, "background", card.GetComponent<Image>(), log, null);
       AssignIfNull(so, "border", card.GetComponent<Outline>(), log, null);
       AssignIfNull(so, "canvasGroup", card.GetComponent<CanvasGroup>(), log, null);
+      AssignIfNull(so, "button", card.GetComponent<Button>(), log, null);
 
       var thumbRoot = card.transform.Find("Thumb") ?? card.transform.Find("ThumbInner");
       var thumb = thumbRoot?.GetComponent<Image>();

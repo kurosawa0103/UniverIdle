@@ -52,17 +52,17 @@ Assets/Editor/UI/MainUIBindMenu.cs
 | 组件 | 挂哪里 | 要拖的引用 |
 |------|--------|------------|
 | `GameSession` | `App` | — |
-| `MainUIController` | `App` | `skillItems`、`workCenterHost`、`inventoryButton`（`Btn_背包`）、`inventoryPanel`、`topBarGold`、`lootToast` / 行·飘字预制体（**无运行时兜底**） |
+| `MainUIController` | `App` | `skillItems`、`workCenterHost`、`inventoryButton`（`Btn_背包`）、`inventoryPanel`、`topBarGold`、`lootToast`（**无**行·飘字预制体字段；**无运行时挪父级**） |
 | `TopBarGoldView` | `TopBar/Currency` | **必拖** `icon` → `Icon`、`amountText` → `Text` |
 | `WorkCenterHost` | `App/Body/Center` | 各 `WorkView_*` 子物体 |
 | `ScavengeHubView` | `WorkView_scavenge` | `detailPanel` → 拾荒 `Detail`（`ScavengeDetailView`，**无 GetComponent 兜底**） |
-| `StandardWorkCenterView` | **拾荒地图节点**（如 `Content/村口`）；挖矿/魔物可挂工作根 | `workId`、`sceneId`、动作卡、本 Center `RunningBar` |
-| `ActionListWorkCenterView` | `WorkView_woodcutting` | `workId`、动作卡、中栏进度条、`detailPanel` → 砍树 `Detail`（**无兜底**） |
+| `StandardWorkCenterView` | **拾荒地图节点**（如 `Content/村口`）；挖矿/魔物可挂工作根 | `workId`、`sceneId`、动作卡；**必拖** `runningBarRoot` + fill/文案；挖矿等多地区时 **必拖** `sceneTagsRoot`（**无** `Find("Tags")`） |
+| `ActionListWorkCenterView` | `WorkView_woodcutting` | `workId`、动作卡、**必拖** `runningBarRoot` + fill/文案、`detailPanel` → 砍树 `Detail`（**无** Find RunningBar） |
 | `ScavengeDetailView` | **仅** `WorkView_scavenge/Detail` | 标题、正文、`Btn_工作` + `workButtonText`、`LootPreviewView`（**无**按钮文案 InChildren 兜底） |
 | `WorkActionDetailView` | `WorkView_woodcutting/Detail` 等 | 标题、正文、掉落预览；**无**开始按钮 |
 | `SkillNavItemView` | 左栏每项 | `workId`、高亮状态 |
-| `ActionCardView` | 动作卡 | 标题、元信息、Thumb、`unlockText`、`MasteryIcon` / `MasteryLevel`（**无**运行时按名扫；缺引用跑一键绑定）；熟练度五角星：1–30 铜、31–70 银、71+ 金 |
-| `LootToastView` | **`App` 根下「获得提示区」**（勿挂 `WorkView_*` / Detail） | `lineRoot` / `floatLayer` / 行·飘字预制体；`MainUI.lootToast` 拖此节点；切工作仍显示 |
+| `ActionCardView` | 动作卡 | 标题、元信息、Thumb、`unlockText`、**`button`（`ClickButton`）**、`MasteryIcon` / `MasteryLevel`；Center Wire 用 `ClickButton`，不 `GetComponent` |
+| `LootToastView` | **`App` 根下「获得提示区」**（勿挂 `WorkView_*` / Detail） | **必拖** `lineRoot` / `floatLayer` / `linePrefab`（`获得提示.prefab`）/ `floaterPrefab`（`获得提示飘字.prefab`）；`MainUI.lootToast` 只拖此节点 |
 | `LootToastLineView` | `获得提示.prefab` | `icon` / 文案 + **`row` → `Row`**（布局必拖） |
 | `InventoryPanelView` | `InventoryOverlay` | 见 [UI-背包](UI-背包.md)；`pageTabs` 必拖（**不**扫 `tabRoot`） |
 | `LootPreviewView` | `Detail/掉落预览` | `slotPrefab` → `掉落slot.prefab` |
@@ -89,8 +89,8 @@ Assets/Editor/UI/MainUIBindMenu.cs
 
 ## 已知限制
 
-- **进度条**：由当前 Center 驱动自己的 `RunningBar`，详情不管进度
-- **获得提示**：全局 overlay，挂 `App`（与 `MainUIController` 同级子树），**不要**放进拾荒/砍树 Detail；运行时若仍挂在 WorkView 下会自动挪到 App；或跑一键绑定挪位；行预制体须绑 `row`
+- **进度条**：Standard / ActionList 均手配 `runningBarRoot` + fill/文案；预制体 fill 若无 sprite，运行时补白图才能看见滚动；已删基类按名 Find
+- **获得提示**：全局 overlay，挂 `App`；行·飘字预制体只绑在 `LootToastView` 上；切工作不隐藏；错挂 WorkView 时一键绑定只挪父级、**不改**你调好的锚点/位置（仅新建才用默认占位）；行须绑 `row`
 - **砍树**：无地图节点；点卡即开停；详情用 `WorkActionDetailView`，与拾荒 `ScavengeDetailView` 分离
 - **顶栏金币**：`TopBar/Currency` + `TopBarGoldView`；图鉴/设置按钮无逻辑；背包见 [UI-背包](UI-背包.md)
 - 本地存档见 [SAVE-存档](SAVE-存档.md)（默认 10 秒自动存）；离线收益尚未做

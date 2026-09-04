@@ -29,23 +29,14 @@ namespace UniverIdle.UI
 
     private void Awake()
     {
-      ResolveReferences();
+      if (pageTabs == null)
+        pageTabs = new List<Button>();
+      CacheTabVisuals();
       WireHandlers();
       SetOpen(false);
     }
 
     private void OnDestroy() => UnbindGold();
-
-    private void ResolveReferences()
-    {
-      if (overlayRoot == null)
-        overlayRoot = gameObject;
-
-      if (pageTabs == null)
-        pageTabs = new List<Button>();
-
-      CacheTabVisuals();
-    }
 
     private void CacheTabVisuals()
     {

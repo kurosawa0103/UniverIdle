@@ -12,6 +12,7 @@ namespace UniverIdle.UI
   public sealed class ActionListWorkCenterView : WorkCenterView
   {
     [SerializeField] private List<ActionCardView> actionCards = new();
+    [SerializeField] private GameObject runningBarRoot;
     [SerializeField] private Image progressFill;
     [SerializeField] private TextMeshProUGUI progressLabelText;
     [SerializeField] private TextMeshProUGUI progressTimeText;
@@ -21,23 +22,21 @@ namespace UniverIdle.UI
     private readonly List<WorkActionDefinition> _actions = new();
     private string _detailActionId;
     private bool _wired;
-    private GameObject _runningBarRoot;
 
-    private void Awake() => ResolveRunningBarRoot();
+    private void Awake() => HideProgressBar();
 
     public override void Wire(MainUIController host)
     {
       if (_wired) return;
       _wired = true;
       _host = host;
-      ResolveRunningBarRoot();
 
       for (var i = 0; i < actionCards.Count; i++)
       {
         var card = actionCards[i];
         if (card == null) continue;
         var index = i;
-        var button = card.GetComponent<Button>();
+        var button = card.ClickButton;
         if (button == null) continue;
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => OnCardClicked(index));
@@ -51,7 +50,6 @@ namespace UniverIdle.UI
     public override void Refresh(MainUIController host)
     {
       _host = host;
-      ResolveRunningBarRoot();
       BindCards();
       UpdateCardSelection();
       SyncProgressBar();
@@ -88,8 +86,9 @@ namespace UniverIdle.UI
         return;
       }
 
-      if (_runningBarRoot != null && !_runningBarRoot.activeSelf)
-        _runningBarRoot.SetActive(true);
+      EnsureProgressBarReady();
+      if (runningBarRoot != null && !runningBarRoot.activeSelf)
+        runningBarRoot.SetActive(true);
 
       if (progressLabelText != null)
         progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(runner.CurrentAction);
@@ -227,8 +226,9 @@ namespace UniverIdle.UI
     private void ShowProgressBar(WorkActionDefinition action)
     {
       if (action == null) return;
-      if (_runningBarRoot != null)
-        _runningBarRoot.SetActive(true);
+      EnsureProgressBarReady();
+      if (runningBarRoot != null)
+        runningBarRoot.SetActive(true);
       if (progressLabelText != null)
         progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(action);
       if (progressFill != null)
@@ -243,15 +243,32 @@ namespace UniverIdle.UI
         progressFill.fillAmount = 0f;
       if (progressTimeText != null)
         progressTimeText.text = "00:00";
-      if (_runningBarRoot != null)
-        _runningBarRoot.SetActive(false);
+      if (runningBarRoot != null)
+        runningBarRoot.SetActive(false);
     }
 
-    private void ResolveRunningBarRoot()
+    /// <summary>预制体 fill 常无 sprite；Filled + 白图才能看得见滚动。</summary>
+    private void EnsureProgressBarReady()
     {
-      if (_runningBarRoot != null) return;
-      _runningBarRoot = FindRunningBarRoot(transform, progressFill);
-      HideProgressBar();
+      if (progressFill == null) return;
+      progressFill.type = Image.Type.Filled;
+      progressFill.fillMethod = Image.FillMethod.Horizontal;
+      progressFill.fillOrigin = (int)Image.OriginHorizontal.Left;
+      if (progressFill.sprite == null)
+        progressFill.sprite = GetWhiteSprite();
+    }
+
+    private static Sprite _whiteSprite;
+
+    private static Sprite GetWhiteSprite()
+    {
+      if (_whiteSprite != null) return _whiteSprite;
+      _whiteSprite = Sprite.Create(
+        Texture2D.whiteTexture,
+        new Rect(0, 0, 4, 4),
+        new Vector2(0.5f, 0.5f),
+        4f);
+      return _whiteSprite;
     }
   }
 }

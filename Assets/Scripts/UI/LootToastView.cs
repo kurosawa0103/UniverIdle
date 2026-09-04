@@ -50,14 +50,6 @@ namespace UniverIdle.UI
 
     private void Awake() => WireLines();
 
-    public void BindPrefabs(LootToastLineView line, TextMeshProUGUI floater)
-    {
-      if (line != null) linePrefab = line;
-      if (floater != null) floaterPrefab = floater;
-      if (_wired) return;
-      WireLines();
-    }
-
     private void Update()
     {
       if (!_wired) return;

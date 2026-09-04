@@ -1,6 +1,6 @@
 # UI-02 背包
 
-> 状态：**已实现** · 更新：2026-09-03
+> 状态：**已实现** · 更新：2026-09-04
 
 ## 职责
 
@@ -49,7 +49,7 @@ Assets/StreamingAssets/Game/inventory.json
 
 | 节点 | 组件 / 引用 |
 |------|-------------|
-| Overlay 根 | `InventoryPanelView`：`overlayRoot`、`grid`、`closeButton`、`backdropButton`、`tabRoot`、`pageTabs`（Tab_1～4）、`pageLabelText`、`goldText` |
+| Overlay 根 | `InventoryPanelView`：**必拖** `overlayRoot`（**无**用自身兜底）、`grid`、`closeButton`、`backdropButton`、`tabRoot`、`pageTabs`（Tab_1～4）、`pageLabelText`、`goldText` |
 | `Panel/Tabs` | `Tab_1`～`Tab_4`、金币与格数 TMP |
 | Body | `InventoryGridView`：`slotContainer`、`slotPrefab` → `背包slot.prefab` |
 

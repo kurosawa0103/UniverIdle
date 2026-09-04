@@ -16,6 +16,7 @@ namespace UniverIdle.UI
     [SerializeField] private string sceneId;
     [SerializeField] private TextMeshProUGUI locationTitleText;
     [SerializeField] private List<ActionCardView> actionCards = new();
+    [SerializeField] private GameObject runningBarRoot;
     [SerializeField] private Image progressFill;
     [SerializeField] private TextMeshProUGUI progressLabelText;
     [SerializeField] private TextMeshProUGUI progressTimeText;
@@ -28,7 +29,6 @@ namespace UniverIdle.UI
     private readonly List<WorkActionDefinition> _visibleActions = new();
     private readonly List<GameObject> _sceneTagObjects = new();
     private bool _wired;
-    private GameObject _centerRunningBarRoot;
 
     public MainUIController Host => _host;
 
@@ -38,12 +38,7 @@ namespace UniverIdle.UI
 
     private IReadOnlyList<WorkSceneGroup> SceneGroups => GameContent.GetSceneGroupsForWork(WorkId);
 
-    private void Awake()
-    {
-      if (sceneTagsRoot == null && locationTitleText != null)
-        sceneTagsRoot = locationTitleText.transform.parent?.Find("Tags");
-      ResolveCenterRunningBarRoot();
-    }
+    private void Awake() => HideCenterProgressBar();
 
     public override void OnDeactivated() => HideCenterProgressBar();
 
@@ -52,7 +47,6 @@ namespace UniverIdle.UI
     {
       if (detail != null)
         detailPanel = detail;
-      ResolveCenterRunningBarRoot();
     }
 
     public override void OnActivated(MainUIController host)
@@ -64,7 +58,6 @@ namespace UniverIdle.UI
         _activeSceneId = null;
       _activeActionId = null;
       detailPanel?.Wire(this);
-      ResolveCenterRunningBarRoot();
       SyncProgressBarVisibility(host);
     }
 
@@ -80,7 +73,7 @@ namespace UniverIdle.UI
         var card = actionCards[i];
         if (card == null) continue;
         var index = i;
-        var button = card.GetComponent<Button>();
+        var button = card.ClickButton;
         if (button == null) continue;
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => OnActionSelected(index));
@@ -141,8 +134,8 @@ namespace UniverIdle.UI
       }
 
       EnsureProgressBarReady();
-      if (_centerRunningBarRoot != null && !_centerRunningBarRoot.activeSelf)
-        _centerRunningBarRoot.SetActive(true);
+      if (runningBarRoot != null && !runningBarRoot.activeSelf)
+        runningBarRoot.SetActive(true);
 
       if (progressLabelText != null)
         progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(runner.CurrentAction);
@@ -518,39 +511,45 @@ namespace UniverIdle.UI
         locationTitleText.text = work.LocationName;
     }
 
-    private void ResolveCenterRunningBarRoot()
+    private void SyncProgressBarVisibility(MainUIController host)
     {
-      if (_centerRunningBarRoot != null && progressFill != null) return;
-
-      if (_centerRunningBarRoot == null)
-        _centerRunningBarRoot = FindRunningBarRoot(transform, progressFill);
-      // 拾荒：RunningBar 在共享 Detail 上，地图节点下找不到
-      if (_centerRunningBarRoot == null && detailPanel != null)
-        _centerRunningBarRoot = FindRunningBarRoot(detailPanel.transform, null);
-
-      if (progressFill == null && _centerRunningBarRoot != null)
+      if (IsShowingRunningAction())
       {
-        var barFill = _centerRunningBarRoot.transform.Find("Mid/BarBg/BarFill")
-                      ?? _centerRunningBarRoot.transform.Find("BarBg/BarFill")
-                      ?? _centerRunningBarRoot.transform.Find("BarFill");
-        if (barFill != null)
-          progressFill = barFill.GetComponent<Image>();
+        var action = host?.Session?.Runner?.CurrentAction;
+        if (action != null)
+          ShowCenterProgressBar(action);
+        else
+          HideCenterProgressBar();
       }
-
-      if (_centerRunningBarRoot != null)
-      {
-        var texts = _centerRunningBarRoot.GetComponentsInChildren<TextMeshProUGUI>(true);
-        if (progressLabelText == null && texts.Length > 0)
-          progressLabelText = texts[0];
-        if (progressTimeText == null && texts.Length > 1)
-          progressTimeText = texts[texts.Length - 1];
-      }
-
-      EnsureProgressBarReady();
-      if (_centerRunningBarRoot != null && !IsShowingRunningAction())
+      else
         HideCenterProgressBar();
     }
 
+    private void ShowCenterProgressBar(WorkActionDefinition action)
+    {
+      if (action == null) return;
+      EnsureProgressBarReady();
+      if (runningBarRoot != null)
+        runningBarRoot.SetActive(true);
+      if (progressLabelText != null)
+        progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(action);
+      if (progressFill != null)
+        progressFill.fillAmount = 0f;
+      if (progressTimeText != null)
+        progressTimeText.text = SceneProgressRules.FormatRemainingTime(action.DurationSeconds);
+    }
+
+    private void HideCenterProgressBar()
+    {
+      if (progressFill != null)
+        progressFill.fillAmount = 0f;
+      if (progressTimeText != null)
+        progressTimeText.text = "00:00";
+      if (runningBarRoot != null)
+        runningBarRoot.SetActive(false);
+    }
+
+    /// <summary>预制体 fill 常无 sprite；Filled + 白图才能看得见滚动。</summary>
     private void EnsureProgressBarReady()
     {
       if (progressFill == null) return;
@@ -572,46 +571,6 @@ namespace UniverIdle.UI
         new Vector2(0.5f, 0.5f),
         4f);
       return _whiteSprite;
-    }
-
-    private void SyncProgressBarVisibility(MainUIController host)
-    {
-      ResolveCenterRunningBarRoot();
-      if (IsShowingRunningAction())
-      {
-        var action = host?.Session?.Runner?.CurrentAction;
-        if (action != null)
-          ShowCenterProgressBar(action);
-        else
-          HideCenterProgressBar();
-      }
-      else
-        HideCenterProgressBar();
-    }
-
-    private void ShowCenterProgressBar(WorkActionDefinition action)
-    {
-      if (action == null) return;
-      ResolveCenterRunningBarRoot();
-      EnsureProgressBarReady();
-      if (_centerRunningBarRoot != null)
-        _centerRunningBarRoot.SetActive(true);
-      if (progressLabelText != null)
-        progressLabelText.text = "进行中 · " + SceneProgressRules.FormatActionTitle(action);
-      if (progressFill != null)
-        progressFill.fillAmount = 0f;
-      if (progressTimeText != null)
-        progressTimeText.text = SceneProgressRules.FormatRemainingTime(action.DurationSeconds);
-    }
-
-    private void HideCenterProgressBar()
-    {
-      if (progressFill != null)
-        progressFill.fillAmount = 0f;
-      if (progressTimeText != null)
-        progressTimeText.text = "00:00";
-      if (_centerRunningBarRoot != null)
-        _centerRunningBarRoot.SetActive(false);
     }
   }
 }

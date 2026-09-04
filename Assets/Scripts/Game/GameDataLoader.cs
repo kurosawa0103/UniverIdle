@@ -157,7 +157,6 @@ namespace UniverIdle.Game
           Id = row.id,
           DisplayName = row.name,
           LocationName = row.locationName,
-          IconColor = GameColorUtility.Parse(row.iconColor, Color.white),
           XpBase = row.xpBase > 0 ? row.xpBase : 40,
           XpPerLevel = row.xpPerLevel > 0 ? row.xpPerLevel : 20,
           SceneXpBase = row.sceneXpBase,

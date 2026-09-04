@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using TMPro;
 using UniverIdle.Game;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,8 +24,6 @@ namespace UniverIdle.UI
 
     [Header("全局获得提示")]
     [SerializeField] private LootToastView lootToast;
-    [SerializeField] private LootToastLineView lootLinePrefab;
-    [SerializeField] private TextMeshProUGUI lootFloaterPrefab;
 
     private GameSession _session;
     private string _activeWorkId;
@@ -44,7 +41,6 @@ namespace UniverIdle.UI
     private void Start()
     {
       WireButtons();
-      WireLootToast();
 
       if (_session?.Player != null)
       {
@@ -96,31 +92,6 @@ namespace UniverIdle.UI
         inventoryButton.onClick.RemoveAllListeners();
         inventoryButton.onClick.AddListener(ToggleInventoryPanel);
       }
-    }
-
-    private void WireLootToast()
-    {
-      EnsureGlobalLootToastHost();
-      lootToast?.BindPrefabs(lootLinePrefab, lootFloaterPrefab);
-    }
-
-    /// <summary>
-    /// 获得提示必须挂在切工作不会关掉的节点上（App / MainUIController），
-    /// 不能放在 WorkView_* / Detail 里，否则切到砍树等会随拾荒一起 inactive。
-    /// </summary>
-    private void EnsureGlobalLootToastHost()
-    {
-      if (lootToast == null) return;
-
-      var toastTf = lootToast.transform;
-      if (toastTf.GetComponentInParent<WorkCenterView>(true) != null)
-      {
-        toastTf.SetParent(transform, worldPositionStays: true);
-        toastTf.SetAsLastSibling();
-      }
-
-      if (!lootToast.gameObject.activeSelf)
-        lootToast.gameObject.SetActive(true);
     }
 
     private void OnDestroy()
@@ -207,7 +178,6 @@ namespace UniverIdle.UI
 
     private void OnActionCompleted(ActionCompleteResult result)
     {
-      WireLootToast();
       lootToast?.PushResult(result, _session?.Player);
 
       if (result?.Action != null &&
