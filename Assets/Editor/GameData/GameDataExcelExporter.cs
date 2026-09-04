@@ -19,7 +19,7 @@ namespace UniverIdle.Editor
     private static readonly string[] ItemHeadersLegacyColorNoIcon = { "id", "name", "color", "description" };
     private static readonly string[] WorkHeaders =
     {
-      "id", "name", "locationName", "iconColor",
+      "id", "name", "locationName",
       "xpBase", "xpPerLevel", "sceneXpBase", "sceneXpPerLevel", "grantWorkXp", "grantSceneXp",
     };
     private static readonly string[] ActionHeaders =
@@ -46,7 +46,7 @@ namespace UniverIdle.Editor
       { "道具ID", "显示名称", "分类(junk/wood/ore/monster/herb/tool/relic/system)", "图标(空=自动)", "描述" };
     private static readonly string[] WorkHeaderComments =
     {
-      "工作ID", "工作名称", "地点名称", "图标颜色",
+      "工作ID", "工作名称", "地点名称",
       "工作经验基数", "每级额外工作经验", "地区熟练度基数", "地区熟练度每级增量", "是否加工作XP(1/0)", "是否加地区XP(1/0)",
     };
     private static readonly string[] ActionHeaderComments =
@@ -618,13 +618,12 @@ namespace UniverIdle.Editor
         id = r[0],
         name = r[1],
         locationName = r[2],
-        iconColor = r[3],
-        xpBase = ParseInt(r[4], 40),
-        xpPerLevel = ParseInt(r[5], 20),
-        sceneXpBase = ParseInt(r[6], 0),
-        sceneXpPerLevel = ParseInt(r[7], 0),
-        grantWorkXp = ParseInt(r[8], 1),
-        grantSceneXp = ParseInt(r[9], 1),
+        xpBase = ParseInt(r[3], 40),
+        xpPerLevel = ParseInt(r[4], 20),
+        sceneXpBase = ParseInt(r[5], 0),
+        sceneXpPerLevel = ParseInt(r[6], 0),
+        grantWorkXp = ParseInt(r[7], 1),
+        grantSceneXp = ParseInt(r[8], 1),
       });
 
     private static List<ActionRow> ReadActionSheet(List<string[]> rows)
@@ -923,7 +922,7 @@ namespace UniverIdle.Editor
       {
         rows.Add(new[]
         {
-          work.id, work.name, work.locationName, work.iconColor,
+          work.id, work.name, work.locationName,
           work.xpBase.ToString(CultureInfo.InvariantCulture),
           work.xpPerLevel.ToString(CultureInfo.InvariantCulture),
           work.sceneXpBase.ToString(CultureInfo.InvariantCulture),
@@ -1030,7 +1029,6 @@ namespace UniverIdle.Editor
         sb.Append("      \"id\": ").Append(Q(work.id)).Append(",\n");
         sb.Append("      \"name\": ").Append(Q(work.name)).Append(",\n");
         sb.Append("      \"locationName\": ").Append(Q(work.locationName)).Append(",\n");
-        sb.Append("      \"iconColor\": ").Append(Q(work.iconColor)).Append(",\n");
         sb.Append("      \"xpBase\": ").Append(work.xpBase).Append(",\n");
         sb.Append("      \"xpPerLevel\": ").Append(work.xpPerLevel).Append(",\n");
         sb.Append("      \"sceneXpBase\": ").Append(work.sceneXpBase).Append(",\n");

@@ -5,7 +5,6 @@
       "id": "monster_explore",
       "name": "魔物探索",
       "locationName": "坠星野外",
-      "iconColor": "#442828",
       "xpBase": 45,
       "xpPerLevel": 22,
       "sceneXpBase": 45,

@@ -5,7 +5,6 @@
       "id": "mining",
       "name": "挖矿",
       "locationName": "坠星矿洞",
-      "iconColor": "#403830",
       "xpBase": 40,
       "xpPerLevel": 20,
       "sceneXpBase": 40,

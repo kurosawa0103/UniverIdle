@@ -48,7 +48,6 @@ namespace UniverIdle.Game
     public string id;
     public string name;
     public string locationName;
-    public string iconColor;
     public int xpBase;
     public int xpPerLevel;
     public int sceneXpBase;

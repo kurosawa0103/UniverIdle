@@ -5,7 +5,6 @@
       "id": "scavenge",
       "name": "拾荒",
       "locationName": "萤溪村",
-      "iconColor": "#2A4838",
       "xpBase": 40,
       "xpPerLevel": 20,
       "sceneXpBase": 40,

@@ -5,7 +5,6 @@
       "id": "woodcutting",
       "name": "砍伐",
       "locationName": "黑松林",
-      "iconColor": "#324030",
       "xpBase": 40,
       "xpPerLevel": 20,
       "sceneXpBase": 40,
